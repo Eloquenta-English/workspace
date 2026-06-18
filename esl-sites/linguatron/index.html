@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Langui — Translation Tool</title>
+<title>Lingui — Translation Tool</title>
 <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Blogger+Sans:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0618;--bg2:#0d0820;--bg3:#120b2a;--bg-card:#140d2e;--bg-card2:#0f0922;--bg-hover:#1a1040;--border:#2a1f55;--border-light:#3a2d6e;--text:#e8e8e8;--text-muted:#999999;--text-dim:#555555;--accent:#ff9a9e;--accent-dim:rgba(255,154,158,.08);--accent-glow:rgba(255,154,158,.35);--amber:#fbbf24;--amber-dim:rgba(251,191,36,.08);--green:#34d399;--violet:#a78bfa;--rose:#fb7185}
+:root{--bg:#0a0618;--bg2:#0d0820;--bg3:#120b2a;--bg-card:#140d2e;--bg-card2:#0f0922;--bg-hover:#1a1040;--border:#2a1f55;--border-light:#3a2d6e;--text:#e8e8e8;--text-muted:#999999;--text-dim:#555555;--accent:#22d3ee;--accent-dim:rgba(34,211,238,.08);--accent-glow:rgba(34,211,238,.35);--amber:#fbbf24;--amber-dim:rgba(251,191,36,.08);--green:#34d399;--violet:#a78bfa;--rose:#fb7185}
 *{margin:0;padding:0;box-sizing:border-box}
 html{font-size:16px}
 body{font-family:'Blogger Sans','Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
@@ -111,18 +111,10 @@ body{font-family:'Blogger Sans','Inter',system-ui,sans-serif;background:var(--bg
 <body>
 <div class="topbar">
   <a href="#" class="topbar-logo"><div class="logo-icon" style="background:none;padding:0">
-<svg width="28" height="28" viewBox="0 0 340 250" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="0" y="0" width="340" height="250" fill="#0a0618"/>
-<g transform="translate(85,40)">
-<path d="M0 0h120c27.614 0 50 22.386 50 50v100c0 27.614-22.386 50-50 50H50c-27.614 0-50-22.386-50-50V0z" fill="#ff9a9e" fill-opacity="0.15"/>
-<path d="M0 0h120c27.614 0 50 22.386 50 50v100c0 27.614-22.386 50-50 50H50c-27.614 0-50-22.386-50-50V0z" stroke="#ff9a9e" stroke-width="3" fill="none"/>
-<circle cx="85" cy="100" r="18" fill="#ff9a9e" fill-opacity="0.3"/>
-<circle cx="85" cy="100" r="8" fill="#ff9a9e"/>
-<path d="M60 120 L75 145" stroke="#ff9a9e" stroke-width="3" stroke-linecap="round"/>
-<path d="M110 120 L95 145" stroke="#ff9a9e" stroke-width="3" stroke-linecap="round"/>
-</g>
+<svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0 0h70c16.569 0 30 13.431 30 30v70H30C13.431 100 0 86.569 0 70V0z" fill="#22d3ee" fill-rule="evenodd"/>
 </svg>
-</div>LANGUi</a>
+</div>LINGUI</a>
   <div class="topbar-nav">
     <a href="#" class="active">Text Translation</a>
     <a href="#" onclick="showSection('documents');return false;">Documents</a>
@@ -132,10 +124,7 @@ body{font-family:'Blogger Sans','Inter',system-ui,sans-serif;background:var(--bg
     <button class="btn btn-icon" onclick="toggleTheme()" title="Theme"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
   </div>
 
-    <button class="theme-cycle-btn" onclick="cycleTheme()" data-theme="eloquenta">
-      <span class="dot" style="background:#22d3ee"></span>
-      <span>Eloquenta</span>
-    </button></div>
+</div>
 <div class="main">
   <div class="translate-area">
     <div class="lang-bar">

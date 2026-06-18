@@ -1,188 +1,225 @@
-// Linguatron Translation Tool — Multi-API with Cross-Check
-// Uses: MyMemory (primary) → LibreTranslate → Lingva as fallbacks
-// Cross-checks results and lets users cycle through alternatives.
-
+// Lingui Translation Tool — Robust multi-API with back-translation verification
 (function() {
   'use strict';
 
   var translateTimeout = null;
   var isTranslating = false;
+  var lastTranslation = null;
 
-  // ═══ API ENDPOINTS ═══
-  var API_MYMEMORY = 'https://api.mymemory.translated.net/get';
-  var API_LIBRE   = 'https://libretranslate.de/translate';
-  var API_LIBRE2  = 'https://translate.argosopentech.com/translate';  // Community instance
-  var API_LINGVA  = 'https://lingva.ml/api/v1';
+  // Free API endpoints. These rotate; some may fail due to rate limits or CORS.
+  var APIS = [
+    {
+      name: 'LibreTranslate',
+      url: 'https://libretranslate.de/translate',
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: function(q, s, t) { return JSON.stringify({q: q, source: s, target: t, format: 'text'}); },
+      extract: function(d) { return d && d.translatedText; }
+    },
+    {
+      name: 'LibreMirror',
+      url: 'https://translate.argosopentech.com/translate',
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: function(q, s, t) { return JSON.stringify({q: q, source: s, target: t, format: 'text'}); },
+      extract: function(d) { return d && d.translatedText; }
+    },
+    {
+      name: 'Lingva',
+      url: function(s, t, q) { return 'https://lingva.ml/api/v1/' + s + '/' + t + '/' + encodeURIComponent(q); },
+      method: 'GET',
+      headers: {},
+      extract: function(d) { return d && d.translation; }
+    },
+    {
+      name: 'MyMemory',
+      url: function(s, t, q) { return 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(q) + '&langpair=' + s + '|' + t; },
+      method: 'GET',
+      headers: {},
+      extract: function(d) { return d && d.responseStatus === 200 && d.responseData && d.responseData.translatedText; }
+    }
+  ];
 
-  // ═══ TRANSLATION WITH MULTI-API CROSS-CHECK ═══
+  // Common English↔target glossary for sanity checks (loaded as minimal built-in verification DB)
+  var SANITY = {
+    hello: {es:'hola', fr:'bonjour', de:'hallo', it:'ciao', pt:'olá'},
+    thank: {es:'gracias', fr:'merci', de:'danke', it:'grazie', pt:'obrigado'},
+    good: {es:'bueno', fr:'bon', de:'gut', it:'buono', pt:'bom'},
+    yes: {es:'sí', fr:'oui', de:'ja', it:'sì', pt:'sim'},
+    no: {es:'no', fr:'non', de:'nein', it:'no', pt:'não'}
+  };
+
+  function apiRequest(cfg, q, s, t) {
+    var url = typeof cfg.url === 'function' ? cfg.url(s, t, q) : cfg.url;
+    var init = {method: cfg.method, headers: cfg.headers, mode: 'cors'};
+    if (cfg.method === 'POST') init.body = cfg.body(q, s, t);
+    return fetch(url, init)
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(d) {
+        var text = cfg.extract(d);
+        if (!text || typeof text !== 'string') throw new Error('no translation');
+        return {source: cfg.name, text: text.trim()};
+      });
+  }
+
+  function raceWithFallback(q, s, t) {
+    var errors = [];
+    // Try all APIs with individual timeouts; return first success.
+    var promises = APIS.map(function(cfg) {
+      return new Promise(function(resolve, reject) {
+        var timer = setTimeout(function() { reject(new Error('timeout')); }, 6000);
+        apiRequest(cfg, q, s, t)
+          .then(function(res) { clearTimeout(timer); resolve(res); })
+          .catch(function(err) { clearTimeout(timer); reject(err); });
+      });
+    });
+    return Promise.allSettled(promises).then(function(results) {
+      var success = results.filter(function(r) { return r.status === 'fulfilled'; }).map(function(r) { return r.value; });
+      var failures = results.filter(function(r) { return r.status === 'rejected'; });
+      if (success.length) return success;
+      var msg = failures.map(function(r) { return r.reason && r.reason.message; }).filter(Boolean).join('; ');
+      throw new Error('All translation services failed: ' + (msg || 'unknown'));
+    });
+  }
+
   window.translateText = function() {
     var text = document.getElementById('sourceText').value.trim();
     if (!text || isTranslating) return;
-
     var source = document.getElementById('sourceLang').value;
     var target = document.getElementById('targetLang').value;
-
     if (source === target) {
       showError('Source and target languages must be different.');
       return;
     }
-
     isTranslating = true;
     var btn = document.getElementById('translateBtn');
     btn.disabled = true;
     btn.textContent = 'Translating...';
-
     var output = document.getElementById('targetOutput');
-    output.innerHTML = '<div class="loading"><div class="loading-spinner"></div> Translating across multiple services...</div>';
+    output.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Contacting translation services...</div>';
     hideQualityIndicator();
 
-    var results = [];
-    var completed = 0;
-    var totalApis = 3;
-
-    function checkComplete() {
-      completed++;
-      if (completed >= totalApis) {
-        displayResults(results, text, source, target);
+    raceWithFallback(text, source, target)
+      .then(function(results) { displayResults(results, text, source, target); })
+      .catch(function(err) {
+        output.innerHTML = '<span class="placeholder">Translation failed. ' + escapeHtml(err.message) + '.</span>';
+        showError('Translation failed: ' + err.message);
+      })
+      .finally(function() {
         isTranslating = false;
         btn.disabled = false;
         btn.textContent = 'Translate';
-      }
-    }
-
-    // API 1: MyMemory
-    fetch(API_MYMEMORY + '?q=' + encodeURIComponent(text) + '&langpair=' + source + '|' + target)
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.responseStatus === 200 && data.responseData && data.responseData.translatedText) {
-          results.push({text: data.responseData.translatedText, source: 'MyMemory', match: data.responseData.match || 0});
-        }
-        checkComplete();
-      })
-      .catch(function() { checkComplete(); });
-
-    // API 2: LibreTranslate
-    fetch(API_LIBRE, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({q: text, source: source, target: target, format: 'text'})
-    })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.translatedText) {
-          results.push({text: data.translatedText, source: 'LibreTranslate', match: -1});
-        }
-        checkComplete();
-      })
-      .catch(function() {
-        // Fallback to secondary LibreTranslate
-        fetch(API_LIBRE2, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({q: text, source: source, target: target, format: 'text'})
-        })
-          .then(function(r) { return r.json(); })
-          .then(function(data2) {
-            if (data2.translatedText) {
-              results.push({text: data2.translatedText, source: 'LibreTranslate', match: -1});
-            }
-            checkComplete();
-          })
-          .catch(function() { checkComplete(); });
       });
-
-    // API 3: Lingva (Google Translate proxy)
-    fetch(API_LINGVA + '/' + source + '/' + target + '/' + encodeURIComponent(text))
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.translation) {
-          results.push({text: data.translation, source: 'Lingva', match: -1});
-        }
-        checkComplete();
-      })
-      .catch(function() { checkComplete(); });
   };
 
-  // ═══ DISPLAY RESULTS WITH CYCLE ═══
   function displayResults(results, originalText, source, target) {
     var output = document.getElementById('targetOutput');
-
-    if (results.length === 0) {
-      output.innerHTML = '<span class="placeholder">All translation services failed. Please try again in a moment.</span>';
-      return;
-    }
-
-    // Deduplicate near-identical translations
+    // deduplicate by lowercase similarity
     var unique = [];
     results.forEach(function(r) {
-      var isDup = unique.some(function(u) {
-        return stringSimilarity(u.text.toLowerCase(), r.text.toLowerCase()) > 0.85;
-      });
-      if (!isDup) unique.push(r);
+      var dup = unique.some(function(u) { return stringSimilarity(u.text, r.text) > 0.85; });
+      if (!dup) unique.push(r);
     });
-    if (unique.length === 0) unique = results;
-
-    var currentIdx = 0;
-
     window.__allTranslations = unique;
     window.__currentTranslation = unique[0].text;
+    lastTranslation = {original: originalText, forward: unique[0].text, source: source, target: target};
 
-    renderTranslation(currentIdx);
+    var html = '<div class="translation-result">' +
+      '<div class="translation-header"><span class="translation-source">' + unique[0].source + '</span></div>' +
+      '<div class="translation-text" id="currentTranslation">' + escapeHtml(unique[0].text) + '</div>' +
+      '<div class="translation-actions">' +
+        '<button class="btn btn-icon btn-sm" onclick="copyTranslation()" title="Copy">📋</button>' +
+        '<button class="btn btn-icon btn-sm" onclick="speakTranslation()" title="Listen">🔊</button>' +
+        '<button class="btn btn-icon btn-sm" onclick="verifyTranslation()" title="Verify back-translation">🔄</button>' +
+      '</div>';
 
-    function renderTranslation(idx) {
-      var t = unique[idx];
-      window.__currentTranslation = t.text;
-
-      var matchInfo = t.match >= 0 ? ' <span class="match-score" style="color:' + (t.match >= 0.7 ? 'var(--green)' : 'var(--amber)') + '">' + Math.round(t.match * 100) + '%</span>' : '';
-
-      var html = '<div class="translation-result">' +
-        '<div class="translation-header">' +
-          '<span class="translation-source">' + t.source + '</span>' + matchInfo +
-        '</div>' +
-        '<div class="translation-text" id="currentTranslation">' + escapeHtml(t.text) + '</div>' +
-        '<div class="translation-actions">' +
-          '<button class="btn btn-icon btn-sm" onclick="copyTranslation()" title="Copy">📋</button>' +
-          '<button class="btn btn-icon btn-sm" onclick="speakTranslation()" title="Listen">🔊</button>' +
+    if (unique.length > 1) {
+      html += '<div class="alt-translations">' +
+        '<div class="alt-header">Alternatives (' + unique.length + ' sources)</div>';
+      unique.forEach(function(u, i) {
+        html += '<div class="alt-trans ' + (i === 0 ? 'active' : '') + '" onclick="window.__cycleTo(' + i + ')" data-idx="' + i + '">' +
+          '<span class="alt-label">' + u.source + '</span>' +
+          '<span class="alt-text">' + escapeHtml(u.text) + '</span>' +
         '</div>';
-
-      if (unique.length > 1) {
-        html += '<div class="alt-translations">' +
-          '<div class="alt-header">Alternative translations (' + unique.length + ' sources):</div>';
-        unique.forEach(function(u, i) {
-          var cls = i === idx ? 'alt-trans active' : 'alt-trans';
-          var label = u.source + (u.match >= 0 ? ' (' + Math.round(u.match * 100) + '%)' : '');
-          html += '<div class="' + cls + '" onclick="window.__cycleTo(' + i + ')">' +
-            '<span class="alt-label">' + label + '</span>' +
-            '<span class="alt-text">' + escapeHtml(u.text) + '</span>' +
-          '</div>';
-        });
-        html += '<div class="cycle-hint">Click any alternative to use it as the primary translation</div>';
-        html += '</div>';
-      }
-
-      html += '</div>';
-      output.innerHTML = html;
-      document.getElementById('targetCharCount').textContent = t.text.length + ' chars';
+      });
+      html += '<div class="cycle-hint">Click any alternative to select it</div></div>';
     }
+    html += '</div>';
+    output.innerHTML = html;
+    document.getElementById('targetCharCount').textContent = unique[0].text.length + ' chars';
 
-    // Global cycle function
-    window.__cycleTo = function(idx) {
-      currentIdx = idx;
-      renderTranslation(idx);
-    };
-
-    // Show quality indicator if multiple APIs agreed
-    if (unique.length >= 2) {
-      showQualityIndicator(unique, originalText);
+    if (unique.length >= 2 || originalText.split(/\s+/).length <= 5) {
+      runSanityCheck(unique, originalText, source, target);
+      if (unique.length >= 2) showQualityIndicator(unique, originalText);
     }
   }
 
-  // ═══ QUALITY INDICATOR ═══
-  function showQualityIndicator(translations, original) {
-    var existing = document.querySelector('.quality-indicator');
-    if (existing) existing.remove();
+  window.__cycleTo = function(idx) {
+    var t = window.__allTranslations[idx];
+    if (!t) return;
+    window.__currentTranslation = t.text;
+    document.getElementById('currentTranslation').textContent = t.text;
+    document.getElementById('targetCharCount').textContent = t.text.length + ' chars';
+    document.querySelectorAll('.alt-trans').forEach(function(el) {
+      el.classList.toggle('active', +el.dataset.idx === idx);
+    });
+    lastTranslation.forward = t.text;
+  };
 
-    // Calculate pairwise agreement
+  window.verifyTranslation = function() {
+    if (!lastTranslation) return;
+    var t = window.__currentTranslation || lastTranslation.forward;
+    var s = lastTranslation.source;
+    var target = lastTranslation.target;
+    var btn = document.querySelector('[title="Verify back-translation"]');
+    if (btn) btn.textContent = '...';
+    raceWithFallback(t, target, s)
+      .then(function(results) {
+        var back = results[0].text;
+        var sim = stringSimilarity(lastTranslation.original.toLowerCase(), back.toLowerCase());
+        var html = '<div class="quality-indicator animate-in">' +
+          '<div class="quality-header">' +
+            '<div class="quality-score" style="color:' + (sim >= 0.6 ? 'var(--green)' : sim >= 0.35 ? 'var(--amber)' : 'var(--rose)') + '">' +
+              '<span class="quality-score-num">' + Math.round(sim * 100) + '</span><span class="quality-score-max">% back-match</span></div>' +
+            '<div class="quality-label" style="color:' + (sim >= 0.6 ? 'var(--green)' : sim >= 0.35 ? 'var(--amber)' : 'var(--rose)') + '">' +
+              (sim >= 0.6 ? 'Good round-trip confidence' : sim >= 0.35 ? 'Moderate — review suggested' : 'Low confidence — check manually') +
+            '</div>' +
+          '</div>' +
+          '<div style="margin-top:10px;font-size:.8rem;color:var(--text-muted)">Original: ' + escapeHtml(lastTranslation.original) + '</div>' +
+          '<div style="font-size:.8rem;color:var(--text)">Back-translated: ' + escapeHtml(back) + '</div>' +
+        '</div>';
+        var existing = document.querySelector('.quality-indicator');
+        if (existing) existing.remove();
+        document.querySelector('.panels').parentNode.insertAdjacentHTML('beforeend', html);
+      })
+      .catch(function(err) {
+        showError('Verification failed: ' + err.message);
+      })
+      .finally(function() {
+        if (btn) btn.textContent = '🔄';
+      });
+  };
+
+  function runSanityCheck(results, original, source, target) {
+    // If a very common word was translated, check against built-in mini glossary
+    var lower = original.toLowerCase().replace(/[^a-z\s]/g, '');
+    var words = lower.split(/\s+/);
+    var hits = [];
+    words.forEach(function(w) {
+      if (!w) return;
+      var entry = SANITY[w];
+      if (entry && entry[target]) {
+        var found = results.some(function(r) { return r.text.toLowerCase().indexOf(entry[target]) !== -1; });
+        if (!found) hits.push({word: w, expected: entry[target]});
+      }
+    });
+    if (hits.length) {
+      var msg = 'Sanity note: expected ' + hits.map(function(h) { return h.word + '→' + h.expected; }).join(', ') + ' but not detected.';
+      console.warn(msg);
+    }
+  }
+
+  function showQualityIndicator(translations, original) {
     var totalSim = 0, pairs = 0;
     for (var i = 0; i < translations.length; i++) {
       for (var j = i + 1; j < translations.length; j++) {
@@ -190,38 +227,24 @@
         pairs++;
       }
     }
-    var avgAgreement = pairs > 0 ? totalSim / pairs : 0;
-
-    var div = document.createElement('div');
-    div.className = 'quality-indicator animate-in';
-
-    var grade = avgAgreement >= 0.7 ? 'high' : avgAgreement >= 0.4 ? 'medium' : 'low';
+    var avg = pairs ? totalSim / pairs : 0;
+    var grade = avg >= 0.7 ? 'high' : avg >= 0.4 ? 'medium' : 'low';
     var colors = {high: 'var(--green)', medium: 'var(--amber)', low: 'var(--rose)'};
-    var labels = {high: 'High confidence — APIs agree', medium: 'Moderate — some variation', low: 'Low confidence — APIs disagree'};
-
-    var checksHtml = '';
-    translations.forEach(function(t) {
-      checksHtml += '<div class="quality-check">' +
-        '<span class="quality-check-icon" style="color:var(--green)">✓</span>' +
-        '<div class="quality-check-text">' +
-        '<div class="quality-check-label">' + t.source + '</div>' +
-        '<div class="quality-check-detail">' + escapeHtml(t.text.substring(0, 120)) + '</div>' +
-        '</div></div>';
-    });
-
-    div.innerHTML =
+    var labels = {high: 'High confidence — sources agree', medium: 'Mixed results', low: 'Low confidence — sources disagree'};
+    var checks = translations.map(function(t) {
+      return '<div class="quality-check"><span class="quality-check-icon" style="color:var(--green)">✓</span><div class="quality-check-text"><div class="quality-check-label">' + t.source + '</div><div class="quality-check-detail">' + escapeHtml(t.text.substring(0, 120)) + '</div></div></div>';
+    }).join('');
+    var html = '<div class="quality-indicator animate-in">' +
       '<div class="quality-header">' +
-        '<div class="quality-score" style="color:' + colors[grade] + '">' +
-          '<span class="quality-score-num">' + Math.round(avgAgreement * 100) + '</span>' +
-          '<span class="quality-score-max">% agreement</span>' +
-        '</div>' +
+        '<div class="quality-score" style="color:' + colors[grade] + '"><span class="quality-score-num">' + Math.round(avg * 100) + '</span><span class="quality-score-max">% agreement</span></div>' +
         '<div class="quality-label" style="color:' + colors[grade] + '">' + labels[grade] + '</div>' +
         '<button class="btn btn-sm quality-toggle" onclick="this.parentElement.parentElement.classList.toggle(\'expanded\')">Details ▼</button>' +
       '</div>' +
-      '<div class="quality-details">' + checksHtml + '</div>';
-
-    var panels = document.querySelector('.panels');
-    panels.parentNode.insertBefore(div, panels.nextSibling);
+      '<div class="quality-details">' + checks + '</div>' +
+    '</div>';
+    var existing = document.querySelector('.quality-indicator');
+    if (existing) existing.remove();
+    document.querySelector('.panels').parentNode.insertAdjacentHTML('beforeend', html);
   }
 
   function hideQualityIndicator() {
@@ -229,53 +252,43 @@
     if (existing) existing.remove();
   }
 
-  // ═══ STRING SIMILARITY ═══
   function stringSimilarity(a, b) {
     if (a === b) return 1;
-    if (a.length === 0 || b.length === 0) return 0;
+    if (!a || !b) return 0;
     var wordsA = a.split(/\s+/).filter(function(w) { return w.length > 2; });
     var wordsB = b.split(/\s+/).filter(function(w) { return w.length > 2; });
-    if (wordsA.length === 0 || wordsB.length === 0) return 0;
+    if (!wordsA.length || !wordsB.length) return 0;
     var matches = 0;
     wordsA.forEach(function(wa) {
       wordsB.forEach(function(wb) {
-        if (wa === wb || (wa.length > 3 && wb.length > 3 && (wa.indexOf(wb) >= 0 || wb.indexOf(wa) >= 0))) {
-          matches++;
-        }
+        if (wa === wb || (wa.length > 3 && wb.length > 3 && (wa.indexOf(wb) >= 0 || wb.indexOf(wa) >= 0))) matches++;
       });
     });
     return (2 * matches) / (wordsA.length + wordsB.length);
   }
 
-  // ═══ AUTO-TRANSLATE (debounced) ═══
   window.handleInput = function() {
     var text = document.getElementById('sourceText').value;
     document.getElementById('charCount').textContent = text.length;
     clearTimeout(translateTimeout);
     if (text.trim().length > 2) {
-      translateTimeout = setTimeout(window.translateText, 800);
+      translateTimeout = setTimeout(window.translateText, 900);
     }
   };
 
-  // ═══ LANGUAGE HANDLING ═══
   window.handleLangChange = function() {
     var source = document.getElementById('sourceLang');
     var target = document.getElementById('targetLang');
     document.getElementById('sourceLangLabel').textContent = source.options[source.selectedIndex].text;
     document.getElementById('targetLangLabel').textContent = target.options[target.selectedIndex].text;
-    if (document.getElementById('sourceText').value.trim()) {
-      window.translateText();
-    }
+    if (document.getElementById('sourceText').value.trim()) window.translateText();
   };
 
   window.swapLanguages = function() {
     var source = document.getElementById('sourceLang');
     var target = document.getElementById('targetLang');
-    var temp = source.value;
-    source.value = target.value;
-    target.value = temp;
+    var temp = source.value; source.value = target.value; target.value = temp;
     window.handleLangChange();
-
     var sourceText = document.getElementById('sourceText');
     var targetOutput = document.getElementById('targetOutput');
     var current = targetOutput.querySelector('.translation-text');
@@ -288,22 +301,18 @@
     hideQualityIndicator();
   };
 
-  // ═══ UTILITY ═══
   window.clearSource = function() {
     document.getElementById('sourceText').value = '';
     document.getElementById('charCount').textContent = '0';
     document.getElementById('targetOutput').innerHTML = '<span class="placeholder">Translation will appear here...</span>';
     document.getElementById('targetCharCount').textContent = '';
     hideQualityIndicator();
+    lastTranslation = null;
   };
 
   window.copyTranslation = function() {
     var text = window.__currentTranslation;
-    if (text) {
-      navigator.clipboard.writeText(text).then(function() {
-        showToast('Copied to clipboard');
-      });
-    }
+    if (text) navigator.clipboard.writeText(text).then(function() { showToast('Copied'); });
   };
 
   window.pasteFromClipboard = function() {
@@ -311,17 +320,15 @@
       document.getElementById('sourceText').value = text;
       document.getElementById('charCount').textContent = text.length;
       window.translateText();
-    }).catch(function() {
-      showToast('Clipboard access denied');
-    });
+    }).catch(function() { showToast('Clipboard access denied'); });
   };
 
   window.speakTranslation = function() {
     var text = window.__currentTranslation;
     if (text && 'speechSynthesis' in window) {
-      var utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = document.getElementById('targetLang').value;
-      speechSynthesis.speak(utterance);
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = document.getElementById('targetLang').value;
+      speechSynthesis.speak(u);
     }
   };
 
@@ -337,8 +344,9 @@
     var div = document.createElement('div');
     div.className = 'error-msg animate-in';
     div.textContent = msg;
-    document.querySelector('.translate-area').insertBefore(div, document.querySelector('.panels'));
-    setTimeout(function() { div.remove(); }, 5000);
+    var area = document.querySelector('.translate-area');
+    area.insertBefore(div, area.querySelector('.panels'));
+    setTimeout(function() { div.remove(); }, 6000);
   }
 
   window.showToast = function(msg) {
@@ -346,10 +354,9 @@
     if (existing) existing.remove();
     var div = document.createElement('div');
     div.className = 'toast-msg';
-    div.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--accent);color:var(--text);padding:10px 20px;border-radius:8px;font-size:.8rem;font-weight:600;z-index:9999;white-space:nowrap;animation:slideUp .3s ease;box-shadow:0 4px 20px rgba(0,0,0,.4);';
     div.textContent = msg;
     document.body.appendChild(div);
-    setTimeout(function() { div.style.opacity = '0'; div.style.transition = 'opacity .3s'; setTimeout(function() { div.remove(); }, 300); }, 2000);
+    setTimeout(function() { div.remove(); }, 2000);
   };
 
   window.showSection = function(section) {
@@ -359,10 +366,6 @@
   };
 
   document.addEventListener('keydown', function(e) {
-    if (e.ctrlKey && e.key === 'Enter') {
-      e.preventDefault();
-      window.translateText();
-    }
+    if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); window.translateText(); }
   });
-
 })();
