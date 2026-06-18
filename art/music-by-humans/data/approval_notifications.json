@@ -1,0 +1,11 @@
+{
+  "notifications": [],
+  "pending": [],
+  "approved": [],
+  "rejected": [],
+  "blocked": [],
+  "settings": {
+    "summary_email": "",
+    "daily_reminder": "8:00 AM"
+  }
+}

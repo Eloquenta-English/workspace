@@ -1,0 +1,199 @@
+/* Music By Humans — Broadcast Effects */
+/* Early-2000s music TV aesthetic: glitch, scanlines, chromatic aberration */
+
+/* ── Glitch Text Effect ─────────────────────────────────────────────────── */
+.glitch-text {
+  position: relative;
+  animation: glitch-skew 4s infinite linear alternate-reverse;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-text::before {
+  left: 2px;
+  text-shadow: -2px 0 #ff1493;
+  clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+  animation: glitch-anim 2s infinite linear alternate-reverse;
+}
+
+.glitch-text::after {
+  left: -2px;
+  text-shadow: 2px 0 #00f5ff;
+  clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+  animation: glitch-anim2 3s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+  0% { clip-path: polygon(0 10%, 100% 10%, 100% 15%, 0 15%); }
+  20% { clip-path: polygon(0 30%, 100% 30%, 100% 35%, 0 35%); }
+  40% { clip-path: polygon(0 50%, 100% 50%, 100% 55%, 0 55%); }
+  60% { clip-path: polygon(0 70%, 100% 70%, 100% 75%, 0 75%); }
+  80% { clip-path: polygon(0 90%, 100% 90%, 100% 95%, 0 95%); }
+  100% { clip-path: polygon(0 20%, 100% 20%, 100% 25%, 0 25%); }
+}
+
+@keyframes glitch-anim2 {
+  0% { clip-path: polygon(0 15%, 100% 15%, 100% 20%, 0 20%); }
+  20% { clip-path: polygon(0 35%, 100% 35%, 100% 40%, 0 40%); }
+  40% { clip-path: polygon(0 55%, 100% 55%, 100% 60%, 0 60%); }
+  60% { clip-path: polygon(0 75%, 100% 75%, 100% 80%, 0 80%); }
+  80% { clip-path: polygon(0 5%, 100% 5%, 100% 10%, 0 10%); }
+  100% { clip-path: polygon(0 45%, 100% 45%, 100% 50%, 0 50%); }
+}
+
+@keyframes glitch-skew {
+  0% { transform: skew(0deg); }
+  10% { transform: skew(-1deg); }
+  20% { transform: skew(0.5deg); }
+  30% { transform: skew(0deg); }
+  100% { transform: skew(0deg); }
+}
+
+/* ── Chromatic Aberration on Hover ──────────────────────────────────────── */
+.chromatic-hover {
+  position: relative;
+  transition: text-shadow 0.1s;
+}
+
+.chromatic-hover:hover {
+  text-shadow:
+    -2px 0 rgba(255, 0, 0, 0.5),
+    2px 0 rgba(0, 255, 255, 0.5);
+}
+
+/* ── Lower Third Graphic ────────────────────────────────────────────────── */
+.lower-third {
+  position: absolute;
+  bottom: 60px;
+  left: 20px;
+  background: linear-gradient(90deg, var(--skin-primary) 0%, transparent 100%);
+  padding: 8px 20px 8px 12px;
+  border-left: 4px solid var(--skin-primary);
+  animation: lower-third-in 0.5s ease-out;
+}
+
+@keyframes lower-third-in {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* ── Animated Background Shapes ──────────────────────────────────────────── */
+.bg-shapes {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bg-shape {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.05;
+  animation: float-shape 20s ease-in-out infinite;
+}
+
+.bg-shape:nth-child(1) {
+  width: 400px;
+  height: 400px;
+  background: var(--skin-primary);
+  top: -100px;
+  right: -100px;
+  animation-delay: 0s;
+}
+
+.bg-shape:nth-child(2) {
+  width: 300px;
+  height: 300px;
+  background: var(--skin-accent);
+  bottom: -50px;
+  left: -50px;
+  animation-delay: -7s;
+}
+
+.bg-shape:nth-child(3) {
+  width: 200px;
+  height: 200px;
+  background: var(--skin-secondary);
+  top: 50%;
+  left: 50%;
+  animation-delay: -14s;
+}
+
+@keyframes float-shape {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -30px) scale(1.05); }
+  50% { transform: translate(-20px, 20px) scale(0.95); }
+  75% { transform: translate(10px, 10px) scale(1.02); }
+}
+
+/* ── Vignette ────────────────────────────────────────────────────────────── */
+.vignette::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
+  z-index: var(--skin-z-overlay);
+}
+
+/* ── Neon Glow Text ──────────────────────────────────────────────────────── */
+.neon-glow {
+  text-shadow:
+    0 0 5px var(--skin-primary),
+    0 0 10px var(--skin-primary),
+    0 0 20px var(--skin-primary),
+    0 0 40px var(--skin-primary);
+}
+
+/* ── Retro TV Static (for transitions) ───────────────────────────────────── */
+.tv-static {
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E");
+  opacity: 0;
+  pointer-events: none;
+  z-index: var(--skin-z-overlay);
+  transition: opacity 0.1s;
+}
+
+.tv-static.active {
+  opacity: 0.15;
+}
+
+/* ── DJ Mode Styles ─────────────────────────────────────────────────────── */
+body.dj-mode #mbh-player {
+  background: linear-gradient(90deg, #1a002a 0%, #0d0015 20%, #1a002a 80%, #0d0015 100%);
+  border-top: 2px solid var(--skin-primary);
+}
+
+body.dj-mode .mbh-player-btn {
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+}
+
+body.dj-mode #btn-play {
+  width: 56px;
+  height: 56px;
+  font-size: 20px;
+}
+
+/* ── Wireframe Debug View ───────────────────────────────────────────────── */
+.wireframe-debug * {
+  outline: 1px solid rgba(0, 255, 0, 0.3) !important;
+  background: transparent !important;
+}
+
+.wireframe-debug *::before,
+.wireframe-debug *::after {
+  outline: 1px solid rgba(255, 0, 255, 0.3) !important;
+}

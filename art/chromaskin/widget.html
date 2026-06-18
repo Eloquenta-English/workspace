@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChromaSkin Widget</title>
+<link rel="stylesheet" href="chromaskin.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══ WIDGET CONTAINER ═══ */
+.cs-widget-wrap {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ═══ COLLAPSED DOT ═══ */
+.cs-widget-dot {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--cs-accent);
+  color: var(--cs-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px var(--cs-accent-glow);
+  transition: all 0.2s;
+  border: 2px solid var(--cs-bg);
+}
+.cs-widget-dot:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 24px var(--cs-accent-glow);
+}
+
+/* ═══ EXPANDED PANEL ═══ */
+.cs-widget-panel {
+  width: 300px;
+  max-width: 90vw;
+  background: var(--cs-bg-card);
+  border: 1px solid var(--cs-border);
+  border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 0 1px var(--cs-accent-dim);
+  overflow: hidden;
+  animation: csSlideUp 0.25s ease;
+}
+@keyframes csSlideUp {
+  from { opacity: 0; transform: translateY(12px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ═══ HEADER ═══ */
+.cs-widget-header {
+  padding: 10px 14px;
+  background: var(--cs-bg3);
+  border-bottom: 1px solid var(--cs-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+.cs-widget-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--cs-text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cs-widget-close {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1px solid var(--cs-border);
+  background: var(--cs-bg);
+  color: var(--cs-text-muted);
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.cs-widget-close:hover {
+  border-color: var(--cs-accent);
+  color: var(--cs-accent);
+}
+
+/* ═══ BODY ═══ */
+.cs-widget-body {
+  padding: 12px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* ═══ PRESET SWATCHES ═══ */
+.cs-section-label {
+  font-size: 8px;
+  color: var(--cs-text-dim);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 6px;
+}
+.cs-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.cs-preset-swatch {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.15s;
+  position: relative;
+}
+.cs-preset-swatch:hover {
+  transform: scale(1.15);
+  border-color: rgba(255,255,255,0.3);
+}
+.cs-preset-swatch.active {
+  border-color: #fff;
+  box-shadow: 0 0 0 2px var(--cs-bg);
+}
+.cs-preset-swatch.active::after {
+  content: '✓';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* ═══ HUE SLIDER ═══ */
+.cs-hue-slider {
+  width: 100%;
+  height: 12px;
+  border-radius: 6px;
+  appearance: none;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: linear-gradient(to right,
+    hsl(0,80%,50%), hsl(60,80%,50%), hsl(120,80%,50%),
+    hsl(180,80%,50%), hsl(240,80%,50%), hsl(300,80%,50%), hsl(360,80%,50%)
+  );
+  margin-bottom: 10px;
+}
+.cs-hue-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--cs-bg);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  cursor: pointer;
+}
+.cs-hue-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--cs-bg);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  cursor: pointer;
+}
+
+/* ═══ ROW SLIDERS ═══ */
+.cs-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.cs-slider-label {
+  font-size: 9px;
+  color: var(--cs-text-dim);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 24px;
+}
+.cs-slider {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  appearance: none;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+.cs-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--cs-bg);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  cursor: pointer;
+}
+.cs-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--cs-bg);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  cursor: pointer;
+}
+.cs-slider-val {
+  font-size: 10px;
+  color: var(--cs-accent);
+  font-weight: 600;
+  min-width: 28px;
+  text-align: right;
+}
+
+/* ═══ TOGGLE ROW ═══ */
+.cs-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 0 6px;
+}
+.cs-toggle-label {
+  font-size: 9px;
+  color: var(--cs-text-dim);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.cs-toggle {
+  width: 36px;
+  height: 18px;
+  border-radius: 9px;
+  border: 1px solid var(--cs-border);
+  background: var(--cs-bg3);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+.cs-toggle.on {
+  background: var(--cs-accent);
+  border-color: var(--cs-accent);
+}
+.cs-toggle::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  top: 1px;
+  left: 1px;
+  transition: left 0.2s;
+}
+.cs-toggle.on::after {
+  left: 19px;
+}
+
+/* ═══ ACTIONS ═══ */
+.cs-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+.cs-action-btn {
+  flex: 1;
+  padding: 7px 4px;
+  border-radius: 8px;
+  border: 1px solid var(--cs-border);
+  background: var(--cs-bg3);
+  color: var(--cs-text-muted);
+  font-size: 9px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  text-align: center;
+}
+.cs-action-btn:hover {
+  border-color: var(--cs-accent);
+  color: var(--cs-accent);
+  background: var(--cs-accent-dim);
+}
+.cs-action-btn.primary {
+  background: var(--cs-accent);
+  color: var(--cs-bg);
+  border-color: var(--cs-accent);
+}
+.cs-action-btn.primary:hover {
+  filter: brightness(1.1);
+}
+
+/* ═══ TOAST ═══ */
+.cs-toast {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  background: var(--cs-bg-card);
+  border: 1px solid var(--cs-accent);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--cs-text);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s;
+  z-index: 10000;
+  pointer-events: none;
+}
+.cs-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+</head>
+<body class="cs-mustard" data-cs-mode="dark">
+
+<!-- ═══ WIDGET ═══ -->
+<div class="cs-widget-wrap" id="csWidgetWrap">
+
+  <!-- Collapsed dot -->
+  <div class="cs-widget-dot" id="csWidgetDot" onclick="csToggleWidget()" title="Theme">
+    <span id="csDotIcon">🎨</span>
+  </div>
+
+  <!-- Expanded panel -->
+  <div class="cs-widget-panel" id="csWidgetPanel" style="display:none">
+
+    <div class="cs-widget-header" onclick="csToggleWidget()">
+      <div class="cs-widget-title">🎨 ChromaSkin</div>
+      <button class="cs-widget-close" onclick="event.stopPropagation();csToggleWidget()">✕</button>
+    </div>
+
+    <div class="cs-widget-body">
+
+      <!-- Presets -->
+      <div class="cs-section-label">Presets</div>
+      <div class="cs-preset-grid" id="csPresetGrid"></div>
+
+      <!-- Hue slider -->
+      <div class="cs-section-label">Custom Hue</div>
+      <input type="range" class="cs-hue-slider" id="csHueSlider" min="0" max="360" value="45" oninput="csSetHue(this.value)">
+
+      <!-- Sat / Lit -->
+      <div class="cs-slider-row">
+        <span class="cs-slider-label">Sat</span>
+        <input type="range" class="cs-slider" id="csSatSlider" min="0" max="100" value="60" oninput="csSetSat(this.value)">
+        <span class="cs-slider-val" id="csSatVal">60%</span>
+      </div>
+      <div class="cs-slider-row">
+        <span class="cs-slider-label">Lit</span>
+        <input type="range" class="cs-slider" id="csLitSlider" min="5" max="95" value="12" oninput="csSetLit(this.value)">
+        <span class="cs-slider-val" id="csLitVal">12%</span>
+      </div>
+
+      <!-- Dark/Light toggle -->
+      <div class="cs-toggle-row">
+        <span class="cs-toggle-label">Dark Mode</span>
+        <div class="cs-toggle on" id="csModeToggle" onclick="csToggleMode()"></div>
+      </div>
+
+      <!-- Actions -->
+      <div class="cs-actions">
+        <button class="cs-action-btn primary" onclick="csSave()">💾 Save</button>
+        <button class="cs-action-btn" onclick="csCopyCSS()">📋 CSS</button>
+        <button class="cs-action-btn" onclick="csReset()">↺ Reset</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="cs-toast" id="csToast"></div>
+
+<script src="chromaskin.js"></script>
+<script>
+(function(){
+  'use strict';
+
+  var PRESETS = [
+    {name:'midnight',  h:220, s:15, l:8,  color:'hsl(220,60%,40%)'},
+    {name:'mustard',   h:45,  s:60, l:12, color:'hsl(45,80%,45%)'},
+    {name:'burgundy',  h:350, s:45, l:10, color:'hsl(350,65%,40%)'},
+    {name:'forest',    h:140, s:35, l:10, color:'hsl(145,50%,35%)'},
+    {name:'ocean',     h:200, s:50, l:12, color:'hsl(200,65%,40%)'},
+    {name:'violet',    h:270, s:40, l:10, color:'hsl(270,55%,45%)'},
+    {name:'charcoal',  h:220, s:5,  l:8,  color:'hsl(220,15%,30%)'},
+    {name:'classic',   h:220, s:5,  l:95, color:'hsl(220,10%,85%)'},
+  ];
+
+  // ═══ RENDER PRESETS ═══
+  function renderPresets(){
+    var grid = document.getElementById('csPresetGrid');
+    var html = '';
+    var state = ChromaSkin.getState();
+    PRESETS.forEach(function(p){
+      var active = Math.abs(p.h - state.h) < 10 && Math.abs(p.s - state.s) < 10;
+      html += '<div class="cs-preset-swatch' + (active?' active':'') + '" style="background:' + p.color + '" onclick="csLoadPreset(\'' + p.name + '\')" title="' + p.name + '"></div>';
+    });
+    grid.innerHTML = html;
+  }
+
+  // ═══ UPDATE SLIDERS FROM STATE ═══
+  function updateControls(){
+    var state = ChromaSkin.getState();
+    document.getElementById('csHueSlider').value = state.h;
+    document.getElementById('csSatSlider').value = state.s;
+    document.getElementById('csLitSlider').value = state.l;
+    document.getElementById('csSatVal').textContent = state.s + '%';
+    document.getElementById('csLitVal').textContent = state.l + '%';
+    var toggle = document.getElementById('csModeToggle');
+    if(toggle) toggle.className = 'cs-toggle' + (state.mode === 'dark' ? ' on' : '');
+    renderPresets();
+  }
+
+  // ═══ WIDGET TOGGLE ═══
+  var widgetOpen = false;
+  window.csToggleWidget = function(){
+    widgetOpen = !widgetOpen;
+    document.getElementById('csWidgetPanel').style.display = widgetOpen ? 'block' : 'none';
+    document.getElementById('csWidgetDot').style.display = widgetOpen ? 'none' : 'flex';
+    if(widgetOpen) updateControls();
+  };
+
+  // ═══ CONTROLS ═══
+  window.csSetHue = function(v){
+    ChromaSkin.setHue(parseInt(v));
+    updateControls();
+  };
+  window.csSetSat = function(v){
+    ChromaSkin.setSat(parseInt(v));
+    document.getElementById('csSatVal').textContent = v + '%';
+    renderPresets();
+  };
+  window.csSetLit = function(v){
+    ChromaSkin.setLit(parseInt(v));
+    document.getElementById('csLitVal').textContent = v + '%';
+    renderPresets();
+  };
+  window.csToggleMode = function(){
+    ChromaSkin.toggleMode();
+    updateControls();
+  };
+  window.csLoadPreset = function(name){
+    ChromaSkin.setPreset(name);
+    updateControls();
+  };
+  window.csSave = function(){
+    ChromaSkin.save();
+    csShowToast('Theme saved!');
+  };
+  window.csReset = function(){
+    ChromaSkin.reset();
+    updateControls();
+    csShowToast('Reset to default');
+  };
+  window.csCopyCSS = function(){
+    var css = ChromaSkin.exportCSS();
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(css).then(function(){csShowToast('CSS copied!');});
+    }else{
+      csShowToast('CSS: ' + css.substring(0,40) + '...');
+    }
+  };
+
+  // ═══ TOAST ═══
+  window.csShowToast = function(msg){
+    var t = document.getElementById('csToast');
+    t.textContent = msg;
+    t.className = 'cs-toast show';
+    setTimeout(function(){ t.className = 'cs-toast'; }, 2000);
+  };
+
+  // ═══ LISTEN FOR THEME CHANGES ═══
+  ChromaSkin.onThemeChange(function(){ updateControls(); });
+
+  // ═══ INIT ═══
+  // Set initial preset class on body
+  document.body.className = 'cs-mustard';
+  ChromaSkin.setPreset('mustard');
+  updateControls();
+
+})();
+</script>
+
+<!-- ═══ DEMO CONTENT ═══ -->
+<div style="padding:40px;max-width:700px;margin:0 auto">
+  <h1 style="font-size:2rem;margin-bottom:8px;color:var(--cs-text)">ChromaSkin Widget Demo</h1>
+  <p style="color:var(--cs-text-muted);margin-bottom:24px">Click the 🎨 button in the bottom-right corner to open the theme picker. Try different presets, adjust the hue slider, and toggle dark/light mode.</p>
+
+  <div class="cs-card" style="margin-bottom:16px">
+    <h3 style="margin-bottom:8px;color:var(--cs-text)">Sample Card</h3>
+    <p style="color:var(--cs-text-muted);font-size:0.85rem;margin-bottom:12px">This card uses ChromaSkin CSS variables. When you change the theme, everything updates smoothly with 300ms transitions.</p>
+    <div style="display:flex;gap:8px">
+      <button class="cs-btn">Primary Action</button>
+      <button class="cs-btn secondary">Secondary</button>
+    </div>
+  </div>
+
+  <div class="cs-card">
+    <h3 style="margin-bottom:8px;color:var(--cs-text)">Color Palette</h3>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px">
+      <div style="background:var(--cs-accent);padding:12px;border-radius:8px;text-align:center;font-size:11px;font-weight:700;color:var(--cs-bg)">Accent</div>
+      <div style="background:var(--cs-accent2);padding:12px;border-radius:8px;text-align:center;font-size:11px;font-weight:700;color:var(--cs-bg)">Accent 2</div>
+      <div style="background:var(--cs-green);padding:12px;border-radius:8px;text-align:center;font-size:11px;font-weight:700;color:#fff">Green</div>
+      <div style="background:var(--cs-amber);padding:12px;border-radius:8px;text-align:center;font-size:11px;font-weight:700;color:#000">Amber</div>
+      <div style="background:var(--cs-rose);padding:12px;border-radius:8px;text-align:center;font-size:11px;font-weight:700;color:#fff">Rose</div>
+      <div style="background:var(--cs-violet);padding:12px;border-radius:8px;text-align:center;font-size:11px;font-weight:700;color:#fff">Violet</div>
+      <div style="background:var(--cs-bg3);padding:12px;border-radius:8px;text-align:center;font-size:11px;font-weight:700;color:var(--cs-text)">BG3</div>
+      <div style="background:var(--cs-bg-card);padding:12px;border-radius:8px;text-align:center;font-size:11px;font-weight:700;color:var(--cs-text);border:1px solid var(--cs-border)">Card</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

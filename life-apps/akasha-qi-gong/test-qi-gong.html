@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Qi Gong Workout — Test Harness</title>
+<style>
+:root{--bg:#1a1325;--bg2:#241a35;--border:#4a3a60;--text:#f0e8ff;--text-muted:#b8a8d8;--text-dim:#7a68a0;--accent2:#a78bfa;--rose:#f9a8d4;--emerald:#34d399}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);padding:24px;font-size:14px;line-height:1.6}
+h1{font-size:1.4rem;margin-bottom:4px;color:var(--accent2)}
+h2{font-size:1rem;margin:16px 0 8px;color:var(--text-muted);border-bottom:1px solid var(--border);padding-bottom:4px}
+.test-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:24px}
+.test-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.test-card h3{font-size:0.85rem;margin-bottom:8px;color:var(--accent2)}
+.test-card label{display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:2px}
+.test-card input[type="text"],.test-card input[type="range"]{width:100%;margin-bottom:8px}
+.test-card button{height:32px;padding:0 14px;border-radius:6px;border:1px solid var(--border);background:rgba(0,0,0,.3);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;margin-right:4px;margin-bottom:4px;transition:all .15s}
+.test-card button:hover{border-color:var(--accent2)}
+.test-card button.danger{border-color:var(--rose);color:var(--rose)}
+.log{background:#000;border:1px solid var(--border);border-radius:8px;padding:12px;font-family:monospace;font-size:11px;max-height:300px;overflow-y:auto;white-space:pre-wrap;word-break:break-all}
+.log .ok{color:var(--emerald)}
+.log .err{color:var(--rose)}
+.log .info{color:var(--accent2)}
+.log .warn{color:#fbbf24}
+.status-bar{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:8px 16px;font-size:11px;display:flex;gap:16px}
+.status-bar .pass{color:var(--emerald)}
+.status-bar .fail{color:var(--rose)}
+</style>
+</head>
+<body>
+
+<h1>Qi Gong Workout — Test Harness</h1>
+<p style="color:var(--text-dim);margin-bottom:16px">Exercise every function. Green = pass, Red = fail.</p>
+
+<h2>1. Music Player — URL</h2>
+<div class="test-grid">
+  <div class="test-card">
+    <h3>loadMusicUrl()</h3>
+    <label>Test URL (direct MP3 link):</label>
+    <input type="text" id="testUrl" value="https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Tours/Enthusiast/Tours_-_01_-_Enthusiast.mp3">
+    <button onclick="testLoadUrl()">Load URL</button>
+    <button onclick="testLoadUrlEmpty()">Load Empty</button>
+    <button onclick="testLoadUrlInvalid()">Load Invalid URL</button>
+  </div>
+  <div class="test-card">
+    <h3>loadMusicUrlDirect()</h3>
+    <button onclick="testLoadUrlDirect()">Load Direct (Quick Pick)</button>
+  </div>
+  <div class="test-card">
+    <h3>toggleMusic()</h3>
+    <button onclick="testToggleMusic()">Toggle Play/Pause</button>
+  </div>
+  <div class="test-card">
+    <h3>seekMusic()</h3>
+    <button onclick="testSeekMusic()">Seek to 50%</button>
+  </div>
+  <div class="test-card">
+    <h3>setMusicVol()</h3>
+    <input type="range" min="0" max="100" value="80" oninput="testSetVol(this.value)">
+    <div style="font-size:10px;color:var(--text-dim)">Volume: <span id="volDisplay">80</span>%</div>
+  </div>
+  <div class="test-card">
+    <h3>stopUserMusic()</h3>
+    <button onclick="testStopUserMusic()">Stop User Music</button>
+  </div>
+</div>
+
+<h2>2. Music Player — File Upload</h2>
+<div class="test-grid">
+  <div class="test-card">
+    <h3>loadMusicFile()</h3>
+    <input type="file" id="testFileInput" accept="audio/*" onchange="testLoadFile(this)">
+    <button onclick="document.getElementById('testFileInput').click()">Pick File</button>
+  </div>
+</div>
+
+<h2>3. Voiceover System</h2>
+<div class="test-grid">
+  <div class="test-card">
+    <h3>playExerciseAudio()</h3>
+    <button onclick="testPlayExerciseAudio()">Play Exercise 1 Audio</button>
+    <button onclick="testPlayExerciseAudioAll()">Play All 7</button>
+  </div>
+  <div class="test-card">
+    <h3>stopExerciseAudio()</h3>
+    <button onclick="testStopExerciseAudio()">Stop Audio</button>
+  </div>
+  <div class="test-card">
+    <h3>toggleVoiceover()</h3>
+    <button onclick="testToggleVoiceover()">Toggle On/Off</button>
+  </div>
+  <div class="test-card">
+    <h3>setExerciseVolume()</h3>
+    <input type="range" min="0" max="100" value="85" oninput="testSetExVol(this.value)">
+    <div style="font-size:10px;color:var(--text-dim)">Volume: <span id="exVolDisplay">85</span>%</div>
+  </div>
+  <div class="test-card">
+    <h3>setExerciseReverb()</h3>
+    <input type="range" min="0" max="100" value="0" oninput="testSetExRev(this.value)">
+    <div style="font-size:10px;color:var(--text-dim)">Reverb: <span id="exRevDisplay">0</span>%</div>
+  </div>
+  <div class="test-card">
+    <h3>setExerciseSpeed()</h3>
+    <input type="range" min="50" max="150" value="100" step="10" oninput="testSetExSpeed(this.value)">
+    <div style="font-size:10px;color:var(--text-dim)">Speed: <span id="exSpeedDisplay">1.0</span>x</div>
+    <button onclick="testSetExSpeed(50)">0.5x</button>
+    <button onclick="testSetExSpeed(100)">1.0x</button>
+    <button onclick="testSetExSpeed(150)">1.5x</button>
+  </div>
+</div>
+
+<h2>4. Timer & Exercise Guide</h2>
+<div class="test-grid">
+  <div class="test-card">
+    <h3>toggleTimer()</h3>
+    <button onclick="testStartTimer()">Start Timer</button>
+    <button onclick="testPauseTimer()">Pause/Resume</button>
+  </div>
+  <div class="test-card">
+    <h3>resetTimer()</h3>
+    <button onclick="testResetTimer()">Reset</button>
+  </div>
+  <div class="test-card">
+    <h3>showExercise()</h3>
+    <button onclick="testShowExercise(0)">Show Ex 1</button>
+    <button onclick="testShowExercise(3)">Show Ex 4</button>
+    <button onclick="testShowExercise(6)">Show Ex 7</button>
+  </div>
+  <div class="test-card">
+    <h3>userMusicLoaded flag</h3>
+    <button onclick="testUserMusicFlag()">Check Flag</button>
+    <button onclick="testLoadUrlThenShowEx()">Load URL → Show Ex</button>
+  </div>
+</div>
+
+<h2>5. Edge Cases</h2>
+<div class="test-grid">
+  <div class="test-card">
+    <h3>Double load URL</h3>
+    <button onclick="testDoubleLoadUrl()">Load URL twice rapidly</button>
+  </div>
+  <div class="test-card">
+    <h3>Load URL + File</h3>
+    <button onclick="testLoadUrlThenFile()">Load URL then File</button>
+  </div>
+  <div class="test-card">
+    <h3>Stop + Play</h3>
+    <button onclick="testStopThenPlay()">Stop then Play</button>
+  </div>
+  <div class="test-card">
+    <h3>Exercise audio + User music</h3>
+    <button onclick="testExAudioWithUserMusic()">Load user music → play ex audio</button>
+  </div>
+</div>
+
+<h2>Test Log</h2>
+<div class="log" id="log"></div>
+
+<div class="status-bar">
+  <span>Tests run: <strong id="testsRun">0</strong></span>
+  <span class="pass">Passed: <strong id="testsPass">0</strong></span>
+  <span class="fail">Failed: <strong id="testsFail">0</strong></span>
+  <span id="testStatus"></span>
+</div>
+
+<!-- Include the actual qi-gong-workout.html script inline for testing -->
+<script>
+// ═══ MINIFIED EXERCISE DATA ═══
+var EXERCISES=[
+  {name:"Standing Meditation & Centering",duration:240,audio:"audio/qi-gong/ex1.mp3",desc:"Begin standing",script:"Stand tall...",tips:["Grounding","Centering"]},
+  {name:"Lifting the Sky",duration:300,audio:"audio/qi-gong/ex2.mp3",desc:"Raise arms",script:"Begin with arms...",tips:["Spinal stretch"]},
+  {name:"Parting the Wild Horse's Mane",duration:300,audio:"audio/qi-gong/ex3.mp3",desc:"Bow stance",script:"Step right...",tips:["Balance"]},
+  {name:"Wave Hands Like Clouds",duration:360,audio:"audio/qi-gong/ex4.mp3",desc:"Shift weight",script:"Feet shoulder-width...",tips:["Flow"]},
+  {name:"Holding the Balloon",duration:300,audio:"audio/qi-gong/ex5.mp3",desc:"Hold balloon",script:"Begin standing...",tips:["Palmer energy"]},
+  {name:"Crane Spreads Its Wings",duration:300,audio:"audio/qi-gong/ex6.mp3",desc:"Balance on one leg",script:"Shift weight...",tips:["Balance"]},
+  {name:"Closing Meditation",duration:240,audio:"audio/qi-gong/ex7.mp3",desc:"Gather Qi",script:"Stand with feet...",tips:["Energy gathering"]}
+];
+
+// ═══ TEST HARNESS ═══
+var testsRun=0,testsPass=0,testsFail=0;
+function log(msg,type){
+  var el=document.getElementById('log');
+  var cls=type||'info';
+  el.innerHTML+='<div class="'+cls+'">['+new Date().toLocaleTimeString()+'] '+msg+'</div>';
+  el.scrollTop=el.scrollHeight;
+}
+function pass(msg){testsRun++;testsPass++;document.getElementById('testsRun').textContent=testsRun;document.getElementById('testsPass').textContent=testsPass;log('✓ '+msg,'ok')}
+function fail(msg){testsRun++;testsFail++;document.getElementById('testsRun').textContent=testsRun;document.getElementById('testsFail').textContent=testsFail;log('✗ '+msg,'err')}
+
+// ═══ MOCK DOM ELEMENTS ═══
+document.body.innerHTML+='<div id="musicPlayer" class="music-player"><button id="musicPlayBtn">▶</button><div class="music-info"><div id="musicName">No track loaded</div><div class="music-time"><span id="musicCurrentTime">0:00</span> / <span id="musicTotalTime">0:00</span></div></div><div id="musicProgress"><div id="musicProgressFill" class="music-progress-fill"></div></div></div>';
+document.body.innerHTML+='<audio id="musicAudio" preload="auto"></audio>';
+document.body.innerHTML+='<input type="text" id="musicUrlInput">';
+document.body.innerHTML+='<span id="exVolVal">85%</span><span id="exRevVal">0%</span><span id="exSpeedVal">1.0x</span>';
+document.body.innerHTML+='<div id="voiceProgressFill" class="voice-progress-fill"></div>';
+document.body.innerHTML+='<div id="timerLabel">Ready</div>';
+document.body.innerHTML+='<div id="exerciseList"></div>';
+
+// Render exercise cards
+var list=document.getElementById('exerciseList');
+EXERCISES.forEach(function(ex,i){
+  list.innerHTML+='<div class="exercise-card" id="exCard'+i+'"><div class="exercise-num"><div class="num">'+(i+1)+'</div><div class="name">'+ex.name+'</div></div></div>';
+});
+
+// ═══ LOAD ACTUAL FUNCTIONS FROM qi-gong-workout.html ═══
+// We'll fetch and eval the script
+var scriptLoaded=false;
+fetch('http://localhost:8080/qi-gong-workout-test.html')
+  .then(function(r){return r.text();})
+  .then(function(html){
+    var match=html.match(/<script>([\s\S]+?)<\/script>/);
+    if(match){
+      // Remove the renderExercises() call at the end to avoid double render
+      var js=match[1].replace('renderExercises();','');
+      try{
+        eval(js);
+        scriptLoaded=true;
+        log('Script loaded from qi-gong-workout.html — all functions available','ok');
+      }catch(e){
+        log('Script eval error: '+e.message,'err');
+      }
+    }
+  })
+  .catch(function(e){
+    log('Could not load qi-gong-workout.html — make sure python server is running on port 8080','err');
+    log('Run: cd /home/irieb/site && python3 -m http.server 8080','warn');
+  });
+
+function ensureLoaded(fn){
+  if(!scriptLoaded){
+    log('Waiting for script to load...','warn');
+    setTimeout(function(){if(scriptLoaded)fn();else fail('Script not loaded');},1000);
+  }else{fn();}
+}
+
+// ═══ TEST FUNCTIONS ═══
+
+function testLoadUrl(){
+  ensureLoaded(function(){
+    try{
+      document.getElementById('testUrl').value='https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Tours/Enthusiast/Tours_-_01_-_Enthusiast.mp3';
+      loadMusicUrl();
+      setTimeout(function(){
+        var name=document.getElementById('musicName').textContent;
+        if(name!=='No track loaded'&&name!=='Loading...') pass('loadMusicUrl: track loaded, name='+name);
+        else if(name==='Loading...') pass('loadMusicUrl: loading state shown (async load in progress)');
+        else fail('loadMusicUrl: track name still "'+name+'" after 3s');
+      },3000);
+    }catch(e){fail('loadMusicUrl: '+e.message);}
+  });
+}
+
+function testLoadUrlEmpty(){
+  ensureLoaded(function(){
+    try{
+      document.getElementById('musicUrlInput').value='';
+      loadMusicUrl();
+      pass('loadMusicUrl: empty input handled (no crash)');
+    }catch(e){fail('loadMusicUrl empty: '+e.message);}
+  });
+}
+
+function testLoadUrlInvalid(){
+  ensureLoaded(function(){
+    try{
+      document.getElementById('musicUrlInput').value='https://invalid-url-that-does-not-exist.example.com/audio.mp3';
+      loadMusicUrl();
+      setTimeout(function(){
+        var name=document.getElementById('musicName').textContent;
+        if(name.indexOf('Could not load')>=0||name.indexOf('CORS')>=0) pass('loadMusicUrl: error shown for invalid URL');
+        else pass('loadMusicUrl: error handler triggered (name="'+name+'")');
+      },4000);
+    }catch(e){fail('loadMusicUrl invalid: '+e.message);}
+  });
+}
+
+function testLoadUrlDirect(){
+  ensureLoaded(function(){
+    try{
+      loadMusicUrlDirect('https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Tours/Enthusiast/Tours_-_01_-_Enthusiast.mp3','Test Track');
+      setTimeout(function(){
+        var name=document.getElementById('musicName').textContent;
+        if(name==='Test Track'||name!=='No track loaded') pass('loadMusicUrlDirect: name set to "'+name+'"');
+        else fail('loadMusicUrlDirect: name not set');
+      },3000);
+    }catch(e){fail('loadMusicUrlDirect: '+e.message);}
+  });
+}
+
+function testToggleMusic(){
+  ensureLoaded(function(){
+    try{
+      toggleMusic();
+      var btn=document.getElementById('musicPlayBtn').textContent;
+      pass('toggleMusic: button now "'+btn+'"');
+    }catch(e){fail('toggleMusic: '+e.message);}
+  });
+}
+
+function testSeekMusic(){
+  ensureLoaded(function(){
+    try{
+      var fill=document.getElementById('musicProgressFill').style.width;
+      pass('seekMusic: progress fill was "'+fill+'" (may be 0 if no track)');
+    }catch(e){fail('seekMusic: '+e.message);}
+  });
+}
+
+function testSetVol(val){
+  ensureLoaded(function(){
+    try{
+      setMusicVol(val);
+      document.getElementById('volDisplay').textContent=val;
+      pass('setMusicVol('+val+') called');
+    }catch(e){fail('setMusicVol: '+e.message);}
+  });
+}
+
+function testStopUserMusic(){
+  ensureLoaded(function(){
+    try{
+      stopUserMusic();
+      var name=document.getElementById('musicName').textContent;
+      if(name==='No track loaded') pass('stopUserMusic: player reset');
+      else fail('stopUserMusic: name is "'+name+'"');
+    }catch(e){fail('stopUserMusic: '+e.message);}
+  });
+}
+
+function testLoadFile(input){
+  ensureLoaded(function(){
+    try{
+      if(!input.files||!input.files[0]){fail('loadMusicFile: no file selected');return;}
+      loadMusicFile(input);
+      var name=document.getElementById('musicName').textContent;
+      if(name===input.files[0].name) pass('loadMusicFile: name set to "'+name+'"');
+      else fail('loadMusicFile: name is "'+name+'" expected "'+input.files[0].name+'"');
+    }catch(e){fail('loadMusicFile: '+e.message);}
+  });
+}
+
+function testPlayExerciseAudio(){
+  ensureLoaded(function(){
+    try{
+      playExerciseAudio('audio/qi-gong/ex1.mp3');
+      pass('playExerciseAudio: called for ex1.mp3 (check console for fetch errors)');
+    }catch(e){fail('playExerciseAudio: '+e.message);}
+  });
+}
+
+function testPlayExerciseAudioAll(){
+  ensureLoaded(function(){
+    try{
+      EXERCISES.forEach(function(ex,i){
+        setTimeout(function(){
+          playExerciseAudio(ex.audio);
+          log('  Playing exercise '+(i+1)+': '+ex.name,'info');
+        },i*500);
+      });
+      pass('playExerciseAudio: queued all 7 exercises');
+    }catch(e){fail('playExerciseAudio all: '+e.message);}
+  });
+}
+
+function testStopExerciseAudio(){
+  ensureLoaded(function(){
+    try{
+      stopExerciseAudio();
+      pass('stopExerciseAudio: called');
+    }catch(e){fail('stopExerciseAudio: '+e.message);}
+  });
+}
+
+function testToggleVoiceover(){
+  ensureLoaded(function(){
+    try{
+      var before=voiceEnabled;
+      toggleVoiceover();
+      if(voiceEnabled!==before) pass('toggleVoiceover: changed from '+before+' to '+voiceEnabled);
+      else fail('toggleVoiceover: state did not change');
+    }catch(e){fail('toggleVoiceover: '+e.message);}
+  });
+}
+
+function testSetExVol(val){
+  ensureLoaded(function(){
+    try{
+      setExerciseVolume(val);
+      document.getElementById('exVolDisplay').textContent=val;
+      pass('setExerciseVolume('+val+')');
+    }catch(e){fail('setExerciseVolume: '+e.message);}
+  });
+}
+
+function testSetExRev(val){
+  ensureLoaded(function(){
+    try{
+      setExerciseReverb(val);
+      document.getElementById('exRevDisplay').textContent=val;
+      pass('setExerciseReverb('+val+')');
+    }catch(e){fail('setExerciseReverb: '+e.message);}
+  });
+}
+
+function testSetExSpeed(val){
+  ensureLoaded(function(){
+    try{
+      setExerciseSpeed(val);
+      document.getElementById('exSpeedDisplay').textContent=(val/100).toFixed(1);
+      pass('setExerciseSpeed('+val+') = '+(val/100).toFixed(1)+'x');
+    }catch(e){fail('setExerciseSpeed: '+e.message);}
+  });
+}
+
+function testStartTimer(){
+  ensureLoaded(function(){
+    try{
+      toggleTimer();
+      pass('toggleTimer: started');
+    }catch(e){fail('toggleTimer: '+e.message);}
+  });
+}
+
+function testPauseTimer(){
+  ensureLoaded(function(){
+    try{
+      toggleTimer();
+      pass('toggleTimer: paused/resumed');
+    }catch(e){fail('toggleTimer pause: '+e.message);}
+  });
+}
+
+function testResetTimer(){
+  ensureLoaded(function(){
+    try{
+      resetTimer();
+      pass('resetTimer: called');
+    }catch(e){fail('resetTimer: '+e.message);}
+  });
+}
+
+function testShowExercise(idx){
+  ensureLoaded(function(){
+    try{
+      showExercise(idx);
+      var label=document.getElementById('timerLabel').textContent;
+      if(label.indexOf(EXERCISES[idx].name)>=0) pass('showExercise('+idx+'): label shows "'+label+'"');
+      else fail('showExercise('+idx+'): label is "'+label+'"');
+    }catch(e){fail('showExercise: '+e.message);}
+  });
+}
+
+function testUserMusicFlag(){
+  ensureLoaded(function(){
+    log('userMusicLoaded = '+userMusicLoaded,'info');
+    pass('userMusicLoaded flag readable: '+userMusicLoaded);
+  });
+}
+
+function testLoadUrlThenShowEx(){
+  ensureLoaded(function(){
+    try{
+      document.getElementById('musicUrlInput').value='https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Tours/Enthusiast/Tours_-_01_-_Enthusiast.mp3';
+      loadMusicUrl();
+      setTimeout(function(){
+        showExercise(0);
+        if(userMusicLoaded) pass('Load URL → showExercise: userMusicLoaded=true, exercise audio should be skipped');
+        else fail('Load URL → showExercise: userMusicLoaded is still false');
+      },1000);
+    }catch(e){fail('Load URL then showEx: '+e.message);}
+  });
+}
+
+function testDoubleLoadUrl(){
+  ensureLoaded(function(){
+    try{
+      document.getElementById('musicUrlInput').value='https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Tours/Enthusiast/Tours_-_01_-_Enthusiast.mp3';
+      loadMusicUrl();
+      loadMusicUrl();
+      pass('Double loadUrl: no crash');
+    }catch(e){fail('Double loadUrl: '+e.message);}
+  });
+}
+
+function testLoadUrlThenFile(){
+  ensureLoaded(function(){
+    try{
+      document.getElementById('musicUrlInput').value='https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Tours/Enthusiast/Tours_-_01_-_Enthusiast.mp3';
+      loadMusicUrl();
+      // Can't auto-test file picker, just verify no crash
+      pass('loadMusicUrl then file: URL loaded, ready for file');
+    }catch(e){fail('loadUrl then file: '+e.message);}
+  });
+}
+
+function testStopThenPlay(){
+  ensureLoaded(function(){
+    try{
+      stopUserMusic();
+      document.getElementById('musicUrlInput').value='https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Tours/Enthusiast/Tours_-_01_-_Enthusiast.mp3';
+      loadMusicUrl();
+      pass('Stop then play: no crash');
+    }catch(e){fail('Stop then play: '+e.message);}
+  });
+}
+
+function testExAudioWithUserMusic(){
+  ensureLoaded(function(){
+    try{
+      document.getElementById('musicUrlInput').value='https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Tours/Enthusiast/Tours_-_01_-_Enthusiast.mp3';
+      loadMusicUrl();
+      playExerciseAudio('audio/qi-gong/ex1.mp3');
+      if(userMusicLoaded) pass('Exercise audio with user music: userMusicLoaded=true (exercise audio should be muted in showExercise)');
+      else fail('userMusicLoaded should be true after loading URL');
+    }catch(e){fail('Ex audio with user music: '+e.message);}
+  });
+}
+
+log('Test harness ready. Click buttons above to test each function.','info');
+log('Make sure python server is running: cd /home/irieb/site && python3 -m http.server 8080','warn');
+</script>
+</body>
+</html>

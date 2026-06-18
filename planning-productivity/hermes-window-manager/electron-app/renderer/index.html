@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hermes Window Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="node_modules/@xterm/xterm/css/xterm.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="titlebar">
+  <div class="logo">HERMES <em>Windows</em></div>
+  <div class="stats"><div class="dot"></div><span id="stats-text">0 terminals</span></div>
+  <div class="spacer"></div>
+  <button class="titlebar-btn" title="Minimize" onclick="window.winCtrl.minimize()">—</button>
+  <button class="titlebar-btn" title="Maximize" onclick="window.winCtrl.maximize()">□</button>
+  <button class="titlebar-btn close" title="Close" onclick="window.winCtrl.close()">✕</button>
+</div>
+
+<div id="toolbar">
+  <div class="label">Lanes</div>
+  <div id="lane-tabs"></div>
+  <button class="add-btn" title="Add Lane" onclick="addLane()">+</button>
+  <div class="spacer"></div>
+  <button class="tbtn" onclick="collapseAll()">Collapse All</button>
+  <button class="tbtn" onclick="expandAll()">Expand All</button>
+  <button class="tbtn primary" onclick="openAddModal()">+ Terminal</button>
+</div>
+
+<div id="main">
+  <div id="empty-state">
+    <div class="icon">🪟</div>
+    <h2>No terminals yet</h2>
+    <p>Add a lane and spawn terminals to dock your Hermes sessions into one window.</p>
+    <button class="cta" onclick="addLaneAndTerminal()">Add Lane + Terminal</button>
+  </div>
+</div>
+
+<div id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div id="modal">
+    <h3>New Terminal</h3>
+    <label>Quick Add</label>
+    <div class="quick-grid">
+      <div class="quick-item" onclick="quickAdd('hermes')"><span class="qi">🤖</span>Hermes</div>
+      <div class="quick-item" onclick="quickAdd('claude')"><span class="qi">🧠</span>Claude</div>
+      <div class="quick-item" onclick="quickAdd('bash')"><span class="qi">⌨️</span>Bash</div>
+      <div class="quick-item" onclick="quickAdd('node')"><span class="qi">🟢</span>Node</div>
+      <div class="quick-item" onclick="quickAdd('python')"><span class="qi">🐍</span>Python</div>
+      <div class="quick-item" onclick="quickAdd('htop')"><span class="qi">📊</span>htop</div>
+    </div>
+    <label>Shell Command</label>
+    <input type="text" id="form-cmd" placeholder="e.g. hermes, claude, bash" autofocus>
+    <label>Title</label>
+    <input type="text" id="form-title" placeholder="e.g. Hermes Agent">
+    <label>Color</label>
+    <select id="form-color">
+      <option value="green">Green</option>
+      <option value="cyan">Cyan</option>
+      <option value="purple">Purple</option>
+      <option value="yellow">Yellow</option>
+      <option value="pink">Pink</option>
+    </select>
+    <label>Target Lane</label>
+    <select id="form-lane"></select>
+    <div class="btns">
+      <button class="modal-btn" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn primary" onclick="submitTerminal()">Spawn Terminal</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script src="node_modules/@xterm/xterm/lib/xterm.js"></script>
+<script src="node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
+<script src="js/state.js"></script>
+<script src="js/render.js"></script>
+<script src="js/terminals.js"></script>
+<script src="js/actions.js"></script>
+</body>
+</html>

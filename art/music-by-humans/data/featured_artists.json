@@ -1,0 +1,29 @@
+{
+  "artists": [
+    {
+      "id": "angine-de-poitrine",
+      "name": "Angine de Poitrine",
+      "genre": ["Jazz", "Experimental"],
+      "featured_date": "2026-06-12",
+      "video_id": "",
+      "epk_url": "",
+      "linktree": "",
+      "bio": "Angine de Poitrine is an underground jazz artist pushing the boundaries of experimental sound. Their work blends traditional jazz structures with avant-garde textures, creating a unique sonic landscape that defies easy categorization.",
+      "socials": {
+        "instagram": "",
+        "bandcamp": "",
+        "youtube": "",
+        "spotify": "",
+        "soundcloud": ""
+      },
+      "rights_confirmed": false,
+      "rights_notes": "Awaiting email confirmation from artist"
+    }
+  ],
+  "previous_features": [],
+  "settings": {
+    "rotation_weeks": 1,
+    "auto_rotate": false,
+    "require_rights_confirmation": true
+  }
+}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puter TTS Test — Qi Gong</title>
+<style>
+body{font-family:Inter,system-ui,sans-serif;background:#0a0e1a;color:#e0f2fe;padding:30px;max-width:700px;margin:0 auto}
+h1{color:#22d3ee}
+button{background:#1e3a5f;border:1px solid #22d3ee;color:#22d3ee;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:1rem;margin:5px}
+button:hover{background:#22d3ee;color:#0a0e1a}
+#log{margin-top:20px;background:#0a0e1a;border:1px solid #1e3a5f;border-radius:8px;padding:12px;height:300px;overflow-y:auto;font-family:monospace;font-size:12px;color:#94a3b8}
+.box{background:#111827;border:1px solid #1e3a5f;border-radius:8px;padding:16px;margin:16px 0}
+</style>
+<script src="https://js.puter.com/v2/"></script>
+</head>
+<body>
+<h1>Puter TTS Test</h1>
+<p>This page tests the Puter.js <code>txt2speech</code> API directly.</p>
+
+<div class="box">
+  <button onclick="checkPuter()">1. Check puter object</button>
+  <button onclick="testBrowserTTS()">2. Test Browser TTS</button>
+  <button onclick="testPuterTTS()">3. Test Puter TTS</button>
+  <button onclick="testPuterOpenAI()">4. Test Puter OpenAI TTS</button>
+</div>
+
+<div class="box">
+  <input type="text" id="txt" value="Welcome to your Qi Gong morning flow." style="width:100%;padding:10px;background:#0a0e1a;border:1px solid #1e3a5f;color:#e0f2fe;border-radius:6px;box-sizing:border-box">
+</div>
+
+<div id="log"></div>
+
+<script>
+function log(msg, data){
+  var line = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+  if(data !== undefined) { try { line += ' :: ' + JSON.stringify(data); } catch(e){ line += ' :: ' + String(data); } }
+  console.log(line);
+  document.getElementById('log').innerHTML += line + '\n';
+  document.getElementById('log').scrollTop = document.getElementById('log').scrollHeight;
+}
+
+function checkPuter(){
+  log('typeof puter', typeof puter);
+  if(typeof puter !== 'undefined'){
+    log('puter keys', Object.keys(puter));
+    log('puter.ai exists', !!puter.ai);
+    if(puter.ai){
+      log('puter.ai keys', Object.keys(puter.ai));
+      log('puter.ai.txt2speech exists', typeof puter.ai.txt2speech);
+      log('puter.ai.text2speech exists', typeof puter.ai.text2speech);
+      log('puter.ai.ready exists', typeof puter.ai.ready);
+      if(puter.ai.ready){
+        puter.ai.ready().then(function(){ log('puter.ai.ready resolved'); }).catch(function(e){ log('puter.ai.ready rejected', e.message || String(e)); });
+      }
+    }
+  }
+}
+
+function testBrowserTTS(){
+  var text = document.getElementById('txt').value || 'Hello';
+  if(!window.speechSynthesis){ log('Browser TTS unavailable'); return; }
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.85; u.pitch = 1.1; u.volume = 0.85;
+  u.onstart = function(){ log('Browser TTS started'); };
+  u.onend = function(){ log('Browser TTS ended'); };
+  u.onerror = function(e){ log('Browser TTS error', e.error); };
+  window.speechSynthesis.speak(u);
+  log('Browser TTS queued');
+}
+
+function testPuterTTS(){
+  var text = document.getElementById('txt').value || 'Hello';
+  if(typeof puter === 'undefined' || !puter.ai || !puter.ai.txt2speech){ log('Puter txt2speech not available'); return; }
+  log('Calling puter.ai.txt2speech default');
+  puter.ai.txt2speech(text)
+    .then(function(audio){
+      log('Puter returned audio', typeof audio);
+      if(audio && audio.play){
+        audio.volume = 0.85;
+        audio.onended = function(){ log('Puter default audio ended'); };
+        audio.onerror = function(e){ log('Puter default audio error', e); };
+        return audio.play();
+      } else {
+        log('No .play() on returned object');
+      }
+    })
+    .then(function(){ log('Puter default playback started'); })
+    .catch(function(err){ log('Puter default error', err.message || String(err)); });
+}
+
+function testPuterOpenAI(){
+  var text = document.getElementById('txt').value || 'Hello';
+  if(typeof puter === 'undefined' || !puter.ai || !puter.ai.txt2speech){ log('Puter txt2speech not available'); return; }
+  var opts = { provider: 'openai', model: 'tts-1-hd', voice: 'nova' };
+  log('Calling puter.ai.txt2speech', opts);
+  puter.ai.txt2speech(text, opts)
+    .then(function(audio){
+      log('Puter OpenAI returned audio', typeof audio);
+      if(audio && audio.play){
+        audio.volume = 0.85;
+        audio.onended = function(){ log('Puter OpenAI audio ended'); };
+        audio.onerror = function(e){ log('Puter OpenAI audio error', e); };
+        return audio.play();
+      } else {
+        log('No .play() on returned object');
+      }
+    })
+    .then(function(){ log('Puter OpenAI playback started'); })
+    .catch(function(err){ log('Puter OpenAI error', err.message || String(err)); });
+}
+
+log('Test page loaded');
+</script>
+</body>
+</html>

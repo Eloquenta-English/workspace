@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ── SEO Meta Tags ────────────────────────────────────────────────────── -->
+  <title>Music By Humans — Underground Music Discovery</title>
+  <meta name="description" content="Discover underground human musicians. Winamp-themed music discovery platform featuring Jazz, Ska, Dub, Psychedelic, Drum & Bass, Rock, Electronic, and Metal.">
+  <meta name="keywords" content="underground music, human musicians, jazz, ska, dub, psychedelic, drum and bass, rock, electronic, metal, music discovery, winamp">
+  <meta name="author" content="Music By Humans">
+  <meta name="robots" content="index, follow">
+
+  <!-- ── Open Graph ───────────────────────────────────────────────────────── -->
+  <meta property="og:title" content="Music By Humans — Underground Music Discovery">
+  <meta property="og:description" content="Discover underground human musicians. Winamp-themed discovery platform.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://williamthomason.github.io/Music-By-Humans/">
+  <meta property="og:image" content="https://williamthomason.github.io/Music-By-Humans/assets/og-image.png">
+  <meta property="og:site_name" content="Music By Humans">
+
+  <!-- ── Twitter Card ─────────────────────────────────────────────────────── -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Music By Humans — Underground Music Discovery">
+  <meta name="twitter:description" content="Discover underground human musicians.">
+  <meta name="twitter:image" content="https://williamthomason.github.io/Music-By-Humans/assets/og-image.png">
+
+  <!-- ── Canonical ────────────────────────────────────────────────────────── -->
+  <link rel="canonical" href="https://williamthomason.github.io/Music-By-Humans/">
+
+  <!-- ── Structured Data ──────────────────────────────────────────────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Music By Humans",
+    "url": "https://williamthomason.github.io/Music-By-Humans/",
+    "description": "Underground music discovery platform for human musicians",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://williamthomason.github.io/Music-By-Humans/?q={search_term}",
+      "query-input": "required name=search_term"
+    }
+  }
+  </script>
+
+  <!-- ── Fonts ────────────────────────────────────────────────────────────── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- ── Stylesheets ──────────────────────────────────────────────────────── -->
+  <link rel="stylesheet" href="css/skins/base.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/broadcast-effects.css">
+  <!-- Skin loaded dynamically by skin-picker.js -->
+  <link id="mbh-skin-link" rel="stylesheet" href="css/skins/retro-broadcast.css">
+
+  <!-- ── Favicon ──────────────────────────────────────────────────────────── -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
+</head>
+<body>
+  <!-- ── App Shell ───────────────────────────────────────────────────────── -->
+  <div id="mbh-app">
+
+    <!-- ── Winamp Chrome Title Bar ────────────────────────────────────────── -->
+    <header id="mbh-chrome">
+      <div id="mbh-chrome-drag">
+        <span id="mbh-logo">Music <span>By</span> Humans</span>
+      </div>
+      <button class="mbh-chrome-btn" id="mbh-skin-btn" onclick="window.MBH_SkinPicker.open()" title="Change Skin">🎨</button>
+      <button class="mbh-chrome-btn" id="mbh-min-btn" title="Minimize">─</button>
+      <button class="mbh-chrome-btn" id="mbh-max-btn" title="Maximize">□</button>
+      <button class="mbh-chrome-btn" id="mbh-close-btn" title="Close">✕</button>
+    </header>
+
+    <!-- ── Draggable Panes ───────────────────────────────────────────────── -->
+    <div id="mbh-panes">
+
+      <!-- Player Pane -->
+      <div class="mbh-pane" id="pane-player" style="left: 10px; top: 10px; width: 400px; height: 300px;">
+        <div class="mbh-pane-header">
+          <span class="mbh-pane-title">▶ Player</span>
+          <button class="mbh-pane-close" onclick="this.closest('.mbh-pane').classList.add('skin-hidden')">✕</button>
+        </div>
+        <div class="mbh-pane-body" id="player-pane-body">
+          <div id="player-youtube-container">
+            <div id="player-youtube"></div>
+          </div>
+          <div id="player-queue"></div>
+        </div>
+        <div class="mbh-pane-handle mbh-pane-handle-e"></div>
+        <div class="mbh-pane-handle mbh-pane-handle-s"></div>
+        <div class="mbh-pane-handle mbh-pane-handle-se"></div>
+      </div>
+
+      <!-- Featured Artist Pane -->
+      <div class="mbh-pane" id="pane-featured" style="left: 420px; top: 10px; width: 500px; height: 400px;">
+        <div class="mbh-pane-header">
+          <span class="mbh-pane-title">★ Featured Artist</span>
+          <button class="mbh-pane-close" onclick="this.closest('.mbh-pane').classList.add('skin-hidden')">✕</button>
+        </div>
+        <div class="mbh-pane-body" id="featured-pane-body">
+          <div id="featured-artist">
+            <div id="featured-hero"></div>
+            <div id="featured-info"></div>
+            <div id="featured-links"></div>
+          </div>
+        </div>
+        <div class="mbh-pane-handle mbh-pane-handle-e"></div>
+        <div class="mbh-pane-handle mbh-pane-handle-s"></div>
+        <div class="mbh-pane-handle mbh-pane-handle-se"></div>
+      </div>
+
+      <!-- Browser Pane -->
+      <div class="mbh-pane" id="pane-browser" style="left: 10px; top: 320px; width: 400px; height: 280px;">
+        <div class="mbh-pane-header">
+          <span class="mbh-pane-title">🌐 Browser</span>
+          <button class="mbh-pane-close" onclick="this.closest('.mbh-pane').classList.add('skin-hidden')">✕</button>
+        </div>
+        <div class="mbh-pane-body" id="browser-pane-body">
+          <div id="browser-genres">
+            <button class="genre-btn active" data-genre="all">All</button>
+            <button class="genre-btn" data-genre="jazz">Jazz</button>
+            <button class="genre-btn" data-genre="ska">Ska</button>
+            <button class="genre-btn" data-genre="dub">Dub</button>
+            <button class="genre-btn" data-genre="psy">Psy</button>
+            <button class="genre-btn" data-genre="dnb">DnB</button>
+            <button class="genre-btn" data-genre="rock">Rock</button>
+            <button class="genre-btn" data-genre="electro">Electro</button>
+            <button class="genre-btn" data-genre="metal">Metal</button>
+          </div>
+          <div id="browser-results"></div>
+        </div>
+        <div class="mbh-pane-handle mbh-pane-handle-e"></div>
+        <div class="mbh-pane-handle mbh-pane-handle-s"></div>
+        <div class="mbh-pane-handle mbh-pane-handle-se"></div>
+      </div>
+
+      <!-- Playlist Pane -->
+      <div class="mbh-pane" id="pane-playlist" style="left: 420px; top: 420px; width: 500px; height: 180px;">
+        <div class="mbh-pane-header">
+          <span class="mbh-pane-title">📋 Playlist</span>
+          <button class="mbh-pane-close" onclick="this.closest('.mbh-pane').classList.add('skin-hidden')">✕</button>
+        </div>
+        <div class="mbh-pane-body" id="playlist-pane-body">
+          <div id="playlist-tracks"></div>
+        </div>
+        <div class="mbh-pane-handle mbh-pane-handle-e"></div>
+        <div class="mbh-pane-handle mbh-pane-handle-s"></div>
+        <div class="mbh-pane-handle mbh-pane-handle-se"></div>
+      </div>
+
+    </div>
+
+    <!-- ── Player Bar ─────────────────────────────────────────────────────── -->
+    <footer id="mbh-player">
+      <button class="mbh-player-btn" id="btn-prev" title="Previous">⏮</button>
+      <button class="mbh-player-btn" id="btn-play" title="Play/Pause">▶</button>
+      <button class="mbh-player-btn" id="btn-next" title="Next">⏭</button>
+      <div id="mbh-player-progress">
+        <div id="mbh-player-progress-fill"></div>
+      </div>
+      <div id="mbh-player-info">
+        <div id="mbh-player-title">No track loaded</div>
+        <div id="mbh-player-artist">—</div>
+      </div>
+      <span id="mbh-player-time">0:00 / 0:00</span>
+      <input type="range" id="mbh-volume" min="0" max="100" value="80" title="Volume">
+    </footer>
+
+  </div>
+
+  <!-- ── Skin Picker Modal ───────────────────────────────────────────────── -->
+  <div id="skin-picker-modal"></div>
+
+  <!-- ── Developer Console (Easter Egg) ──────────────────────────────────── -->
+  <div id="dev-console" class="skin-hidden">
+    <div id="dev-console-header">
+      <span>🛠️ Dev Console</span>
+      <button onclick="document.getElementById('dev-console').classList.add('skin-hidden')">✕</button>
+    </div>
+    <div id="dev-console-body"></div>
+  </div>
+
+  <!-- ── Screensaver Overlay (Easter Egg) ────────────────────────────────── -->
+  <div id="screensaver" class="skin-hidden">
+    <div id="screensaver-content">
+      <div class="floating-album-art"></div>
+      <div class="floating-album-art"></div>
+      <div class="floating-album-art"></div>
+    </div>
+  </div>
+
+  <!-- ── Matrix Rain Canvas (Easter Egg) ─────────────────────────────────── -->
+  <canvas id="matrix-canvas" class="skin-hidden"></canvas>
+
+  <!-- ── Scripts ─────────────────────────────────────────────────────────── -->
+  <script src="js/skin-picker.js"></script>
+  <script src="js/panes.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/featured.js"></script>
+  <script src="js/easter-eggs.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- ── YouTube IFrame API ──────────────────────────────────────────────── -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+</body>
+</html>

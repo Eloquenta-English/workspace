@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Qi Gong — Full Body Morning Workout</title>
+<link href="https://fonts.cdnfonts.com/css/glacial-indifference" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="qi-gong-workout.css">
+<script src="https://js.puter.com/v2/"></script>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>Qi Gong <span class="accent">Morning Flow</span></h1>
+    <p>A gentle 30-minute full-body Qi Gong practice to awaken your energy</p>
+    <span class="session-badge">30 Minutes &middot; 7 Exercises &middot; All Levels</span>
+  </div>
+
+  <div class="music-section">
+    <h3>Background Music</h3>
+    <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px">Play audio from a URL. YouTube links work too — audio only, no video.</p>
+    <div class="music-tabs">
+      <button class="music-tab active" onclick="showMusicTab('url',this)">URL</button>
+      <button class="music-tab" onclick="showMusicTab('file',this)">Upload File</button>
+    </div>
+    <div class="music-panel active" id="music-url-panel">
+      <input type="text" class="music-input" id="musicUrlInput" placeholder="Paste any audio or YouTube URL..." onkeydown="if(event.key==='Enter')loadMusicUrl()">
+      <button class="timer-btn primary" style="margin-top:8px;width:100%" onclick="loadMusicUrl()">Load</button>
+    </div>
+    <div class="music-panel" id="music-file-panel">
+      <div class="music-drop-zone" id="musicDropZone" onclick="document.getElementById('musicFileInput').click()">
+        <p>Click to browse or drag & drop an audio file here</p>
+        <div class="formats">MP3 &middot; WAV &middot; OGG &middot; FLAC &middot; M4A</div>
+      </div>
+      <input type="file" id="musicFileInput" accept="audio/*" style="display:none" onchange="loadMusicFile(this)">
+    </div>
+    <div class="music-player" id="musicPlayer">
+      <button class="music-play-btn" id="musicPlayBtn" onclick="toggleMusic()">&#9654;</button>
+      <div class="music-info">
+        <div class="music-name" id="musicName">No track loaded</div>
+        <div class="music-time"><span id="musicCurrentTime">0:00</span> / <span id="musicTotalTime">0:00</span></div>
+      </div>
+      <div class="music-progress" id="musicProgress" onclick="seekMusic(event)"><div class="music-progress-fill" id="musicProgressFill"></div></div>
+      <div class="music-vol"><input type="range" id="musicVol" min="0" max="100" value="80" oninput="setMusicVol(this.value)"></div>
+    </div>
+    <audio id="musicAudio" preload="auto"></audio>
+    <div id="ytPlayer" style="display:none"></div>
+  </div>
+
+  <div class="timer-section">
+    <h3>Session Timer</h3>
+    <div class="timer-display" id="timerDisplay"><span>30</span><span class="timer-sep">:</span><span>00</span></div>
+    <div class="timer-label" id="timerLabel">Ready to begin</div>
+    <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+    <div class="timer-controls">
+      <button class="timer-btn primary" id="timerStartBtn" onclick="toggleTimer()">Start</button>
+      <button class="timer-btn danger" onclick="resetTimer()">Reset</button>
+    </div>
+  </div>
+
+  <div class="voiceover-section">
+    <h3>Voiceover Guide</h3>
+    <div class="voiceover-controls">
+      <button class="voice-btn active" id="voiceToggle" onclick="toggleVoiceover()">Voice On</button>
+      <select class="voice-select" id="voiceModelSelect" onchange="setVoiceModel(this.value)">
+        <option value="ss-default" selected>🌐 Browser Default (works offline)</option>
+        <option value="speechma-f">🗣️ SpeechMa — Calm Female</option>
+        <option value="nr-f">🎙️ NaturalReader — Calm Female</option>
+        <option value="lv-amy">💖 LoveVoice — Amy (UK)</option>
+        <option value="lv-joanna">💖 LoveVoice — Joanna (US)</option>
+        <option value="puter-nova">🌐 Puter.js — Nova (OpenAI)</option>
+      </select>
+      <button class="timer-btn" onclick="testVoice()">🔊 Test Voice</button>
+      <span style="font-size:11px;color:var(--text-dim)">Reads exercise instructions aloud</span>
+    </div>
+    <div style="display:flex;gap:16px;margin-top:12px">
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--text-muted)">Volume</span><span style="font-size:11px;color:var(--accent2)" id="exVolVal">85%</span></div>
+        <input type="range" id="exVolume" min="0" max="100" value="85" style="width:100%;accent-color:var(--accent2)">
+      </div>
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--text-muted)">Rate</span><span style="font-size:11px;color:var(--accent2)" id="exRateVal">0.85x</span></div>
+        <input type="range" id="exRate" min="50" max="150" value="85" style="width:100%;accent-color:var(--accent2)">
+      </div>
+    </div>
+    <div class="voice-progress"><div class="voice-progress-fill" id="voiceProgressFill"></div></div>
+  </div>
+
+  <div class="debug-section" style="margin-top:20px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="font-size:12px;color:var(--text-dim);font-weight:600">Debug Log</span>
+      <button class="timer-btn" style="padding:4px 10px;font-size:11px" onclick="document.getElementById('qgDebugBox').value=''">Clear</button>
+    </div>
+    <textarea id="qgDebugBox" readonly style="width:100%;height:160px;background:#0a0e1a;color:#94a3b8;border:1px solid #1e3a5f;border-radius:8px;padding:10px;font-family:'Share Tech Mono',monospace;font-size:11px;resize:vertical"></textarea>
+  </div>
+
+  <div class="breath-indicator" id="breathIndicator">
+    <div class="breath-circle" id="breathCircle"></div>
+    <div class="breath-text" id="breathText">Breathe In</div>
+    <div class="breath-instruction" id="breathInstruction">Slow, deep, through the nose</div>
+  </div>
+
+  <div class="exercise-list" id="exerciseList"></div>
+
+  <div class="footer">
+    <p>Find a quiet space. Wear comfortable clothing. Breathe deeply. Move slowly.</p>
+    <p style="margin-top:8px">Qi Gong — cultivating life force energy through gentle movement</p>
+  </div>
+
+</div>
+<script src="qi-gong-data.js"></script>
+<script src="qi-gong-workout.js"></script>
+</body>
+</html>

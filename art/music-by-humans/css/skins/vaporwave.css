@@ -1,0 +1,53 @@
+/* Music By Humans — Vaporwave Skin */
+/* Pastel pink/cyan, dreamy, retro-futuristic */
+
+:root {
+  --skin-bg: #1a0a2e;
+  --skin-bg-surface: #2d1b4e;
+  --skin-bg-elevated: #3d2b5e;
+  --skin-bg-overlay: rgba(26, 10, 46, 0.92);
+
+  --skin-text: #f0d0ff;
+  --skin-text-dim: #c090d0;
+  --skin-text-bright: #ffffff;
+
+  --skin-primary: #ff71ce;
+  --skin-primary-dim: #cc5aa0;
+  --skin-primary-glow: rgba(255, 113, 206, 0.4);
+
+  --skin-accent: #01cdfe;
+  --skin-accent-dim: #01a0cc;
+  --skin-accent-glow: rgba(1, 205, 254, 0.4);
+
+  --skin-secondary: #b967ff;
+  --skin-secondary-dim: #9450cc;
+
+  --skin-font-main: 'Helvetica Neue', 'Arial', sans-serif;
+  --skin-font-mono: 'Courier New', monospace;
+  --skin-font-display: 'Times New Roman', serif;
+
+  --skin-radius-sm: 8px;
+  --skin-radius-md: 12px;
+  --skin-radius-lg: 16px;
+  --skin-radius-xl: 24px;
+
+  --skin-border: 1px solid rgba(255, 113, 206, 0.25);
+  --skin-border-bright: 1px solid rgba(255, 113, 206, 0.5);
+  --skin-border-primary: 1px solid #ff71ce;
+
+  --skin-chrome-bg: linear-gradient(90deg, #2d1b4e 0%, #1a0a2e 50%, #2d1b4e 100%);
+  --skin-chrome-border: 1px solid rgba(255, 113, 206, 0.4);
+  --skin-chrome-text: #ff71ce;
+
+  --skin-player-bg: #2d1b4e;
+  --skin-player-progress-bg: rgba(255, 113, 206, 0.1);
+  --skin-player-progress-fill: linear-gradient(90deg, #ff71ce, #01cdfe);
+
+  --skin-shadow-sm: 0 2px 8px rgba(255, 113, 206, 0.2);
+  --skin-shadow-md: 0 4px 16px rgba(255, 113, 206, 0.3);
+  --skin-shadow-lg: 0 8px 32px rgba(255, 113, 206, 0.4);
+  --skin-shadow-glow: 0 0 20px rgba(255, 113, 206, 0.4);
+
+  --skin-scrollbar-thumb: rgba(255, 113, 206, 0.25);
+  --skin-scrollbar-thumb-hover: rgba(255, 113, 206, 0.45);
+}

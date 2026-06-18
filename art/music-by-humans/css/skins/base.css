@@ -1,0 +1,291 @@
+/* Music By Humans — Base Skin System */
+/* All skins override these CSS custom properties */
+
+:root {
+  /* ── Colors ────────────────────────────────────── */
+  --skin-bg: #0a0a0a;
+  --skin-bg-surface: #141414;
+  --skin-bg-elevated: #1c1c1c;
+  --skin-bg-overlay: rgba(0, 0, 0, 0.85);
+
+  --skin-text: #e0e0e0;
+  --skin-text-dim: #888888;
+  --skin-text-bright: #ffffff;
+
+  --skin-primary: #ff1493;
+  --skin-primary-dim: #cc1070;
+  --skin-primary-glow: rgba(255, 20, 147, 0.3);
+
+  --skin-accent: #00f5ff;
+  --skin-accent-dim: #00c4cc;
+  --skin-accent-glow: rgba(0, 245, 255, 0.3);
+
+  --skin-secondary: #a855f7;
+  --skin-secondary-dim: #8644c9;
+
+  --skin-success: #22c55e;
+  --skin-warning: #eab308;
+  --skin-error: #ef4444;
+
+  /* ── Typography ────────────────────────────────── */
+  --skin-font-main: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --skin-font-mono: 'Fira Code', 'JetBrains Mono', 'Cascadia Code', monospace;
+  --skin-font-display: 'Inter', 'Segoe UI', system-ui, sans-serif;
+
+  --skin-text-xs: 0.75rem;
+  --skin-text-sm: 0.875rem;
+  --skin-text-base: 1rem;
+  --skin-text-lg: 1.125rem;
+  --skin-text-xl: 1.5rem;
+  --skin-text-2xl: 2rem;
+  --skin-text-3xl: 2.5rem;
+
+  /* ── Spacing ───────────────────────────────────── */
+  --skin-space-xs: 0.25rem;
+  --skin-space-sm: 0.5rem;
+  --skin-space-md: 1rem;
+  --skin-space-lg: 1.5rem;
+  --skin-space-xl: 2rem;
+
+  /* ── Borders & Radii ───────────────────────────── */
+  --skin-radius-sm: 4px;
+  --skin-radius-md: 8px;
+  --skin-radius-lg: 12px;
+  --skin-radius-xl: 16px;
+  --skin-radius-full: 9999px;
+
+  --skin-border: 1px solid rgba(255, 255, 255, 0.1);
+  --skin-border-bright: 1px solid rgba(255, 255, 255, 0.2);
+  --skin-border-primary: 1px solid var(--skin-primary);
+
+  /* ── Shadows ───────────────────────────────────── */
+  --skin-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --skin-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --skin-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --skin-shadow-glow: 0 0 20px var(--skin-primary-glow);
+
+  /* ── Transitions ───────────────────────────────── */
+  --skin-transition-fast: 150ms ease;
+  --skin-transition-base: 250ms ease;
+  --skin-transition-slow: 400ms ease;
+
+  /* ── Z-Index Scale ─────────────────────────────── */
+  --skin-z-base: 1;
+  --skin-z-dropdown: 100;
+  --skin-z-sticky: 200;
+  --skin-z-overlay: 300;
+  --skin-z-modal: 400;
+  --skin-z-toast: 500;
+  --skin-z-easter-egg: 9999;
+
+  /* ── Winamp Chrome ─────────────────────────────── */
+  --skin-chrome-height: 32px;
+  --skin-chrome-bg: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  --skin-chrome-border: 1px solid rgba(255, 255, 255, 0.15);
+  --skin-chrome-text: #cccccc;
+  --skin-chrome-btn-bg: linear-gradient(180deg, #555 0%, #333 100%);
+  --skin-chrome-btn-hover: linear-gradient(180deg, #666 0%, #444 100%);
+
+  /* ── Pane System ───────────────────────────────── */
+  --skin-pane-min-width: 200px;
+  --skin-pane-min-height: 120px;
+  --skin-pane-header-height: 28px;
+  --skin-pane-resize-handle: 6px;
+  --skin-pane-bg: var(--skin-bg-surface);
+  --skin-pane-border: var(--skin-border);
+  --skin-pane-header-bg: var(--skin-bg-elevated);
+
+  /* ── Player ────────────────────────────────────── */
+  --skin-player-height: 80px;
+  --skin-player-bg: var(--skin-bg-elevated);
+  --skin-player-progress-bg: rgba(255, 255, 255, 0.1);
+  --skin-player-progress-fill: var(--skin-primary);
+  --skin-player-btn-size: 36px;
+
+  /* ── Scrollbar ─────────────────────────────────── */
+  --skin-scrollbar-width: 8px;
+  --skin-scrollbar-bg: transparent;
+  --skin-scrollbar-thumb: rgba(255, 255, 255, 0.15);
+  --skin-scrollbar-thumb-hover: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Scrollbar Styling ──────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--skin-scrollbar-thumb) var(--skin-scrollbar-bg);
+}
+
+*::-webkit-scrollbar {
+  width: var(--skin-scrollbar-width);
+  height: var(--skin-scrollbar-width);
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--skin-scrollbar-bg);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--skin-scrollbar-thumb);
+  border-radius: var(--skin-radius-full);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--skin-scrollbar-thumb-hover);
+}
+
+/* ── Base Reset ─────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--skin-font-main);
+  font-size: var(--skin-text-base);
+  color: var(--skin-text);
+  background: var(--skin-bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Utility Classes ────────────────────────────── */
+.skin-glow {
+  box-shadow: var(--skin-shadow-glow);
+}
+
+.skin-text-glow {
+  text-shadow: 0 0 10px var(--skin-primary-glow);
+}
+
+.skin-hidden {
+  display: none !important;
+}
+
+.skin-flex {
+  display: flex;
+}
+
+.skin-flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.skin-flex-1 {
+  flex: 1;
+}
+
+.skin-overflow-hidden {
+  overflow: hidden;
+}
+
+.skin-overflow-auto {
+  overflow: auto;
+}
+
+.skin-relative {
+  position: relative;
+}
+
+.skin-absolute {
+  position: absolute;
+}
+
+.skin-inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.skin-cursor-grab {
+  cursor: grab;
+}
+
+.skin-cursor-grabbing {
+  cursor: grabbing;
+}
+
+.skin-cursor-resize-e {
+  cursor: e-resize;
+}
+
+.skin-cursor-resize-s {
+  cursor: s-resize;
+}
+
+.skin-cursor-resize-se {
+  cursor: se-resize;
+}
+
+.skin-no-select {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── Animation Keyframes ────────────────────────── */
+@keyframes skin-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes skin-glow-pulse {
+  0%, 100% { box-shadow: 0 0 10px var(--skin-primary-glow); }
+  50% { box-shadow: 0 0 25px var(--skin-primary-glow), 0 0 50px var(--skin-primary-glow); }
+}
+
+@keyframes skin-slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes skin-slide-in-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes skin-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes skin-shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+@keyframes skin-glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-3px, 3px); }
+  40% { transform: translate(-3px, -3px); }
+  60% { transform: translate(3px, 3px); }
+  80% { transform: translate(3px, -3px); }
+  100% { transform: translate(0); }
+}
+
+@keyframes skin-scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes skin-rainbow {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+.animate-pulse { animation: skin-pulse 2s ease-in-out infinite; }
+.animate-glow { animation: skin-glow-pulse 2s ease-in-out infinite; }
+.animate-slide-in-right { animation: skin-slide-in-right 0.3s ease-out; }
+.animate-slide-in-up { animation: skin-slide-in-up 0.3s ease-out; }
+.animate-fade-in { animation: skin-fade-in 0.3s ease-out; }
+.animate-shake { animation: skin-shake 0.5s ease-in-out; }
+.animate-glitch { animation: skin-glitch 0.3s ease-in-out; }
+.animate-rainbow { animation: skin-rainbow 5s linear infinite; }

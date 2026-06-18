@@ -1,0 +1,53 @@
+/* Music By Humans — Textured Art Skin */
+/* Detailed, organic, hand-drawn feel with muted pops */
+
+:root {
+  --skin-bg: #1a1612;
+  --skin-bg-surface: #2a2420;
+  --skin-bg-elevated: #3a3228;
+  --skin-bg-overlay: rgba(26, 22, 18, 0.92);
+
+  --skin-text: #d4c8b8;
+  --skin-text-dim: #9a8a78;
+  --skin-text-bright: #f0e8d8;
+
+  --skin-primary: #c8956c;
+  --skin-primary-dim: #a87850;
+  --skin-primary-glow: rgba(200, 149, 108, 0.3);
+
+  --skin-accent: #7aab6e;
+  --skin-accent-dim: #5a8a4e;
+  --skin-accent-glow: rgba(122, 171, 110, 0.3);
+
+  --skin-secondary: #6c95c8;
+  --skin-secondary-dim: #5070a0;
+
+  --skin-font-main: 'Georgia', 'Times New Roman', serif;
+  --skin-font-mono: 'Fira Code', monospace;
+  --skin-font-display: 'Georgia', serif;
+
+  --skin-radius-sm: 6px;
+  --skin-radius-md: 10px;
+  --skin-radius-lg: 14px;
+  --skin-radius-xl: 20px;
+
+  --skin-border: 1px solid rgba(212, 200, 184, 0.15);
+  --skin-border-bright: 1px solid rgba(212, 200, 184, 0.3);
+  --skin-border-primary: 1px solid #c8956c;
+
+  --skin-chrome-bg: linear-gradient(180deg, #3a3228 0%, #2a2420 100%);
+  --skin-chrome-border: 1px solid rgba(200, 149, 108, 0.3);
+  --skin-chrome-text: #d4c8b8;
+
+  --skin-player-bg: #2a2420;
+  --skin-player-progress-bg: rgba(200, 149, 108, 0.1);
+  --skin-player-progress-fill: #c8956c;
+
+  --skin-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --skin-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --skin-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+  --skin-shadow-glow: none;
+
+  --skin-scrollbar-thumb: rgba(200, 149, 108, 0.2);
+  --skin-scrollbar-thumb-hover: rgba(200, 149, 108, 0.4);
+}

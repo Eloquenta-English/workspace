@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OobzoO Logo</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e1a;
+  --cyan: #22d3ee;
+  --violet: #a78bfa;
+  --green: #34d399;
+  --amber: #fbbf24;
+  --rose: #fb7185;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'Orbitron', sans-serif;
+  overflow: hidden;
+}
+
+/* Stars background */
+.stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+.star {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+  animation: twinkle var(--dur) ease-in-out infinite;
+  opacity: var(--op);
+}
+@keyframes twinkle {
+  0%, 100% { opacity: var(--op); }
+  50% { opacity: 0.1; }
+}
+
+/* Logo container */
+.logo-wrap {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+/* The crop circle rings */
+.crop-circle {
+  position: relative;
+  width: 320px;
+  height: 320px;
+}
+
+.ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.ring-1 { width: 100%; height: 100%; border-color: rgba(34,211,238,0.15); }
+.ring-2 { width: 88%; height: 88%; border-color: rgba(34,211,238,0.12); }
+.ring-3 { width: 76%; height: 76%; border-color: rgba(167,139,250,0.15); }
+.ring-4 { width: 64%; height: 64%; border-color: rgba(34,211,238,0.10); }
+.ring-5 { width: 52%; height: 52%; border-color: rgba(167,139,250,0.12); }
+.ring-6 { width: 40%; height: 40%; border-color: rgba(34,211,238,0.08); }
+.ring-7 { width: 28%; height: 28%; border-color: rgba(167,139,250,0.10); }
+.ring-8 { width: 16%; height: 16%; border-color: rgba(34,211,238,0.06); }
+
+/* Orbiting dots */
+.orbit-container {
+  position: absolute;
+  inset: 0;
+  animation: spin 20s linear infinite;
+}
+.orbit-container.reverse { animation-direction: reverse; animation-duration: 15s; }
+
+.orbit-dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 8px currentColor;
+}
+
+.orbit-ring { position: absolute; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.orbit-ring-1 { width: 88%; height: 88%; }
+.orbit-ring-2 { width: 64%; height: 64%; }
+.orbit-ring-3 { width: 40%; height: 40%; }
+
+.orbit-ring-1 .orbit-dot { color: var(--cyan); }
+.orbit-ring-2 .orbit-dot { color: var(--violet); }
+.orbit-ring-3 .orbit-dot { color: var(--green); }
+
+.orbit-ring-2 .orbit-dot { top: auto; bottom: -3px; left: 20%; }
+.orbit-ring-3 .orbit-dot { top: 50%; left: auto; right: -3px; transform: translateY(-50%); }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Center eye */
+.eye-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34,211,238,0.15) 0%, transparent 70%);
+  border: 2px solid rgba(34,211,238,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: eyePulse 3s ease-in-out infinite;
+}
+
+.eye-center::before {
+  content: '';
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 15px var(--cyan), 0 0 30px rgba(34,211,238,0.4);
+}
+
+.eye-center::after {
+  content: '';
+  position: absolute;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  top: 18px; left: 22px;
+}
+
+@keyframes eyePulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(34,211,238,0.2), inset 0 0 10px rgba(34,211,238,0.1); border-color: rgba(34,211,238,0.3); }
+  50% { box-shadow: 0 0 30px rgba(167,139,250,0.3), inset 0 0 15px rgba(167,139,250,0.15); border-color: rgba(167,139,250,0.4); }
+}
+
+/* Concentric arc marks (like crop circle notches) */
+.arc-marks {
+  position: absolute;
+  inset: 0;
+}
+
+.arc-mark {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 2px;
+  height: 12px;
+  background: rgba(34,211,238,0.2);
+  transform-origin: center 160px;
+}
+
+/* The text */
+.logo-text {
+  text-align: center;
+}
+
+.logo-name {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 3.2rem;
+  font-weight: 900;
+  letter-spacing: 12px;
+  color: var(--cyan);
+  text-shadow: 0 0 15px var(--cyan), 0 0 30px rgba(34,211,238,0.3);
+  position: relative;
+}
+
+.logo-name .o1 { color: var(--cyan); }
+.logo-name .o2 { color: var(--violet); }
+.logo-name .b { color: var(--green); }
+.logo-name .z { color: var(--amber); }
+
+.logo-tagline {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  color: rgba(34,211,238,0.4);
+  letter-spacing: 6px;
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+
+/* Glow ring behind text */
+.text-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34,211,238,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Shooting star */
+.shooting-star {
+  position: fixed;
+  width: 3px;
+  height: 3px;
+  background: #fff;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  box-shadow: 0 0 6px 2px rgba(255,255,255,0.8), 0 0 20px 4px rgba(34,211,238,0.3);
+  animation: shoot var(--duration) ease-out forwards;
+}
+.shooting-star::after {
+  content: '';
+  position: absolute;
+  top: 50%; right: 100%;
+  width: var(--tail);
+  height: 1px;
+  background: linear-gradient(to left, rgba(255,255,255,0.6), rgba(34,211,238,0.2), transparent);
+  transform: translateY(-50%);
+}
+@keyframes shoot {
+  0% { transform: translate(0, 0) rotate(var(--angle)); opacity: 0; }
+  5% { opacity: 1; }
+  50% { opacity: 0.8; }
+  100% { transform: translate(var(--dx), var(--dy)) rotate(var(--angle)); opacity: 0; }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .crop-circle { width: 240px; height: 240px; }
+  .logo-name { font-size: 2.2rem; letter-spacing: 8px; }
+  .arc-mark { transform-origin: center 120px; }
+}
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="logo-wrap">
+  <div class="crop-circle">
+    <!-- Concentric rings -->
+    <div class="ring ring-1"></div>
+    <div class="ring ring-2"></div>
+    <div class="ring ring-3"></div>
+    <div class="ring ring-4"></div>
+    <div class="ring ring-5"></div>
+    <div class="ring ring-6"></div>
+    <div class="ring ring-7"></div>
+    <div class="ring ring-8"></div>
+
+    <!-- Arc marks (crop circle notches) -->
+    <div class="arc-marks" id="arcMarks"></div>
+
+    <!-- Orbiting dots -->
+    <div class="orbit-container">
+      <div class="orbit-ring orbit-ring-1"><div class="orbit-dot"></div></div>
+      <div class="orbit-ring orbit-ring-2"><div class="orbit-dot"></div></div>
+    </div>
+    <div class="orbit-container reverse">
+      <div class="orbit-ring orbit-ring-3"><div class="orbit-dot"></div></div>
+    </div>
+
+    <!-- Center eye -->
+    <div class="eye-center"></div>
+  </div>
+
+  <div class="logo-text">
+    <div class="text-glow"></div>
+    <div class="logo-name">
+      <span class="o1">O</span><span class="o2">o</span><span class="b">b</span><span class="z">z</span><span class="o1">O</span><span class="o2">O</span>
+    </div>
+    <div class="logo-tagline">Digital Audio Workstation</div>
+  </div>
+</div>
+
+<script>
+// Generate stars
+var starsEl = document.getElementById('stars');
+for (var i = 0; i < 120; i++) {
+  var star = document.createElement('div');
+  star.className = 'star';
+  var size = Math.random() * 2 + 1;
+  star.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + Math.random() * 100 + '%;top:' + Math.random() * 100 + '%;--dur:' + (Math.random() * 4 + 2) + 's;--op:' + (Math.random() * 0.5 + 0.2) + ';animation-delay:' + Math.random() * 4 + 's';
+  starsEl.appendChild(star);
+}
+
+// Generate arc marks around the outer ring
+var arcMarksEl = document.getElementById('arcMarks');
+for (var i = 0; i < 24; i++) {
+  var mark = document.createElement('div');
+  mark.className = 'arc-mark';
+  mark.style.transform = 'rotate(' + (i * 15) + 'deg)';
+  if (i % 3 === 0) {
+    mark.style.height = '18px';
+    mark.style.background = 'rgba(34,211,238,0.3)';
+  }
+  arcMarksEl.appendChild(mark);
+}
+
+// Shooting stars
+function spawnShootingStar() {
+  var star = document.createElement('div');
+  star.className = 'shooting-star';
+  var angle = Math.random() * 60 + 15;
+  var dx = (Math.random() * 300 + 200) * (Math.random() > 0.5 ? 1 : -1);
+  var dy = Math.random() * 300 + 100;
+  var duration = Math.random() * 1.5 + 0.8;
+  var tail = Math.random() * 80 + 40;
+  star.style.cssText = 'left:' + Math.random() * 80 + '%;top:' + Math.random() * 40 + '%;--angle:' + angle + 'deg;--dx:' + dx + 'px;--dy:' + dy + 'px;--duration:' + duration + 's;--tail:' + tail + 'px';
+  document.body.appendChild(star);
+  setTimeout(function() { star.remove(); }, duration * 1000);
+}
+
+setInterval(function() {
+  if (Math.random() > 0.6) spawnShootingStar();
+}, 2000);
+spawnShootingStar();
+</script>
+</body>
+</html>

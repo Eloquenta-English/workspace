@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Language Widget — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #1c1c1c; --bg2: #161616; --bg3: #222222;
+  --text: #e8e8e8; --text-muted: #999; --text-dim: #555;
+  --accent: #a3e635; --cta: #fcbe6a; --cta-text: #1c1c1c;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg); color: var(--text);
+  min-height: 100vh; display: flex;
+  align-items: center; justify-content: center;
+  padding: 40px 20px;
+}
+.demo-wrap { max-width: 640px; text-align: center; }
+h1 { font-size: 2rem; font-weight: 800; margin-bottom: 12px; color: var(--accent); }
+p { color: var(--text-muted); line-height: 1.7; margin-bottom: 24px; font-size: .95rem; }
+.hint {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px; border-radius: 10px;
+  background: var(--bg3); border: 1px solid #333;
+  font-size: .85rem; color: var(--text-muted);
+  margin-bottom: 32px;
+}
+.hint .arrow { color: var(--cta); font-size: 1.2rem; }
+.features {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  text-align: left; margin-top: 32px;
+}
+.feature {
+  background: var(--bg3); border: 1px solid #333;
+  border-radius: 10px; padding: 16px;
+}
+.feature h3 { font-size: .85rem; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+.feature p { font-size: .75rem; color: var(--text-dim); margin: 0; line-height: 1.5; }
+</style>
+<link rel="stylesheet" href="lang-widget.css">
+</head>
+<body>
+<div class="demo-wrap">
+  <h1>Language Widget</h1>
+  <p>A slide-out panel with translation, synonyms, conjugation, grammar check, and vocabulary saving. Click the button on the right edge to open it.</p>
+  <div class="hint"><span class="arrow">></span> Look for the green button on the right edge of the screen</div>
+  <div class="features">
+    <div class="feature"><h3>Translate</h3><p>MyMemory API with speech-to-text input, microphone selector, auto-translate, and example sentences</p></div>
+    <div class="feature"><h3>Thesaurus</h3><p>350+ word local thesaurus with IPA pronunciation, usage frequency, register labels (formal/informal), synonyms, antonyms, related words, and click-to-explore drill-down with history trail. Datamuse API enrichment when online.</p></div>
+    <div class="feature"><h3>Grammar</h3><p>LanguageTool API with 30+ languages, error categorization, highlighted text, picky mode, one-click apply corrections, "why it's wrong" explanations, and offline fallback for common English errors.</p></div>
+    <div class="feature"><h3>Conjugate</h3><p>Smart English verb conjugation with 6 forms</p></div>
+    <div class="feature"><h3>My Words</h3><p>Save translations to localStorage, search and delete</p></div>
+    <div class="feature"><h3>Speak</h3><p>Web Speech API for pronunciation in 40+ languages</p></div>
+  </div>
+</div>
+
+<!-- WIDGET EMBED: William Thomason English dark theme -->
+<div class="lang-widget-wrap theme-wte">
+  <button class="lang-widget-toggle" id="lw-toggle" onclick="lw_toggle()" title="Language Tools">LT</button>
+  <div class="lang-panel" id="lw-panel">
+    <div class="lang-panel-header">
+      <h3>Language Tools</h3>
+      <button class="lang-panel-close" onclick="lw_toggle()">&#x2715;</button>
+    </div>
+    <div class="lang-tabs">
+      <button class="lang-tab" data-tab="translate" onclick="lw_switchTab('translate')"><span class="tab-icon">&#x1F504;</span>Translate</button>
+      <button class="lang-tab" data-tab="synonyms" onclick="lw_switchTab('synonyms')"><span class="tab-icon">&#x1F4A1;</span>Synonyms</button>
+      <button class="lang-tab" data-tab="conjugate" onclick="lw_switchTab('conjugate')"><span class="tab-icon">&#x1F4DD;</span>Conjugate</button>
+      <button class="lang-tab" data-tab="grammar" onclick="lw_switchTab('grammar')"><span class="tab-icon">&#x2713;</span>Grammar</button>
+      <button class="lang-tab active" data-tab="vocab" onclick="lw_switchTab('vocab')"><span class="tab-icon">&#x1F4DA;</span>My Words</button>
+    </div>
+    <div class="lang-panel-content">
+      <!-- Translate -->
+      <div class="lang-tab-content" id="lw-tab-translate">
+        <div class="lang-select-row">
+          <select id="lw-lang-from">
+            <option value="en">English</option><option value="de">German</option>
+            <option value="es">Spanish</option><option value="fr">French</option>
+            <option value="it">Italian</option><option value="pt">Portuguese</option>
+            <option value="ru">Russian</option><option value="ja">Japanese</option>
+            <option value="ko">Korean</option><option value="zh">Chinese</option>
+            <option value="ar">Arabic</option><option value="hi">Hindi</option>
+            <option value="nl">Dutch</option><option value="pl">Polish</option>
+            <option value="tr">Turkish</option><option value="sv">Swedish</option>
+            <option value="da">Danish</option><option value="fi">Finnish</option>
+            <option value="el">Greek</option><option value="cs">Czech</option>
+            <option value="ro">Romanian</option><option value="hu">Hungarian</option>
+            <option value="bg">Bulgarian</option><option value="sk">Slovak</option>
+            <option value="sl">Slovenian</option><option value="uk">Ukrainian</option>
+            <option value="sr">Serbian</option><option value="id">Indonesian</option>
+            <option value="vi">Vietnamese</option><option value="th">Thai</option>
+            <option value="fa">Persian</option><option value="he">Hebrew</option>
+          </select>
+          <button class="lang-swap-btn" onclick="lw_swapLangs()" title="Swap">&#x21C4;</button>
+          <select id="lw-lang-to">
+            <option value="de">German</option><option value="en">English</option>
+            <option value="es">Spanish</option><option value="fr">French</option>
+            <option value="it">Italian</option><option value="pt">Portuguese</option>
+            <option value="ru">Russian</option><option value="ja">Japanese</option>
+            <option value="ko">Korean</option><option value="zh">Chinese</option>
+            <option value="ar">Arabic</option><option value="hi">Hindi</option>
+            <option value="nl">Dutch</option><option value="pl">Polish</option>
+            <option value="tr">Turkish</option><option value="sv">Swedish</option>
+            <option value="da">Danish</option><option value="fi">Finnish</option>
+            <option value="el">Greek</option><option value="cs">Czech</option>
+            <option value="ro">Romanian</option><option value="hu">Hungarian</option>
+            <option value="bg">Bulgarian</option><option value="sk">Slovak</option>
+            <option value="sl">Slovenian</option><option value="uk">Ukrainian</option>
+            <option value="sr">Serbian</option><option value="id">Indonesian</option>
+            <option value="vi">Vietnamese</option><option value="th">Thai</option>
+            <option value="fa">Persian</option><option value="he">Hebrew</option>
+          </select>
+        </div>
+        <!-- Microphone selector + record button -->
+        <div class="mic-row">
+          <select id="lw-mic-select" class="mic-select" title="Select microphone">
+            <option value="">Default microphone</option>
+          </select>
+          <button class="mic-btn" id="lw-mic-btn" onclick="lw_toggleRecording()" title="Hold to record">
+            <span class="mic-icon">&#x1F3A4;</span>
+            <span class="mic-label">Hold to speak</span>
+          </button>
+        </div>
+        <textarea class="lang-textarea" id="lw-lang-input" placeholder="Type, paste, or speak to translate..."></textarea>
+        <button class="lang-btn-primary" onclick="lw_doTranslate()">Translate</button>
+        <div id="lw-translate-results"></div>
+      </div>
+      <!-- Synonyms -->
+      <div class="lang-tab-content" id="lw-tab-synonyms">
+        <input type="text" class="lang-textarea" id="lw-synonym-input" placeholder="Enter a word..." style="min-height:48px">
+        <button class="lang-btn-primary" onclick="lw_doSynonyms()">Find Synonyms</button>
+        <div id="lw-synonym-results"></div>
+      </div>
+      <!-- Conjugate -->
+      <div class="lang-tab-content" id="lw-tab-conjugate">
+        <input type="text" class="lang-textarea" id="lw-conjugate-input" placeholder="Enter a verb..." style="min-height:48px">
+        <button class="lang-btn-primary" onclick="lw_doConjugate()">Conjugate</button>
+        <div id="lw-conjugate-results"></div>
+      </div>
+      <!-- Grammar -->
+      <div class="lang-tab-content" id="lw-tab-grammar">
+        <select id="lw-grammar-lang" class="grammar-lang-select">
+          <option value="en-US">English (US)</option>
+          <option value="en-GB">English (UK)</option>
+          <option value="de-DE">German</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="it">Italian</option>
+          <option value="pt-PT">Portuguese</option>
+          <option value="nl">Dutch</option>
+          <option value="pl">Polish</option>
+          <option value="ru">Russian</option>
+          <option value="ja">Japanese</option>
+          <option value="zh">Chinese</option>
+          <option value="ko">Korean</option>
+          <option value="ar">Arabic</option>
+          <option value="sv">Swedish</option>
+          <option value="da">Danish</option>
+          <option value="fi">Finnish</option>
+          <option value="el">Greek</option>
+          <option value="cs">Czech</option>
+          <option value="ro">Romanian</option>
+          <option value="hu">Hungarian</option>
+          <option value="tr">Turkish</option>
+          <option value="uk">Ukrainian</option>
+          <option value="sk">Slovak</option>
+          <option value="sl">Slovenian</option>
+          <option value="et">Estonian</option>
+          <option value="lv">Latvian</option>
+          <option value="lt">Lithuanian</option>
+          <option value="bg">Bulgarian</option>
+          <option value="id">Indonesian</option>
+          <option value="vi">Vietnamese</option>
+          <option value="th">Thai</option>
+          <option value="fa">Persian</option>
+        </select>
+        <textarea class="lang-textarea" id="lw-grammar-input" placeholder="Write a sentence to check..." style="min-height:100px"></textarea>
+        <button class="lang-btn-primary" onclick="lw_doGrammarCheck()">Check Grammar</button>
+        <div id="lw-grammar-results"></div>
+      </div>
+      <!-- Vocab -->
+      <div class="lang-tab-content active" id="lw-tab-vocab">
+        <input type="text" class="vocab-search" id="lw-vocab-search" placeholder="Search saved words..." oninput="lw_filterVocab()">
+        <div id="lw-vocab-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="lang-widget.js"></script>
+</body>
+</html>

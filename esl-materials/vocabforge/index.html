@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VocabForge</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* Inline placeholder so the page works immediately before CSS loads */
+body { margin: 0; background: #0a0a0f; color: #f1f5f9; font-family: system-ui, sans-serif; }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ====== HEADER ====== -->
+  <header id="topbar">
+    <div class="topbar-left">
+      <svg class="logo-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        <line x1="8" y1="7" x2="16" y2="7"/>
+        <line x1="8" y1="11" x2="14" y2="11"/>
+      </svg>
+      <span class="logo-text">VocabForge</span>
+    </div>
+    <div class="topbar-right">
+      <div class="theme-picker" id="themePicker">
+        <button class="theme-picker-btn" id="themePickerBtn" onclick="VF.toggleThemePicker()" title="Change Theme">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+        <div class="theme-picker-dropdown" id="themePickerDropdown">
+          <div class="theme-grid" id="themeGrid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+      <div class="font-picker" id="fontPicker">
+        <button class="font-picker-btn" id="fontPickerBtn" onclick="VF.toggleFontPicker()" title="Change Font">
+          <span style="font-size:16px;">Aa</span>
+        </button>
+        <div class="font-picker-dropdown" id="fontPickerDropdown">
+          <button class="font-option font-nunito active" onclick="VF.setFont('nunito')" data-font="nunito">Nunito</button>
+          <button class="font-option font-fredoka" onclick="VF.setFont('fredoka')" data-font="fredoka">Fredoka</button>
+          <button class="font-option font-quicksand" onclick="VF.setFont('quicksand')" data-font="quicksand">Quicksand</button>
+          <button class="font-option font-comfortaa" onclick="VF.setFont('comfortaa')" data-font="comfortaa">Comfortaa</button>
+          <button class="font-option font-baloo" onclick="VF.setFont('baloo')" data-font="baloo">Baloo 2</button>
+          <button class="font-option font-poppins" onclick="VF.setFont('poppins')" data-font="poppins">Poppins</button>
+        </div>
+      </div>
+      <span class="level-badge" id="levelBadge">L1</span>
+      <div class="xp-bar" id="xpBar">
+        <div class="xp-fill" id="xpFill" style="width: 0%"></div>
+        <span class="xp-text" id="xpText">0/100</span>
+      </div>
+      <div class="hearts" id="heartsDisplay">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="#fb7185" stroke="#fb7185" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span id="heartsText">5/5</span>
+      </div>
+      <div class="streak" id="streakDisplay">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
+        <span id="streakText">0</span>
+      </div>
+      <button class="btn btn-secondary btn-sm" id="btnSettings" style="padding:4px 10px;font-size:0.75rem;">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </button>
+    </div>
+  </header>
+
+  <!-- ====== MAIN CONTENT ====== -->
+  <main id="main">
+
+    <!-- HOME SCREEN -->
+    <div class="screen" data-screen="home" data-active="true">
+      <div class="screen-content">
+        <div class="home-hero" id="homeHero" style="background-image:url('https://images.pexels.com/photos/256417/pexels-photo-256417.jpeg?auto=compress&w=800');">
+          <div class="home-hero-overlay">
+            <h1 style="font-size:1.8rem;font-weight:800;color:#fff;margin-bottom:4px;">Welcome to VocabForge</h1>
+            <p style="color:rgba(255,255,255,0.8);font-size:0.9rem;">Master vocabulary one word at a time.</p>
+          </div>
+        </div>
+        <div class="home-actions">
+          <button class="btn btn-primary" onclick="VF.showScreen('flashcards')">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <span>Start Learning</span>
+          </button>
+          <button class="btn btn-secondary" onclick="VF.showScreen('games-menu')">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><circle cx="18" cy="12" r="1"/><circle cx="15" cy="7" r="1"/><circle cx="15" cy="17" r="1"/><rect x="2" y="6" width="20" height="12" rx="2"/></svg>
+            <span>Play Games</span>
+          </button>
+        </div>
+        <div class="daily-goal-card">
+          <h3>Daily Goal</h3>
+          <div class="goal-progress">
+            <div class="goal-bar"><div class="goal-fill" id="dailyGoalFill" style="width:0%"></div></div>
+            <span id="dailyGoalText">0 / 100 XP</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLASHCARDS SCREEN -->
+    <div class="screen" data-screen="flashcards" data-active="false">
+      <div class="screen-content" id="flashcardsContent"></div>
+    </div>
+
+    <!-- GAMES MENU SCREEN -->
+    <div class="screen" data-screen="games-menu" data-active="false">
+      <div class="screen-content">
+        <h2 class="screen-title">Games</h2>
+        <div class="games-grid">
+          <button class="game-card game-card-img" onclick="VF.showScreen('game-quiz')" style="background-image:url('https://images.pexels.com/photos/5905888/pexels-photo-5905888.jpeg?auto=compress&w=400');">
+            <div class="game-card-overlay">
+              <span class="game-name">Quiz</span>
+              <span class="game-desc">Multiple choice</span>
+            </div>
+          </button>
+          <button class="game-card game-card-img" onclick="VF.showScreen('game-typing')" style="background-image:url('https://images.pexels.com/photos/5905937/pexels-photo-5905937.jpeg?auto=compress&w=400');">
+            <div class="game-card-overlay">
+              <span class="game-name">Typing</span>
+              <span class="game-desc">Type the word</span>
+            </div>
+          </button>
+          <button class="game-card game-card-img" onclick="VF.showScreen('game-memory')" style="background-image:url('https://images.pexels.com/photos/698808/pexels-photo-698808.jpeg?auto=compress&w=400');">
+            <div class="game-card-overlay">
+              <span class="game-name">Memory</span>
+              <span class="game-desc">Match pairs</span>
+            </div>
+          </button>
+          <button class="game-card game-card-img" onclick="VF.showScreen('game-wordsearch')" style="background-image:url('https://images.pexels.com/photos/572056/pexels-photo-572056.jpeg?auto=compress&w=400');">
+            <div class="game-card-overlay">
+              <span class="game-name">Word Search</span>
+              <span class="game-desc">Find the words</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRAMMAR SCREEN -->
+    <div class="screen" data-screen="grammar" data-active="false">
+      <div class="screen-content" id="grammarContent"></div>
+    </div>
+
+    <!-- STATS SCREEN -->
+    <div class="screen" data-screen="stats" data-active="false">
+      <div class="screen-content">
+        <h2 class="screen-title">Statistics</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value" id="statXP">0</span>
+            <span class="stat-label">Total XP</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="statStreak">0</span>
+            <span class="stat-label">Current Streak</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="statBestStreak">0</span>
+            <span class="stat-label">Best Streak</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="statWords">0</span>
+            <span class="stat-label">Words Learned</span>
+          </div>
+        </div>
+        <div class="achievements-section">
+          <h3>Achievements</h3>
+          <div class="achievements-grid" id="achievementsGrid">
+            <div class="achievement locked">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+              <span>First Steps</span>
+            </div>
+            <div class="achievement locked">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+              <span>Week Warrior</span>
+            </div>
+            <div class="achievement locked">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+              <span>Century Club</span>
+            </div>
+            <div class="achievement locked">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+              <span>Perfectionist</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS SCREEN -->
+    <div class="screen" data-screen="settings" data-active="false">
+      <div class="screen-content" id="settingsContent"></div>
+    </div>
+
+    <!-- GAME QUIZ SCREEN -->
+    <div class="screen" data-screen="game-quiz" data-active="false">
+      <div class="screen-content"></div>
+    </div>
+    <div class="screen" data-screen="game-typing" data-active="false">
+      <div class="screen-content" id="typingContent"></div>
+    </div>
+    <div class="screen" data-screen="game-memory" data-active="false">
+      <div class="screen-content" id="memoryContent"></div>
+    </div>
+    <div class="screen" data-screen="game-wordsearch" data-active="false">
+      <div class="screen-content" id="wordsearchContent"></div>
+    </div>
+
+  </main>
+
+  <!-- ====== BOTTOM NAV ====== -->
+  <nav id="bottomNav">
+    <button class="nav-tab" data-nav="home" data-active="true">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="nav-tab" data-nav="flashcards">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Learn</span>
+    </button>
+    <button class="nav-tab" data-nav="games-menu">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><circle cx="18" cy="12" r="1"/><circle cx="15" cy="7" r="1"/><circle cx="15" cy="17" r="1"/><rect x="2" y="6" width="20" height="12" rx="2"/></svg>
+      <span>Games</span>
+    </button>
+    <button class="nav-tab" data-nav="grammar">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+      <span>Grammar</span>
+    </button>
+    <button class="nav-tab" data-nav="stats">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span>Stats</span>
+    </button>
+  </nav>
+
+  <!-- ====== MODALS ====== -->
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="modalSettings" data-visible="false">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Settings</h2>
+        <button class="modal-close" onclick="VF.closeModal('modalSettings')">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-row">
+          <span>Sound Effects</span>
+          <label class="toggle"><input type="checkbox" id="toggleSound" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="setting-row">
+          <span>Text-to-Speech</span>
+          <label class="toggle"><input type="checkbox" id="toggleTTS" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="setting-row">
+          <span>TTS Model</span>
+          <select id="selTtsModel" class="setting-input" style="width:160px;">
+            <option value="speechma">🗣️ SpeechMa (Browser)</option>
+            <option value="naturalreader">🎙️ NaturalReader</option>
+            <option value="lovevoice">💖 LoveVoice AI</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <span>TTS Voice</span>
+          <select id="selTtsVoice" class="setting-input" style="width:140px;"></select>
+        </div>
+        <div class="setting-row">
+          <span>Daily XP Goal</span>
+          <select id="selDailyGoal" class="setting-input" style="width:90px;">
+            <option value="50">50 XP</option>
+            <option value="100">100 XP</option>
+            <option value="200">200 XP</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <span>Theme</span>
+          <button class="btn btn-secondary btn-sm" id="btnCycleTheme">Eloquent</button>
+        </div>
+        <div class="setting-row" style="border-top:2px solid var(--surface2);margin-top:8px;padding-top:16px;">
+          <span>Data</span>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-secondary btn-sm" id="btnExportProgress">Export</button>
+            <button class="btn btn-secondary btn-sm" id="btnImportProgress">Import</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span style="color:var(--danger);">Reset Progress</span>
+          <button class="btn btn-danger btn-sm" id="btnResetProgress">Reset All</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Achievements Modal -->
+  <div class="modal-overlay" id="modalAchievements" data-visible="false">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Achievements</h2>
+        <button class="modal-close" onclick="VF.closeModal('modalAchievements')">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="achievements-grid">
+          <div class="achievement locked"><span>First Steps</span></div>
+          <div class="achievement locked"><span>Week Warrior</span></div>
+          <div class="achievement locked"><span>Century Club</span></div>
+          <div class="achievement locked"><span>Perfectionist</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Level Up Modal -->
+  <div class="modal-overlay" id="modalLevelUp" data-visible="false">
+    <div class="modal">
+      <div class="level-up-celebration">
+        <div class="levelup-icon">
+          <svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+        </div>
+        <h2>Level Up!</h2>
+        <p class="levelup-level" id="levelUpTo">Level 2</p>
+        <p class="xp-earned" id="levelUpXP">+0 XP this session</p>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="VF.closeModal('modalLevelUp')">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Over Modal -->
+  <div class="modal-overlay" id="modalGameOver" data-visible="false">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Game Over</h2>
+        <button class="modal-close" onclick="VF.closeModal('modalGameOver')">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Hearts ran out! Try again tomorrow or practice to restore them.</p>
+        <div class="gameover-stats">
+          <div class="gameover-stat"><span class="go-label">Score</span><span class="go-value" id="goScore">0</span></div>
+          <div class="gameover-stat"><span class="go-label">Correct</span><span class="go-value" id="goCorrect">0</span></div>
+        </div>
+        <button class="btn btn-primary" onclick="VF.closeModal('modalGameOver')">OK</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /#app -->
+
+<script src="js/vocabulary.js"></script>
+<script src="js/progress.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/games/flashcards.js"></script>
+<script src="js/games/memory.js"></script>
+<script src="js/games/typing.js"></script>
+<script src="js/games/quiz.js"></script>
+<script src="js/games/wordsearch.js"></script>
+<script src="js/grammar.js"></script>
+<script src="js/games/grammar-drill.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

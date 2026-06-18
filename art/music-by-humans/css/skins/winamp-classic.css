@@ -1,0 +1,48 @@
+/* Music By Humans — Winamp Classic Skin */
+/* The default Winamp 2.x green-on-black look */
+
+:root {
+  --skin-bg: #000000;
+  --skin-bg-surface: #0a0a0a;
+  --skin-bg-elevated: #1a1a1a;
+  --skin-bg-overlay: rgba(0, 0, 0, 0.9);
+
+  --skin-text: #00ff00;
+  --skin-text-dim: #00aa00;
+  --skin-text-bright: #33ff33;
+
+  --skin-primary: #00ff00;
+  --skin-primary-dim: #00cc00;
+  --skin-primary-glow: rgba(0, 255, 0, 0.3);
+
+  --skin-accent: #ff9900;
+  --skin-accent-dim: #cc7700;
+  --skin-accent-glow: rgba(255, 153, 0, 0.3);
+
+  --skin-secondary: #00ccff;
+  --skin-secondary-dim: #0099cc;
+
+  --skin-font-main: 'Courier New', 'Fira Code', monospace;
+  --skin-font-mono: 'Courier New', monospace;
+  --skin-font-display: 'Courier New', monospace;
+
+  --skin-radius-sm: 0px;
+  --skin-radius-md: 0px;
+  --skin-radius-lg: 0px;
+  --skin-radius-xl: 0px;
+
+  --skin-border: 1px solid #00aa00;
+  --skin-border-bright: 1px solid #00ff00;
+  --skin-border-primary: 1px solid #00ff00;
+
+  --skin-chrome-bg: linear-gradient(180deg, #2a2a2a 0%, #111 50%, #0a0a0a 100%);
+  --skin-chrome-border: 1px solid #00aa00;
+  --skin-chrome-text: #00ff00;
+
+  --skin-player-bg: #0a0a0a;
+  --skin-player-progress-bg: rgba(0, 255, 0, 0.1);
+  --skin-player-progress-fill: #00ff00;
+
+  --skin-scrollbar-thumb: rgba(0, 255, 0, 0.2);
+  --skin-scrollbar-thumb-hover: rgba(0, 255, 0, 0.4);
+}

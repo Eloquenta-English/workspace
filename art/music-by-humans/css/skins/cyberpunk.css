@@ -1,0 +1,57 @@
+/* Music By Humans — Cyberpunk Skin */
+/* Neon-on-black: hot pink, electric blue, high contrast */
+
+:root {
+  --skin-bg: #0a0a0a;
+  --skin-bg-surface: #111111;
+  --skin-bg-elevated: #1a1a1a;
+  --skin-bg-overlay: rgba(10, 10, 10, 0.92);
+
+  --skin-text: #e0e0e0;
+  --skin-text-dim: #888888;
+  --skin-text-bright: #ffffff;
+
+  --skin-primary: #ff1493;
+  --skin-primary-dim: #cc1070;
+  --skin-primary-glow: rgba(255, 20, 147, 0.5);
+
+  --skin-accent: #00f5ff;
+  --skin-accent-dim: #00c4cc;
+  --skin-accent-glow: rgba(0, 245, 255, 0.5);
+
+  --skin-secondary: #a855f7;
+  --skin-secondary-dim: #8644c9;
+
+  --skin-success: #00ff88;
+  --skin-warning: #ffcc00;
+  --skin-error: #ff3366;
+
+  --skin-font-main: 'Fira Code', 'JetBrains Mono', monospace;
+  --skin-font-mono: 'Fira Code', monospace;
+  --skin-font-display: 'Fira Code', monospace;
+
+  --skin-radius-sm: 0px;
+  --skin-radius-md: 2px;
+  --skin-radius-lg: 4px;
+  --skin-radius-xl: 6px;
+
+  --skin-border: 1px solid rgba(255, 20, 147, 0.3);
+  --skin-border-bright: 1px solid rgba(255, 20, 147, 0.6);
+  --skin-border-primary: 1px solid #ff1493;
+
+  --skin-chrome-bg: #0a0a0a;
+  --skin-chrome-border: 1px solid rgba(0, 245, 255, 0.3);
+  --skin-chrome-text: #00f5ff;
+
+  --skin-player-bg: #111111;
+  --skin-player-progress-bg: rgba(255, 20, 147, 0.1);
+  --skin-player-progress-fill: linear-gradient(90deg, #ff1493, #a855f7, #00f5ff);
+
+  --skin-shadow-sm: 0 0 5px rgba(255, 20, 147, 0.3);
+  --skin-shadow-md: 0 0 15px rgba(255, 20, 147, 0.4);
+  --skin-shadow-lg: 0 0 30px rgba(255, 20, 147, 0.5);
+  --skin-shadow-glow: 0 0 20px rgba(255, 20, 147, 0.5);
+
+  --skin-scrollbar-thumb: rgba(255, 20, 147, 0.3);
+  --skin-scrollbar-thumb-hover: rgba(255, 20, 147, 0.6);
+}

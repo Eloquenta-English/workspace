@@ -1,0 +1,999 @@
+# tactiq.io free youtube transcript
+# I Built the Ultimate Multi-Agent Workflow w/ Hermes Agent Kanban Board
+# https://www.youtube.com/watch/EKVRqcpTT6s
+
+00:00:00.600 Many people talk about multi-agent
+00:00:02.240 workflows, but they're very difficult to
+00:00:04.440 actually pull off without breaking.
+00:00:07.200 In this video, I'm going to show you how
+00:00:08.800 I actually pulled this off where I had
+00:00:11.160 agents
+00:00:12.240 that did research,
+00:00:14.040 made judgments,
+00:00:16.079 built tools all autonomously
+00:00:19.600 with my
+00:00:21.040 human gate only being the final
+00:00:22.600 approval.
+00:00:24.000 And I did this all with Hermes agent
+00:00:26.600 and the Kanban board.
+00:00:29.480 So that you can have a whole fleet of
+00:00:31.280 agents working for you 24/7,
+00:00:34.240 doing research, building solutions,
+00:00:37.040 producing deliverables, making you
+00:00:38.960 money,
+00:00:40.280 operating your businesses,
+00:00:42.440 and much, much more. So watch the end.
+00:00:44.440 I'll show you how I pulled this off,
+00:00:46.600 and then I will open source
+00:00:48.800 my entire workflow template so you can
+00:00:50.800 try it out yourself.
+00:00:52.960 Let's get started.
+00:00:54.400 And if you like this video, please
+00:00:55.800 consider supporting the channel by
+00:00:57.480 joining Team Garage,
+00:00:59.600 which will give you early access to
+00:01:01.000 videos,
+00:01:02.200 or Team Garage Max, where you will get
+00:01:04.120 exclusive videos each week, as well as
+00:01:06.040 many other perks. I'd like to continue
+00:01:08.200 providing as much free, valuable content
+00:01:10.200 as possible, as well as better
+00:01:11.800 experiments on different hardware. So,
+00:01:13.680 these memberships will really make it
+00:01:15.200 possible.
+00:01:16.720 So, one of the big features of the last
+00:01:19.600 few updates of Hermes agent has been
+00:01:21.840 this Kanban,
+00:01:23.400 and you can find it if you open your
+00:01:25.400 your web dashboard here.
+00:01:27.360 Uh it's under plugins, Kanban.
+00:01:29.920 And this is what it's going to look
+00:01:31.440 like. Mine looks a little bit different,
+00:01:33.960 but generally it's going to have these
+00:01:35.400 different cards
+00:01:37.440 uh that you will see.
+00:01:39.320 So, this is a very exciting development
+00:01:41.280 cuz it allows a lot more multi-agent
+00:01:43.320 workflows
+00:01:44.600 that a lot of people are interested in
+00:01:45.960 setting up when they are using agents.
+00:01:48.840 And the first version had some issues,
+00:01:50.640 and they with every new update, they've
+00:01:52.360 been kind of working on it, and I'm sure
+00:01:54.800 uh in future updates, they'll continue
+00:01:56.680 to kind of refine it. But, I've been
+00:01:58.680 using it now to set up this workflow and
+00:02:00.960 it it works fine. So, whatever issues
+00:02:03.120 were in the earlier versions seem to be
+00:02:05.280 ironed out.
+00:02:06.520 So, in today's video, I'm going to give
+00:02:08.399 you a breakdown of what the Kanban
+00:02:10.080 Kanban is
+00:02:11.320 and show you a live example of me
+00:02:13.840 actually using it for a workflow that I
+00:02:15.760 designed myself and that I use myself.
+00:02:18.400 And at the end, I will open source um
+00:02:21.120 the workflow, some of the key
+00:02:22.920 structures,
+00:02:24.200 and scripts needed for a generalized
+00:02:26.200 version, not my specific workflow, but
+00:02:28.320 one that can do work for you using the
+00:02:30.600 Kanban and using multiple agents. This
+00:02:32.800 video, I'm going to cover the Kanban
+00:02:33.959 board itself, how a fleet of agents
+00:02:35.600 coordinates without chaos.
+00:02:37.840 Uh the workflow that I set up just as a
+00:02:39.720 demonstration, right? And I'll show you
+00:02:41.720 how this actually works, how I set this
+00:02:43.440 up, and what it looks like in the Kanban
+00:02:45.600 here in the the dashboard. You can
+00:02:47.640 already see some
+00:02:49.040 some work has been done.
+00:02:53.360 And then at the end, I'll show you the
+00:02:54.440 finished deliverables.
+00:02:56.196 >> [snorts]
+00:02:56.360 >> So, first about the board.
+00:02:58.360 So, here's the hard thing about
+00:02:59.840 multi-agent systems that a lot of people
+00:03:01.480 experience. It isn't setting up the
+00:03:03.519 agents themselves, it's getting them to
+00:03:05.360 work together on one job without
+00:03:06.959 stepping each other.
+00:03:08.480 And this is really what the Kanban board
+00:03:11.040 is trying to solve.
+00:03:13.440 There have been many, many attempts at
+00:03:14.840 multi-agent systems and they've all had
+00:03:17.160 some success to a certain degree,
+00:03:19.480 but they all eventually run on the same
+00:03:20.800 issue is that how do you get them to
+00:03:22.640 work together without
+00:03:24.440 uh running to any conflicts with the
+00:03:26.760 work.
+00:03:27.800 So, without a Kanban board, you have
+00:03:29.200 agents racing around and doing duplicate
+00:03:31.200 work, wasting your tokens, wasting your
+00:03:33.320 money, right? No one has a shared memory
+00:03:35.560 of the progress and one crash loses
+00:03:37.600 everything. With the board,
+00:03:39.959 uh
+00:03:41.200 every unit of work is a card, like you
+00:03:43.440 saw, these different cards here.
+00:03:48.320 The agents claim it, work on it, and
+00:03:50.040 then hand it off. So, state leaves on
+00:03:51.760 the desk and it survives a restart. The
+00:03:54.080 board is a single source of truth.
+00:03:57.280 So, there's no chatting between the
+00:03:58.640 agents. There's no message queues or
+00:04:00.240 anything like that. Just the board that
+00:04:02.200 they all read and then write.
+00:04:04.320 So, this is the design of the board. I
+00:04:05.880 showed you the real thing right here.
+00:04:07.440 These different cards.
+00:04:10.800 But, this can kind of show you the
+00:04:11.920 concept.
+00:04:13.480 And these are all the different
+00:04:14.400 sub-agents. Builder agent has this to do
+00:04:16.358 to build a prototype. These two cards
+00:04:18.358 are ready, the researchers.
+00:04:20.160 This is the current one that's running,
+00:04:21.640 make a slide deck from the video
+00:04:23.080 producer agent. And these are the ones
+00:04:24.919 that are done.
+00:04:26.520 So, this is one SQLite file.
+00:04:29.240 That's the entire coordination layer.
+00:04:31.360 And it's the bus and audit log all in
+00:04:33.880 once.
+00:04:34.960 So, here's an example
+00:04:36.400 of a task.
+00:04:38.080 And they keep it very simple. It's just
+00:04:39.360 the title, what the task is, who's in
+00:04:41.560 charge of it, and what its status is.
+00:04:44.600 So, the assignee is for routing. A card
+00:04:46.919 assigned to the builder runs on the
+00:04:48.280 builder agent.
+00:04:49.680 So, this one is assigned to video
+00:04:51.440 producer, so it runs on that agent.
+00:04:54.000 And each of these agents are really just
+00:04:55.960 profiles inside of Hermes agent.
+00:04:59.560 We'll get into the profiles a little bit
+00:05:01.000 more, but it allows you to give
+00:05:02.760 different agents uh different models and
+00:05:05.640 different tasks.
+00:05:07.680 So, how does a card become a running
+00:05:09.120 agent? It's one loop and it's called the
+00:05:11.280 dispatcher.
+00:05:12.680 So, you can see this diagram from top to
+00:05:14.160 bottom. The board has a ready task.
+00:05:17.520 The dispatcher claims it.
+00:05:20.200 So, two never grab the same task, and it
+00:05:22.919 spawns the assigned agent in its own
+00:05:25.000 clean workspace.
+00:05:26.919 The agent then does whatever the work
+00:05:28.520 it's been tasked and then marks the card
+00:05:30.280 as done.
+00:05:31.919 And then it loops, so every tick
+00:05:34.240 continuously.
+00:05:35.720 And there's some really clever uh
+00:05:38.880 architecture to how this Kanban board
+00:05:41.000 works.
+00:05:42.200 Tasks can wait for each other
+00:05:44.240 automatically.
+00:05:46.360 So, you see these different cards. The
+00:05:48.520 card will sit in to do until its parents
+00:05:50.920 are finished. Then it promotes itself to
+00:05:53.520 ready.
+00:05:54.840 So this one task founds fans out to
+00:05:57.200 three research tasks.
+00:05:59.200 You verify the sources, pull prior
+00:06:01.160 context, audit existing solutions, and
+00:06:03.680 this all happens in parallel.
+00:06:07.000 And I hang out route task on all three
+00:06:08.840 of these.
+00:06:09.880 So the last So the moment the last one
+00:06:12.560 finishes, the route fires itself.
+00:06:16.040 So you have three agents working at once
+00:06:17.880 and the next step triggers itself. So
+00:06:20.360 there's no polling or no babysitting, no
+00:06:22.600 glue code holding it all together. It's
+00:06:24.680 all just done automatically.
+00:06:26.840 So why does this win as a multi-agent
+00:06:28.960 system? Why go through all this trouble?
+00:06:31.520 There's five things.
+00:06:33.000 One, it's more durable. It survives
+00:06:34.520 restarts and crashes. The board is on
+00:06:36.320 the desk. Everything here
+00:06:38.640 can be recovered.
+00:06:40.600 Uh parallel, you have many agent working
+00:06:42.919 at once all coordinated by one board.
+00:06:46.480 Event-driven,
+00:06:48.080 the work flows itself through the graph.
+00:06:50.600 There's no polling loops or anything
+00:06:51.919 like that.
+00:06:53.160 It's self-healing.
+00:06:54.919 A dead task gets reclaimed and then
+00:06:56.640 respawned.
+00:06:58.040 And it's auditable. Every claim,
+00:07:00.040 comment, and completion is fully logged,
+00:07:02.760 so you can go back and see exactly what
+00:07:04.680 happened and if there any kind of
+00:07:06.480 issues.
+00:07:08.000 Okay, so now I'm going to show you how
+00:07:08.960 this actually works with this workflow I
+00:07:10.840 designed myself. And I designed this
+00:07:13.320 uh in a combination of Claude and Obelus
+00:07:15.760 4.
+00:07:17.160 8 as well as with Hermes agent itself
+00:07:19.919 using GPT 5.5.
+00:07:22.720 So this was the problem that I want to
+00:07:24.600 solve. Find real pain points AI agent
+00:07:26.440 users hit, then do something about it.
+00:07:29.040 This is the pro- uh process. Detect, we
+00:07:31.960 have scout service complaints
+00:07:33.840 from across the web.
+00:07:35.320 Validate, score each against a rubric,
+00:07:37.440 drop the weak ones automatically. Route,
+00:07:39.440 build a fix or make a video explaining a
+00:07:41.840 solution, and then ship after exactly
+00:07:44.800 one human approval.
+00:07:47.200 And this is my fleet of agents that is
+00:07:49.240 going to make this workflow possible.
+00:07:52.000 Every agent here is just a profile on
+00:07:53.920 one machine.
+00:07:55.520 The two scouts on top here, one is doing
+00:07:57.680 research on X, and this one specifically
+00:08:00.360 has a Grok model. All the others are
+00:08:02.320 GPT-5.5 right now, but it can be
+00:08:05.120 whichever model you prefer.
+00:08:07.280 Uh there's also the web research scout,
+00:08:09.040 which checks uh Reddit, YouTube, the
+00:08:10.880 web.
+00:08:11.840 The orchestrator in the middle, who's
+00:08:13.320 kind of the central pipeline, this
+00:08:15.640 orchestrator is the judge and the
+00:08:16.840 driver. It runs everything.
+00:08:19.480 Then you got these workers. You have the
+00:08:20.720 researcher,
+00:08:21.919 uh analyst, builder, tester, and video
+00:08:24.560 producer.
+00:08:25.680 And these are all ones really doing the
+00:08:27.320 work. So, that's the main pipeline. You
+00:08:29.960 have scouts creating doing research and
+00:08:31.760 creating reports, orchestrator deciding
+00:08:35.000 what to do after that, and then all
+00:08:37.440 these other sub-agents doing the work
+00:08:39.559 based on that judgment.
+00:08:41.360 So, here's the full pipeline top to
+00:08:43.039 bottom.
+00:08:44.360 Got this nice little diagram you could
+00:08:45.960 see. Starts with the scouts, and this is
+00:08:49.080 done hourly
+00:08:51.360 or maybe every 2 hours, depending.
+00:08:54.560 Uh but this is a research on X and web,
+00:08:57.040 uh Reddit, etc. Then the orchestrator
+00:09:00.000 will intake those reports,
+00:09:03.280 and then it has to decide. It has to
+00:09:05.080 deduplicate. Obviously, you're going to
+00:09:06.520 run into a lot of the similar issues.
+00:09:08.440 So, it has to deduplicate anything it's
+00:09:09.920 already seen before. And then we created
+00:09:12.400 a rubric,
+00:09:13.720 and it was scoring
+00:09:15.520 based on how often the issue had been
+00:09:17.640 seen, if it was something that was
+00:09:19.400 actually fixable, if it was something
+00:09:20.960 temporary.
+00:09:22.560 We had a few different uh ways to
+00:09:24.200 measure this, but
+00:09:25.920 anything under a 65 out of 100, it was
+00:09:28.600 shelved and just not touched.
+00:09:30.920 So, after anything that passes this
+00:09:33.000 gate, goes to researcher agent, and
+00:09:35.600 there there's three of them like I
+00:09:37.040 showed you before, and they work in
+00:09:38.960 parallel to verify the issue, figure out
+00:09:41.560 the context and existing solutions. Then
+00:09:44.160 the orchestrator, once again, gets this
+00:09:46.280 report and decides to be build this, is
+00:09:49.400 this a tool that I can build?
+00:09:51.400 Uh should I explain it as a video idea?
+00:09:54.760 So people can overcome whatever issues
+00:09:57.080 they're facing or shelve it, is it just
+00:09:59.560 not usable for whatever reason.
+00:10:01.680 So then if it's a build idea, we have
+00:10:03.560 the analyst agent that synthesizes the
+00:10:05.760 information and then creates the idea in
+00:10:08.280 more detail.
+00:10:09.600 If it's the video idea, we have a video
+00:10:11.800 producer agent that does research on
+00:10:13.480 what it could do and creates an outline
+00:10:15.000 for me. Then, and this is very
+00:10:17.120 important, this is the one human gate.
+00:10:18.920 Everything else here happens
+00:10:20.000 autonomously. I'm not touching any of
+00:10:22.000 this.
+00:10:23.520 This human gate is very important and
+00:10:25.640 this comes out in Telegram
+00:10:27.560 and this is what it looks like. I'll
+00:10:29.200 show you in our live demo, but this is
+00:10:32.360 kind of what it shows. Four proposals
+00:10:34.480 are awaiting your approval.
+00:10:36.680 And it has each of the proposals. This
+00:10:39.080 case they're all video.
+00:10:40.800 And you have to approve them, shelve
+00:10:43.080 them or just modify them if you want to
+00:10:44.640 change the plan.
+00:10:46.080 But this is very important to keep. You
+00:10:48.040 could get rid of this, but I would not
+00:10:49.640 cuz I just don't want my agents wasting
+00:10:51.920 all my tokens and wasting a lot of money
+00:10:55.080 building random stuff. So you want to at
+00:10:57.280 least approve this decision.
+00:11:00.440 Because even after all of this, they're
+00:11:02.040 still going to have ideas
+00:11:03.960 and proposals that uh just don't make
+00:11:06.440 sense.
+00:11:08.000 So after you approve it, obviously if
+00:11:10.120 you shelve it, it goes away.
+00:11:12.120 Uh if you approve it, then it goes into
+00:11:14.360 a builder agent if it's a tool that I
+00:11:16.560 want to build
+00:11:18.040 and then a tester agent that tests
+00:11:20.400 whatever tool it is or skill, whatever
+00:11:22.480 I'm happening to make here. And the
+00:11:24.320 deliverable for this is usually either a
+00:11:25.960 script or skill.
+00:11:28.120 Um and for the video,
+00:11:30.440 it takes the concept, builds out a
+00:11:33.320 presentation slides and a script speaker
+00:11:35.680 notes for me to work on
+00:11:37.680 and then delivers it
+00:11:39.680 uh in the same thing, the same Telegram
+00:11:42.240 channel.
+00:11:43.280 Either the final code that it built here
+00:11:45.560 or the slides and speaker notes.
+00:11:48.440 So, that's the whole workflow and I have
+00:11:50.400 this actually working.
+00:11:52.000 Um whenever you get this, you usually
+00:11:54.240 get a decent product, but you still need
+00:11:56.040 to work on it, obviously,
+00:11:57.840 uh to mold it until it's actually ready
+00:12:00.360 for production.
+00:12:01.800 But, it at least gives you some kind of
+00:12:04.720 pretty decent starting point.
+00:12:07.160 Um and this is the judging rubric. Just
+00:12:09.200 want to show you this more in detail
+00:12:11.280 uh cuz this is important as well. This
+00:12:12.960 is the one we designed.
+00:12:14.920 And it's based on frequency of the
+00:12:16.680 issue, the pain intensity, how serious
+00:12:19.120 is this issue,
+00:12:20.400 is it solvable or explainable,
+00:12:22.680 uh what's the solution gap, and what's
+00:12:24.800 the strategic fit
+00:12:26.600 in terms of my channel and the the dev
+00:12:29.200 work that I do do.
+00:12:31.240 So, the bar for actually shipping and
+00:12:33.920 moving on to the next phase is 65. This
+00:12:36.480 is still still tweaking this a little
+00:12:38.240 bit, but I have found so far that this
+00:12:40.480 gets you at a good balance.
+00:12:42.360 And then once again, the orchestrator
+00:12:43.640 decides either to build it or try to
+00:12:45.960 make a video of it or just forget about
+00:12:48.440 it.
+00:12:49.960 Uh so, there is one human gate, like I
+00:12:52.320 talked about before, and this is the
+00:12:54.360 only place you're in the loop.
+00:12:56.400 Okay, so I'm going to run this for real
+00:12:57.960 so you can actually see it, not just me
+00:12:59.520 talking about it. And you'll see how it
+00:13:01.320 works in the Kanban. You'll see the
+00:13:03.080 cards popping up.
+00:13:04.960 And I will show you the full process
+00:13:06.839 start to finish.
+00:13:08.320 This is usually on a Chrome schedule,
+00:13:10.160 but I'm going to run it here so you can
+00:13:11.880 see everything work out.
+00:13:14.040 Okay, to get this started, we're going
+00:13:15.520 to have to do this orchestrator gateway
+00:13:17.920 run cuz we need the gateway to be
+00:13:19.880 running or the orchestrator is going to
+00:13:22.040 send us Telegram messages.
+00:13:24.440 And you can see it's got a warnings and
+00:13:26.560 stuff, but um this stuff's fine.
+00:13:30.200 And you might want to do this in like a
+00:13:32.360 tmux type of shell cuz this is going to
+00:13:34.520 be a long-running ongoing
+00:13:37.120 gateway run. So,
+00:13:39.120 you want to keep this alive.
+00:13:41.080 Okay, so I set this up as a cron, but I
+00:13:43.120 want to show you what the command would
+00:13:44.680 look like from the CLI cuz we're going
+00:13:46.080 to run it.
+00:13:47.200 Force it to run right now. So, this is X
+00:13:49.120 research research agent.
+00:13:52.480 And it's using the pain point scout
+00:13:54.480 skill.
+00:13:55.720 And the prompt is run one X pain point
+00:13:58.200 sweep now
+00:13:59.640 following the pain point scout X skill
+00:14:01.640 exactly.
+00:14:02.880 So, this is going to do the research
+00:14:04.240 run.
+00:14:05.200 And we will start to see
+00:14:07.120 um the Kanban board populate once this
+00:14:10.160 is is through. So, I'm also going to do
+00:14:11.840 this for the web scout as well.
+00:14:14.520 So, those are doing research and that'll
+00:14:16.040 take a little time. They are
+00:14:18.360 prompted to do pretty thorough research.
+00:14:21.640 And then once they have completed their
+00:14:23.920 reports, they're going to send them in
+00:14:25.200 and you're going to start to see the
+00:14:26.760 Kanban board populate.
+00:14:29.120 You see the scout agents are starting
+00:14:30.960 up.
+00:14:33.480 You see the sweep is complete. So, we
+00:14:35.440 should see task on the Kanban board and
+00:14:38.600 we do.
+00:14:39.520 See this was claimed by a worker. The
+00:14:41.240 orchestrator has taken this report from
+00:14:42.960 the X
+00:14:44.280 uh the X agent.
+00:14:47.080 And it's starting to work. The web agent
+00:14:48.880 is still working cuz it has more sources
+00:14:51.000 to kind of check over.
+00:14:52.640 So, you can see this is the block
+00:14:53.760 itself.
+00:14:55.640 I didn't find any qualifying pain points
+00:14:57.680 in this window.
+00:14:59.040 The X one is a little bit more narrow.
+00:15:00.880 We might be able to see more
+00:15:02.640 uh from the web
+00:15:04.320 scout.
+00:15:06.720 Hey, you see the web scout is is ready.
+00:15:10.440 Just just came in and this one actually
+00:15:12.600 does have a couple of candidates for
+00:15:14.480 issues.
+00:15:15.720 So, we'll see how the orchestrator
+00:15:18.000 judges them.
+00:15:19.400 It says six
+00:15:21.000 candidates and you can see them right
+00:15:22.440 here.
+00:15:26.760 And the nice thing like I said is this
+00:15:28.120 is all
+00:15:31.680 orderable. Like it has all these reports
+00:15:34.080 exist as markdown files.
+00:15:36.320 So if I wanted to go back and take a
+00:15:38.160 look at them myself, they're all here.
+00:15:42.360 So you can see the one
+00:15:43.960 extra report is it went into the done
+00:15:46.240 section down here because there's no
+00:15:48.000 there's no candidates, there's nothing
+00:15:49.280 to do.
+00:15:50.840 Now
+00:15:52.920 the web research report went from ready
+00:15:56.360 to in progress.
+00:15:57.920 So that's what I'm talking about with
+00:16:01.520 everything having a proper order to it.
+00:16:04.800 Nothing stumbling over itself. So let's
+00:16:06.920 see what the orchestrator does with this
+00:16:08.840 one.
+00:16:09.920 And there's a worker log down here so
+00:16:11.720 you can see what it's actually doing.
+00:16:14.880 You can see now the orchestrator is
+00:16:17.120 looking at these different issues.
+00:16:19.200 Specifically, these are all all six,
+00:16:21.720 right? Yeah, there were six candidate
+00:16:23.200 issues.
+00:16:24.240 So it's going to judge each of these to
+00:16:26.040 see
+00:16:29.839 if it's something that it can actually
+00:16:31.040 use. You can see it's working down here
+00:16:32.480 on it.
+00:16:34.320 And it's scoring it and doing the the
+00:16:36.360 deduplication.
+00:16:41.000 I originally set this up to be hourly,
+00:16:42.440 but it probably doesn't need to be
+00:16:43.640 hourly. I think that's probably
+00:16:45.280 overkill.
+00:16:46.520 Maybe a couple times a day.
+00:16:50.240 You can see it's panning out even more.
+00:16:52.240 Look at all this stuff in progress. The
+00:16:53.720 researcher sub agents have been
+00:16:55.880 launched. Can you see this? Can you see
+00:16:57.200 this? Can you see this?
+00:16:58.640 Here, made it a little bit bigger.
+00:17:00.360 The researcher agents have been
+00:17:04.160 out like I said there's three of them
+00:17:05.640 per
+00:17:07.400 per issue. So source verifyer verifying
+00:17:10.160 the source issues.
+00:17:12.359 Researching the context around it and
+00:17:14.160 any existing solutions. So you have each
+00:17:16.199 of these
+00:17:18.079 now in work.
+00:17:24.280 So, these are all researcher agents. 18,
+00:17:27.000 we have 18 workers
+00:17:29.000 all working together in parallel without
+00:17:31.120 tripping on each other.
+00:17:33.000 And that's really the beauty of this
+00:17:34.120 system.
+00:17:37.440 And you can see the previous tasks are
+00:17:38.920 all in the done
+00:17:40.720 uh
+00:17:42.360 card
+00:17:43.520 or group.
+00:17:45.040 So, the orchestrator finished that work
+00:17:46.680 and now it's up to the researcher.
+00:17:49.360 You could see the orchestrator now has
+00:17:50.920 several to-dos as well.
+00:17:53.440 And this is routing these issues
+00:17:56.200 uh
+00:17:57.360 to me
+00:17:58.720 in the Telegram once these researchers
+00:18:00.480 are are finished.
+00:18:02.440 You can see they're starting to finish
+00:18:03.520 their work. So, once
+00:18:05.160 all three of the researchers per issue
+00:18:07.000 are done,
+00:18:08.760 I
+00:18:10.280 it'll go over here to the to-do.
+00:18:13.800 And once everything is done, it'll send
+00:18:15.440 me the message in Telegram.
+00:18:17.200 So, you could see in this to-do
+00:18:19.560 a little bit more specifically about
+00:18:21.000 what it's doing. When all the parent
+00:18:22.760 research lines are done, which are the
+00:18:24.200 three that I showed before,
+00:18:26.040 so this will make the judgment, right?
+00:18:28.520 Is this something we build?
+00:18:30.800 Uh is it good for a video?
+00:18:33.200 Or do we shelve it?
+00:18:34.720 And then it'll move on
+00:18:36.720 to this ready. Now, there were two ready
+00:18:38.720 and I guess those were they finished.
+00:18:41.480 You see it's moving along nicely. So,
+00:18:43.200 after the to-do, then it goes to ready.
+00:18:45.400 And then the agent orchestrator, I
+00:18:47.200 should say, orchestrator agent makes the
+00:18:49.200 judgment.
+00:18:51.280 You can see more more tasks are in the
+00:18:53.240 done pile here.
+00:18:58.120 Um so, you can actually see this by
+00:19:00.680 agent here
+00:19:01.960 as we have a couple different agents in
+00:19:03.520 process.
+00:19:04.960 Um
+00:19:06.880 you could see the researchers are still
+00:19:08.560 working on the research down to six
+00:19:10.400 tasks. And the orchestrator up here has
+00:19:12.520 two tasks of its own.
+00:19:14.520 So, a lot going on here, but this is all
+00:19:17.400 happening without me touching anything.
+00:19:19.360 Once I have this set up, it all happens
+00:19:20.880 automatically. It's all automated.
+00:19:24.040 So, this is the one that's in progress
+00:19:25.440 right now. It's reading the reports and
+00:19:28.040 judging which path we're going to take
+00:19:30.040 here.
+00:19:31.000 You see this one moved over to ready.
+00:19:35.440 And this is the video producer. So, I
+00:19:37.840 guess one of them did get through this
+00:19:39.600 issue
+00:19:40.640 Cloud code sub agents fail when many MCP
+00:19:43.120 tools are configured.
+00:19:44.760 So, that would be a good. So, the
+00:19:46.400 orchestrator decided this would be a
+00:19:47.560 good for a video.
+00:19:50.040 So, now the video researcher is
+00:19:52.760 researching the current existing
+00:19:54.120 solutions
+00:19:55.360 and then creating a outline for me to
+00:19:57.440 approve.
+00:20:00.000 We should be getting Telegram messages
+00:20:01.520 soon.
+00:20:02.680 You see they're moving in.
+00:20:04.840 With ready, the analyst is synthesizing
+00:20:06.800 the problem.
+00:20:09.360 Um so, this is actually this got to a
+00:20:10.840 build path. So, this is actually
+00:20:12.360 considering building a tool or skill.
+00:20:15.840 Um and this is for Codex uh VS Code
+00:20:18.440 extension ignores config uh tunnel
+00:20:21.520 changes.
+00:20:22.880 So, now it's analyzing this issue and
+00:20:25.040 trying to come up with a solution.
+00:20:28.280 So, we should be able to see both video
+00:20:31.200 proposals and a build proposal.
+00:20:34.560 And the nice thing is this is all very
+00:20:35.960 visual. Like, you can very clearly see
+00:20:37.920 what's happening
+00:20:39.240 even though I'm not doing anything. You
+00:20:40.480 can see analyst is in progress,
+00:20:41.800 orchestrator, researcher,
+00:20:44.240 video producer. We now got four uh
+00:20:46.720 four agents all working in parallel all
+00:20:49.080 together.
+00:20:51.480 Everything's in progress. They're all
+00:20:53.240 working together, but they're working on
+00:20:54.400 different problems, so they don't step
+00:20:56.240 over each other.
+00:21:00.680 So, going back to this diagram, we're
+00:21:02.040 now in this phase, right? Next one,
+00:21:04.720 they'll be sending it to me to decide if
+00:21:06.840 they want to go through with it.
+00:21:12.480 Okay, you can see some of the video
+00:21:13.520 outlines are ready.
+00:21:17.760 And then
+00:21:19.200 it'll be assigned
+00:21:21.040 uh to the orchestrator to send it to me
+00:21:23.160 in Telegram when everything is ready.
+00:21:26.200 Okay, we can see it starting to get
+00:21:27.560 proposals here. This is in Telegram
+00:21:29.960 uh with my Hermes agent
+00:21:32.000 Bulls here, you remember from
+00:21:34.320 Agent Trench's trial.
+00:21:36.440 Uh Bulls is my Hermes agent
+00:21:38.760 on this device. But the first build
+00:21:41.080 proposal is building a tool
+00:21:43.600 uh
+00:21:44.440 and the pain point is the Codex VS Code
+00:21:46.760 extension users report safety critical
+00:21:49.240 mismatch
+00:21:51.400 uh between their intended config camel
+00:21:53.440 approval settings and the IDE
+00:21:55.200 extension's behavior.
+00:21:57.080 So
+00:21:58.800 it did Here's the sources in GitHub.
+00:22:02.160 So why build it?
+00:22:03.800 And giving it the reasons, it seems to
+00:22:06.040 be a frequent issue. Existing solutions
+00:22:08.040 are broken.
+00:22:10.080 Uh bounded build scope. So what they
+00:22:12.560 would want to build is a Python script
+00:22:14.440 under 500 lines.
+00:22:16.600 Um which is what we want. We don't want
+00:22:18.920 like full, you know,
+00:22:20.960 API thing.
+00:22:24.000 So this is the proposed solution. Build
+00:22:25.920 a local Codex VS Code safety config
+00:22:28.680 verifier set CLI.
+00:22:31.560 Um it would inspect likely codec config
+00:22:33.920 locations across Linux WSL and Windows
+00:22:37.120 home paths.
+00:22:39.000 Uh should explicitly avoid claiming the
+00:22:41.280 CLI enforcement
+00:22:43.440 through VS Code extension enforcement.
+00:22:44.920 Okay.
+00:22:46.880 So
+00:22:48.880 So this is the build proposal and it has
+00:22:51.400 a pretty good outline, you can see,
+00:22:53.880 uh written by the agent.
+00:22:56.720 So this is how you would reply to it,
+00:22:59.400 how I've designed it. You just simply do
+00:23:01.920 approve, you just say approve this.
+00:23:06.240 If you don't want to do it, you can just
+00:23:07.360 do shelf. You can add a reason if you
+00:23:09.360 want to check the logs later, or you
+00:23:10.920 could just modify the plan.
+00:23:13.760 Um
+00:23:19.800 Let's Let's build it just for a demo
+00:23:21.360 here.
+00:23:22.520 So, I'll do approve so you can see how
+00:23:24.960 it builds.
+00:23:28.480 So, you could see while we got that
+00:23:29.560 report, it's still working on the
+00:23:31.920 issues. Oh, you could see
+00:23:34.280 in real time the builder started working
+00:23:35.960 on that prototype build.
+00:23:38.120 So, this is connected with Telegram, but
+00:23:40.280 only through the orchestrator
+00:23:42.200 and only through the one
+00:23:44.280 gateway here.
+00:23:47.800 So, post approval build chain
+00:23:50.520 prototype build builder ready, tester,
+00:23:53.200 and then final report and the final
+00:23:55.440 deliverable, which I think in this case
+00:23:56.880 it's going to be a script, a CLI
+00:24:00.080 um that I can work
+00:24:02.360 I can test out myself. I do have Codex.
+00:24:05.960 I don't think I have the VS Codex
+00:24:07.080 extension, but I can probably test this
+00:24:08.480 out myself. Okay, we got more proposals
+00:24:10.680 here in Telegram. The cloud code sub
+00:24:12.360 agents fail
+00:24:13.880 when many MCP tools are configured. So,
+00:24:16.120 this is a video proposal. The existing
+00:24:18.520 solution, there's not one simple guide,
+00:24:20.640 but there are usable pieces spread
+00:24:22.200 across Anthropic's docs.
+00:24:24.880 So, why a video would help specific
+00:24:26.600 friction, users see many silent-looking,
+00:24:28.680 you know, sub agent exits.
+00:24:31.000 Instead of understanding the sub agent
+00:24:32.520 was born with a giant MCP tool manual in
+00:24:34.640 its prompt.
+00:24:36.480 So, this is a proposed video.
+00:24:38.800 So, it would be a guide for people.
+00:24:42.480 Um
+00:24:44.080 Take a look at this.
+00:24:46.360 These are all the sources.
+00:24:48.040 You see a lot of people having issues
+00:24:49.320 with this.
+00:24:50.400 Might be a good video.
+00:24:52.960 So, just for an example, you could see
+00:24:54.480 we already did the build one. Let's
+00:24:55.760 approve this one as well.
+00:24:58.760 Uh
+00:24:59.320 so, approve this so you can see both of
+00:25:01.440 the pipelines.
+00:25:08.600 So, it's approving this as a video. So,
+00:25:10.200 it's going to go back and research.
+00:25:16.560 So, this is the next approval, right?
+00:25:18.320 Yeah, cloud code sub agents, silent
+00:25:20.800 leave fail rights and MCP calls.
+00:25:24.640 Okay, so you can see it's approved here.
+00:25:27.080 And the video producer is starting to
+00:25:29.600 work on it.
+00:25:31.160 And it's based on the research, it's
+00:25:32.480 going to go once more over the research.
+00:25:35.360 So, now we're seeing the human gate has
+00:25:37.800 gone through. I approved two of them.
+00:25:39.560 Right now, it's building and we have
+00:25:41.080 another
+00:25:42.200 uh pipeline creating slides and a script
+00:25:44.600 based on the research.
+00:25:48.720 This is during the testing phase, but I
+00:25:50.520 just wanted to show you this cuz I
+00:25:51.840 thought it was interesting. So, one of
+00:25:53.480 the features about this set up with the
+00:25:55.520 orchestrator agent
+00:25:57.280 is that it has this kind of self-healing
+00:26:00.000 factor to it and it's one of the reasons
+00:26:01.720 why you want a model
+00:26:03.960 uh in the loop, several models actually.
+00:26:07.360 Because in this testing phase, I have
+00:26:10.320 this ironed out by now.
+00:26:12.080 Uh but it had delivered the slides for
+00:26:15.120 the video concept. But the slides have
+00:26:18.200 been you can see the problem here.
+00:26:20.880 Um the approved post gate slides and
+00:26:23.000 script were written to scratch task work
+00:26:24.960 places that are no longer present.
+00:26:28.240 And they're just like temporary work
+00:26:30.000 places.
+00:26:31.000 So, the final delivery cannot reference
+00:26:32.880 real files. These are just temporary.
+00:26:35.600 So, it realized this it was an issue.
+00:26:39.080 And I didn't tell it this, it did this
+00:26:40.720 autonomously. It
+00:26:43.040 had this self-healing function where it
+00:26:44.800 regenerated the video slide deck again
+00:26:47.280 to a persistent output directory.
+00:26:49.600 So, this This a bug
+00:26:51.360 that I will have fixed by the time you
+00:26:53.680 look at this actual code base and in my
+00:26:56.080 primary example, but I just wanted to
+00:26:57.480 show you this this is during testing
+00:26:59.600 uh cuz this is built in.
+00:27:01.560 This specific issue has been solved, but
+00:27:04.160 if you run into any issues with the
+00:27:05.640 deliverables,
+00:27:07.200 um it has this kind of recovery function
+00:27:09.520 recovery task
+00:27:11.280 uh that is is very useful.
+00:27:15.560 Okay, so let's let those build out.
+00:27:18.760 And you see the outline of the video
+00:27:20.040 they're describing here and based on
+00:27:21.800 this research,
+00:27:23.800 uh first lever is verify modern tool
+00:27:25.960 search, second stop giving every sub
+00:27:27.640 agent every tool. So there's allow list
+00:27:29.840 for custom sub agents.
+00:27:32.720 So this is something where a solution
+00:27:34.880 exists, it's just not always clear. So
+00:27:37.040 having a video
+00:27:38.360 um would make it more clear for people.
+00:27:42.000 And this is why I designed this pipeline
+00:27:43.560 because I wouldn't know this problem
+00:27:45.320 existed. It's not something I've been
+00:27:46.840 encountering myself,
+00:27:48.240 but clearly a lot of people have been
+00:27:49.480 dealing with it.
+00:27:50.800 So as a content creator and trying to
+00:27:53.080 educate, having seen what people are
+00:27:55.360 struggling with is a really good source
+00:27:57.720 to try to make videos and content that's
+00:28:00.600 really helpful for people.
+00:28:02.320 So if there's a proposal you don't want,
+00:28:03.600 you just do shelf here
+00:28:05.640 and you can add a reason like I said.
+00:28:08.760 And this will shelf.
+00:28:11.000 We're only going to do the two uh
+00:28:14.120 the two uh builds that I showed you, the
+00:28:15.800 one build in one of the video.
+00:28:19.520 And you see this was shelved and that'll
+00:28:22.120 take it off the Kanban
+00:28:23.600 and put it into done.
+00:28:26.400 Okay, so the builder this is in blocked,
+00:28:28.480 but it's not really blocked. It just
+00:28:29.680 needs my input. You can see it actually
+00:28:31.720 did under here
+00:28:33.360 uh it built the CLI, the config verifier
+00:28:36.240 CLI, plus a readme report template. All
+00:28:38.680 the tests passed and the artifacts are
+00:28:40.720 on persistent workspace. So it's in
+00:28:42.840 blocked, but it just needs me to
+00:28:44.640 double-check it.
+00:28:46.240 Uh but it did build
+00:28:47.960 the, I guess this is a a CLI tool.
+00:28:51.200 So, let's check it out.
+00:28:52.800 So, it wrote out a nice read me for the
+00:28:54.920 tool here.
+00:28:56.360 So, with a quick start. So, I could very
+00:28:58.280 easily like open source this.
+00:29:00.560 So, that'd probably be the next step.
+00:29:02.240 Yeah, and it's just a Python script
+00:29:03.600 here.
+00:29:05.120 So, this auto discovers likely config
+00:29:06.880 paths
+00:29:09.400 for uh Codex VX code configs.
+00:29:12.720 Okay, I ran the script and this is
+00:29:14.800 uh it creates only a report. It doesn't
+00:29:16.480 modify anything, which is good. Uh, but
+00:29:19.400 it basically tries to inspect candidate
+00:29:22.040 config.toml paths,
+00:29:24.280 redacts likely secrets, and records
+00:29:26.120 policy values, uh
+00:29:28.200 user-intended Codex to use.
+00:29:30.680 So, this is the result. I don't have any
+00:29:32.520 configs uh for this specific extension,
+00:29:35.520 but it did find the paths, right?
+00:29:38.320 I found a couple paths here.
+00:29:41.360 So, it's not going to completely solve
+00:29:42.840 the issue, but it's at least a tool you
+00:29:44.360 can use to
+00:29:46.280 uh start to address it.
+00:29:48.120 So, like actually building tools, and
+00:29:49.600 this one was a little bit complicated,
+00:29:50.880 but
+00:29:51.880 uh it's not quite easy to one-shot it,
+00:29:54.200 but this at least gives you a good
+00:29:55.640 starting point
+00:29:57.120 because all the research into the issue
+00:29:59.440 has been done, and it you have at least
+00:30:01.440 have a a template
+00:30:04.000 or a basic foundation for the tool that
+00:30:06.400 you're trying to write.
+00:30:07.800 So, we verified that the test works, so
+00:30:09.760 then you would just go in here and
+00:30:10.800 unblock this.
+00:30:13.360 And you see it went into ready.
+00:30:16.200 So, we could see everything else
+00:30:17.240 finished working.
+00:30:18.680 Um
+00:30:22.400 the tester
+00:30:23.640 still needs to test.
+00:30:26.720 And then we have a final report for
+00:30:28.200 that. I think the
+00:30:30.040 the video one finished while we were
+00:30:31.600 messing around with that. Without
+00:30:33.040 looking anywhere, the nice thing about
+00:30:34.360 Kanban is I could just look here in the
+00:30:35.520 done, and I could see this card,
+00:30:37.800 and it is uh finished.
+00:30:41.200 So, let's see what it came up with for
+00:30:43.240 this is this is a video task.
+00:30:46.760 Here we go. It created the slides.
+00:30:49.280 These aren't as beautiful as my my usual
+00:30:51.800 slides. So, I guess that this is just a
+00:30:55.000 a starting off point, but this is based
+00:30:57.080 on all the research.
+00:30:59.440 Our sub-agent did nothing or did it die
+00:31:01.400 before birth? So, this is kind of
+00:31:02.920 explaining a problem where a solution
+00:31:04.680 does exist,
+00:31:06.320 but it's not always clear what it is.
+00:31:10.320 So, like I said, this is not something I
+00:31:12.080 would just put out without reviewing it.
+00:31:14.400 I would have to look closely at the
+00:31:15.960 research it did, uh look at the slide,
+00:31:19.080 certainly improve the visuals a little
+00:31:20.520 bit. Well, it doesn't look that bad.
+00:31:23.200 And then decide how to tweak it from
+00:31:25.360 here, but at least gives me a really
+00:31:27.080 great, um
+00:31:28.720 starting point.
+00:31:30.200 And you can see the final step there is
+00:31:31.480 it in the Telegram.
+00:31:33.760 Just in case I'm out and about, I can't
+00:31:35.160 look at the Kanban itself. It gave me
+00:31:37.120 the final video deliverable message
+00:31:39.280 here. Telling me deliverables actually
+00:31:42.000 are. Gives me a fact sheet, final
+00:31:43.960 handoff, markdown file, the slides, a
+00:31:47.160 script to go with it.
+00:31:49.080 And there you go.
+00:31:50.960 So, you could do this all just by those
+00:31:53.520 one command, basically the one approval,
+00:31:56.880 and you would have this really nice, uh
+00:31:59.000 foundation.
+00:32:00.360 And you can see we got our two
+00:32:01.720 deliverables.
+00:32:03.160 Uh see all the tasks we're up to 97
+00:32:04.800 tasks done in that one run.
+00:32:06.960 So, this is an autonomous system and it
+00:32:08.560 all starts based on those two scout
+00:32:11.080 researchers,
+00:32:12.480 who you can set up on a cron job. Like I
+00:32:14.080 said, I would probably do this maybe
+00:32:15.480 daily,
+00:32:16.800 maybe two times a day tops. Don't know
+00:32:19.280 how often these kind of pain points come
+00:32:21.480 up for people. Feels like a lot, but
+00:32:23.600 maybe not so much.
+00:32:25.280 Uh but this is an entirely autonomous
+00:32:28.000 setup,
+00:32:29.560 except for the one human gate.
+00:32:31.920 So, that's going to be it. I hope, uh
+00:32:34.080 you enjoyed seeing this kind of setup.
+00:32:36.120 There's a lot of different ways to
+00:32:38.520 design this, connect it to your own
+00:32:40.720 workflows so that you can have
+00:32:42.640 researchers and you have agents building
+00:32:44.400 stuff
+00:32:45.480 without any kind of breakdowns, any kind
+00:32:47.880 of duplication or agents working over
+00:32:51.280 each other, stumbling over each other,
+00:32:52.640 breaking stuff. You saw everything ran
+00:32:55.240 start to finish without anything
+00:32:56.760 breaking.
+00:32:58.000 And if something does break,
+00:33:00.640 you saw that self-healing element to
+00:33:02.880 itself that it automatically
+00:33:05.320 noticed there was an issue and then
+00:33:06.760 fixed it, which is pretty pretty
+00:33:08.400 incredible.
+00:33:10.040 And if you want to try this out
+00:33:11.200 yourself, I have open-sourced this
+00:33:12.840 workflow. I made it a generalized
+00:33:14.440 version
+00:33:15.560 so that you can adapt it to whatever
+00:33:17.960 purpose you have. It's under Tombi
+00:33:20.240 Studio Hermes multi-agent workflow.
+00:33:24.200 So you'll have to work on this with your
+00:33:25.880 agent to get it to exactly what you
+00:33:27.840 want, but the skeleton is all here and
+00:33:30.040 it does the same basic path, right?
+00:33:32.720 Where you do some sort of research,
+00:33:35.120 you do some type of scoring, and then
+00:33:37.080 you take that research and decide
+00:33:38.920 there's a couple different paths about
+00:33:40.520 preparing to do some type of action. And
+00:33:42.400 there's a human gate in the middle to
+00:33:43.640 actually approve the action. So that's
+00:33:45.680 the idea, the same workflow, but you can
+00:33:47.440 just adapt it to whatever purpose you
+00:33:49.000 have.
+00:33:52.360 So that's going to be it for this video.
+00:33:53.440 Please leave a comment. Let me know what
+00:33:55.080 kind of
+00:33:56.480 multi-agent setups you have, what kind
+00:33:58.520 of purpose
+00:34:00.120 or workflows that you're working on.
+00:34:02.840 I know these are very interesting, but
+00:34:04.880 can be very difficult, very brittle. So
+00:34:07.440 we're always trying to find ways to make
+00:34:08.879 them
+00:34:10.080 more durable.
+00:34:11.520 And if you like this video,
+00:34:13.320 please leave a like. Please subscribe.
+00:34:15.040 I'll be doing a lot more work in this
+00:34:16.719 kind of multi-agent setup agentic
+00:34:19.719 workflow space cuz I think there's a lot
+00:34:21.879 of room here. But that's going to be it
+00:34:23.520 for this video. This one ran a bit
+00:34:25.120 longer than my usual videos, but I think
+00:34:27.600 it was worth it. And I will see you in
+00:34:29.639 the next one. Thank you for watching.

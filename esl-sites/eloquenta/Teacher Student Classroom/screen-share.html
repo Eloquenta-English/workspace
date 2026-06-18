@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Screen Share — Teacher Student Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0f1a;--bg2:#111827;--bg3:#1e293b;--border:#374151;--text:#f1f5f9;--dim:#94a3b8;--muted:#64748b;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--rose:#fb7185}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow:hidden;height:100vh;height:100dvh}
+.header{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg2);border-bottom:1px solid var(--border);height:44px;flex-shrink:0}
+.back{color:var(--dim);text-decoration:none;font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px;border:1px solid var(--border);white-space:nowrap}
+.back:hover{color:var(--cyan);border-color:var(--cyan)}
+.title{font-size:14px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Layout */
+.layout{display:flex;flex:1;overflow:hidden;height:calc(100dvh - 44px)}
+
+/* Toolbar - responsive */
+.toolbar{width:48px;min-width:48px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:6px 0;gap:2px;flex-shrink:0;overflow-y:auto}
+.tool-btn{width:36px;height:36px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--dim);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;position:relative;-webkit-tap-highlight-color:transparent}
+.tool-btn:hover{background:var(--bg3);color:var(--text)}
+.tool-btn.active{background:rgba(34,211,238,.12);color:var(--cyan);border-color:rgba(34,211,238,.25)}
+.tool-btn .tooltip{display:none}
+.tool-sep{height:1px;background:var(--border);width:24px;margin:2px 0}
+
+/* Main */
+.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;min-width:0}
+
+/* Start state */
+.start-state{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:10;background:var(--bg);padding:20px}
+.start-state h2{font-size:1.3rem;font-weight:800;text-align:center}
+.start-state p{color:var(--dim);max-width:320px;text-align:center;font-size:13px}
+.start-state .hint{font-size:11px;color:var(--muted);margin-top:4px;text-align:center}
+.mobile-warning{display:none;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--amber);max-width:320px;text-align:center;margin-top:8px}
+.share-btn{height:44px;padding:0 28px;border-radius:10px;background:var(--cyan);border:none;color:var(--bg);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.share-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(34,211,238,.3)}
+.share-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.stop-btn{background:var(--rose);color:#fff}
+.stop-btn:hover{box-shadow:0 4px 16px rgba(251,113,135,.3)}
+
+/* Video */
+.video-wrap{flex:1;display:none;align-items:center;justify-content:center;background:#000;position:relative;overflow:hidden;min-height:0}
+.video-wrap.active{display:flex}
+.video-wrap video{max-width:100%;max-height:100%;width:100%;height:100%;object-fit:contain}
+
+/* Canvas overlay */
+.ann-canvas{position:absolute;inset:0;cursor:crosshair;z-index:5;touch-action:none}
+
+/* Bottom bar - responsive */
+.bottom-bar{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--bg2);border-top:1px solid var(--border);flex-wrap:wrap;flex-shrink:0}
+.status{font-size:11px;color:var(--muted);white-space:nowrap}
+.status.recording{color:var(--rose)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);display:inline-block;margin-right:4px}
+.status.recording .status-dot{background:var(--rose);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* Color palette */
+.color-palette{display:flex;gap:3px;flex-wrap:wrap}
+.color-swatch{width:20px;height:20px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.color-swatch:hover{transform:scale(1.15)}
+.color-swatch.active{border-color:var(--text)}
+
+/* Brush */
+.brush-size{display:flex;align-items:center;gap:4px}
+.brush-size input{width:50px;accent-color:var(--cyan)}
+.brush-preview{width:16px;height:16px;border-radius:50%;background:var(--cyan);flex-shrink:0}
+
+/* Error */
+.error-msg{display:none;text-align:center;padding:30px}
+.error-msg.show{display:block}
+.error-msg h2{font-size:1.1rem;margin-bottom:8px}
+.error-msg p{color:var(--dim);font-size:13px}
+
+/* Mobile text input modal */
+.text-input-modal{display:none;position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:20px}
+.text-input-modal.show{display:flex}
+.text-input-box{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;width:100%;max-width:320px}
+.text-input-box input{width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:(--text);font-size:14px;outline:none;margin-bottom:10px}
+.text-input-box input:focus{border-color:var(--cyan)}
+.text-input-box .btns{display:flex;gap:8px;justify-content:flex-end}
+.text-input-box button{padding:6px 16px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px;cursor:pointer}
+.text-input-box button.primary{background:var(--cyan);color:var(--bg);border-color:var(--cyan)}
+
+/* Mobile: bottom toolbar */
+@media(max-width:600px){
+  .toolbar{position:fixed;bottom:0;left:0;right:0;width:auto;height:52px;flex-direction:row;justify-content:center;gap:2px;padding:4px 8px;z-index:30;border-right:none;border-top:1px solid var(--border);overflow-x:auto}
+  .tool-btn{width:32px;height:32px;font-size:12px}
+  .tool-sep{width:1px;height:20px;margin:0 2px}
+  .main-area{padding-bottom:52px}
+  .bottom-bar{bottom:52px}
+  .mobile-warning{display:block}
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <a href="index.html" class="back">&larr; Back</a>
+  <div class="title">Screen Share &amp; Annotate</div>
+</div>
+
+<div class="layout">
+  <div class="toolbar" id="toolbar" style="display:none">
+    <button class="tool-btn active" data-tool="select">&#10022;</button>
+    <button class="tool-btn" data-tool="pen">&#9999;</button>
+    <button class="tool-btn" data-tool="highlighter">&#128337;</button>
+    <button class="tool-btn" data-tool="line">&#9472;</button>
+    <button class="tool-btn" data-tool="arrow">&#8594;</button>
+    <button class="tool-btn" data-tool="rect">&#9633;</button>
+    <button class="tool-btn" data-tool="circle">&#9675;</button>
+    <button class="tool-btn" data-tool="text">&#65;</button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" data-tool="eraser">&#9003;</button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" onclick="clearAnnotations()">&#10005;</button>
+    <button class="tool-btn" onclick="undoAnnotation()">&#8630;</button>
+  </div>
+
+  <div class="main-area">
+    <div class="start-state" id="startState">
+      <h2>Screen Share &amp; Annotate</h2>
+      <p>Share your screen and draw on it in real time. Perfect for teaching and demonstrations.</p>
+      <div class="mobile-warning" id="mobileWarning">
+        Screen sharing is not available on mobile browsers. Use a desktop browser (Chrome, Edge, or Firefox) for full functionality.
+      </div>
+      <button class="share-btn" id="shareBtn" onclick="startShare()">Share Screen</button>
+      <p class="hint">Your browser will ask you which screen or window to share</p>
+    </div>
+
+    <div class="error-msg" id="errorMsg">
+      <h2 style="margin-bottom:8px">Screen Sharing Not Available</h2>
+      <p>Screen sharing requires a supported browser (Chrome, Edge, or Firefox) and HTTPS or localhost.</p>
+    </div>
+
+    <div class="video-wrap" id="videoWrap">
+      <video id="screenVideo" autoplay playsinline webkit-playsinline></video>
+      <canvas class="ann-canvas" id="annCanvas"></canvas>
+    </div>
+
+    <div class="bottom-bar" id="bottomBar" style="display:none">
+      <div class="status" id="shareStatus"><span class="status-dot"></span>Sharing</div>
+      <div class="brush-size" id="brushControls" style="display:none">
+        <div class="brush-preview" id="brushPreview"></div>
+        <input type="range" id="brushSize" min="1" max="20" value="3" oninput="updateBrush()">
+      </div>
+      <div class="color-palette" id="colorPalette"></div>
+      <button class="share-btn stop-btn" style="height:30px;padding:0 14px;font-size:12px" onclick="stopShare()">Stop</button>
+      <button class="share-btn" style="height:30px;padding:0 14px;font-size:12px" onclick="saveAnnotation()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile text input modal -->
+<div class="text-input-modal" id="textModal">
+  <div class="text-input-box">
+    <input type="text" id="textInput" placeholder="Enter annotation text...">
+    <div class="btns">
+      <button onclick="cancelText()">Cancel</button>
+      <button class="primary" onclick="confirmText()">Add</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var stream=null,canvas,ctx,tool='select',drawing=false;
+var colors=['#22d3ee','#34d399','#fbbf24','#fb7185','#a78bfa','#f1f5f9','#64748b','#ef4444'];
+var annColor='#22d3ee';
+var brushSize=3;
+var undoStack=[];
+var startX,startY;
+var isMobile=false;
+
+// Detect mobile
+function detectMobile(){
+  isMobile=/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)||(navigator.maxTouchPoints&&navigator.maxTouchPoints>1);
+  if(isMobile){
+    document.getElementById('mobileWarning').style.display='block';
+    // Disable share button on mobile since getDisplayMedia isn't supported
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getDisplayMedia){
+      document.getElementById('shareBtn').disabled=true;
+      document.getElementById('shareBtn').textContent='Desktop Only';
+    }
+  }
+}
+
+// Color palette
+(function(){
+  var pal=document.getElementById('colorPalette');
+  colors.forEach(function(c,i){
+    var s=document.createElement('div');
+    s.className='color-swatch'+(i===0?' active':'');
+    s.style.background=c;
+    s.addEventListener('click',function(){
+      annColor=c;
+      document.querySelectorAll('.color-swatch').forEach(function(x){x.classList.remove('active');});
+      s.classList.add('active');
+      updateBrush();
+    });
+    pal.appendChild(s);
+  });
+})();
+
+function updateBrush(){
+  brushSize=parseInt(document.getElementById('brushSize').value);
+  var pv=document.getElementById('brushPreview');
+  pv.style.width=Math.max(8,brushSize*2)+'px';
+  pv.style.height=Math.max(8,brushSize*2)+'px';
+}
+
+// Tool selection
+document.querySelectorAll('.tool-btn[data-tool]').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.tool-btn[data-tool]').forEach(function(b){b.classList.remove('active');});
+    this.classList.add('active');
+    tool=this.dataset.tool;
+    var pen=['pen','highlighter','eraser'];
+    document.getElementById('brushControls').style.display=pen.includes(tool)?'flex':'none';
+    canvas.style.cursor=tool==='select'?'default':tool==='text'?'text':'crosshair';
+  });
+});
+
+// ═══ SCREEN SHARE ═══
+function startShare(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getDisplayMedia){
+    document.getElementById('errorMsg').classList.add('show');
+    return;
+  }
+  var constraints={
+    video:{cursor:'always'},
+    audio:false
+  };
+  // Try to get display media
+  navigator.mediaDevices.getDisplayMedia(constraints).then(function(s){
+    stream=s;
+    var video=document.getElementById('screenVideo');
+    video.srcObject=s;
+    // iOS needs this
+    video.setAttribute('playsinline','');
+    video.setAttribute('webkit-playsinline','');
+    document.getElementById('startState').style.display='none';
+    document.getElementById('videoWrap').classList.add('active');
+    document.getElementById('bottomBar').style.display='flex';
+    document.getElementById('toolbar').style.display='flex';
+    setupCanvas();
+    s.getVideoTracks()[0].onended=function(){stopShare();};
+  }).catch(function(err){
+    console.error('Share error:',err);
+    document.getElementById('errorMsg').classList.add('show');
+  });
+}
+
+function stopShare(){
+  if(stream){stream.getTracks().forEach(function(t){t.stop();});stream=null;}
+  document.getElementById('screenVideo').srcObject=null;
+  document.getElementById('videoWrap').classList.remove('active');
+  document.getElementById('bottomBar').style.display='none';
+  document.getElementById('toolbar').style.display='none';
+  document.getElementById('startState').style.display='flex';
+}
+
+// ═══ CANVAS ═══
+function setupCanvas(){
+  canvas=document.getElementById('annCanvas');
+  ctx=canvas.getContext('2d');
+  resizeCanvas();
+  window.addEventListener('resize',resizeCanvas);
+  // Mouse
+  canvas.addEventListener('mousedown',function(e){startDraw(e.offsetX,e.offsetY);});
+  canvas.addEventListener('mousemove',function(e){draw(e.offsetX,e.offsetY);});
+  canvas.addEventListener('mouseup',function(e){endDraw(e.offsetX,e.offsetY);});
+  canvas.addEventListener('mouseleave',function(){endDraw();});
+  // Touch
+  canvas.addEventListener('touchstart',function(e){
+    e.preventDefault();
+    var t=e.touches[0];
+    var rect=canvas.getBoundingClientRect();
+    startDraw(t.clientX-rect.left,t.clientY-rect.top);
+  },{passive:false});
+  canvas.addEventListener('touchmove',function(e){
+    e.preventDefault();
+    var t=e.touches[0];
+    var rect=canvas.getBoundingClientRect();
+    draw(t.clientX-rect.left,t.clientY-rect.top);
+  },{passive:false});
+  canvas.addEventListener('touchend',function(e){
+    e.preventDefault();
+    if(e.changedTouches.length>0){
+      var t=e.changedTouches[0];
+      var rect=canvas.getBoundingClientRect();
+      endDraw(t.clientX-rect.left,t.clientY-rect.top);
+    }
+  });
+}
+
+function resizeCanvas(){
+  var wrap=document.getElementById('videoWrap');
+  if(canvas){
+    canvas.width=wrap.clientWidth;
+    canvas.height=wrap.clientHeight;
+  }
+}
+
+// ═══ DRAWING ═══
+function startDraw(x,y){
+  if(tool==='select')return;
+  drawing=true;
+  startX=x;startY=y;
+  if(tool==='pen'||tool==='highlighter'||tool==='eraser'){
+    ctx.beginPath();ctx.moveTo(x,y);
+  }
+}
+
+function draw(x,y){
+  if(!drawing)return;
+  ctx.lineCap='round';ctx.lineJoin='round';
+  if(tool==='pen'){
+    ctx.globalCompositeOperation='source-over';
+    ctx.strokeStyle=annColor;ctx.lineWidth=brushSize;ctx.globalAlpha=1;
+    ctx.lineTo(x,y);ctx.stroke();
+  }else if(tool==='highlighter'){
+    ctx.globalCompositeOperation='source-over';
+    ctx.strokeStyle=annColor;ctx.lineWidth=brushSize*3;ctx.globalAlpha=.3;
+    ctx.lineTo(x,y);ctx.stroke();
+  }else if(tool==='eraser'){
+    ctx.globalCompositeOperation='destination-out';
+    ctx.lineWidth=brushSize*5;
+    ctx.lineTo(x,y);ctx.stroke();
+  }
+}
+
+function endDraw(x,y){
+  if(!drawing)return;
+  drawing=false;
+  if(tool==='line'||tool==='arrow'){
+    ctx.globalCompositeOperation='source-over';
+    ctx.strokeStyle=annColor;ctx.lineWidth=brushSize;ctx.globalAlpha=1;
+    ctx.beginPath();ctx.moveTo(startX,startY);ctx.lineTo(x,y);ctx.stroke();
+    if(tool==='arrow')drawArrow(startX,startY,x,y);
+  }else if(tool==='rect'){
+    ctx.globalCompositeOperation='source-over';
+    ctx.strokeStyle=annColor;ctx.lineWidth=brushSize;ctx.globalAlpha=1;
+    ctx.strokeRect(startX,startY,x-startX,y-startY);
+  }else if(tool==='circle'){
+    ctx.globalCompositeOperation='source-over';
+    ctx.strokeStyle=annColor;ctx.lineWidth=brushSize;ctx.globalAlpha=1;
+    var rx=Math.abs(x-startX)/2,ry=Math.abs(y-startY)/2;
+    var cx=startX+(x-startX)/2,cy=startY+(y-startY)/2;
+    ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);ctx.stroke();
+  }else if(tool==='text'){
+    showTextModal();
+  }
+  saveUndo();
+}
+
+function drawArrow(x1,y1,x2,y2){
+  var angle=Math.atan2(y2-y1,x2-x1);
+  var headLen=15;
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-headLen*Math.cos(angle-Math.PI/6),y2-headLen*Math.sin(angle-Math.PI/6));
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-headLen*Math.cos(angle+Math.PI/6),y2-headLen*Math.sin(angle+Math.PI/6));
+  ctx.stroke();
+}
+
+// ═══ TEXT MODAL (mobile-friendly) ═══
+function showTextModal(){
+  document.getElementById('textModal').classList.add('show');
+  document.getElementById('textInput').value='';
+  setTimeout(function(){document.getElementById('textInput').focus();},100);
+}
+function cancelText(){
+  document.getElementById('textModal').classList.remove('show');
+}
+function confirmText(){
+  var txt=document.getElementById('textInput').value;
+  document.getElementById('textModal').classList.remove('show');
+  if(txt&&startX!==undefined){
+    ctx.globalCompositeOperation='source-over';
+    ctx.fillStyle=annColor;
+    ctx.font=Math.max(12,brushSize*5)+'px Inter,sans-serif';
+    ctx.fillText(txt,startX,startY+brushSize*4);
+    saveUndo();
+  }
+}
+
+// ═══ UNDO/CLEAR/SAVE ═══
+function saveUndo(){
+  if(canvas)undoStack.push(canvas.toDataURL());
+  if(undoStack.length>20)undoStack.shift();
+}
+function undoAnnotation(){
+  if(undoStack.length===0||!canvas)return;
+  var img=new Image();
+  img.onload=function(){ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0);};
+  img.src=undoStack.pop();
+}
+function clearAnnotations(){
+  if(!canvas)return;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  saveUndo();
+}
+function saveAnnotation(){
+  if(!canvas)return;
+  // Merge video frame + canvas
+  var exportCanvas=document.createElement('canvas');
+  var vid=document.getElementById('screenVideo');
+  exportCanvas.width=canvas.width;
+  exportCanvas.height=canvas.height;
+  var ex=exportCanvas.getContext('2d');
+  if(vid.videoWidth>0)ex.drawImage(vid,0,0,exportCanvas.width,exportCanvas.height);
+  ex.drawImage(canvas,0,0);
+  var link=document.createElement('a');
+  link.download='annotation-'+Date.now()+'.png';
+  link.href=exportCanvas.toDataURL('image/png');
+  link.click();
+}
+
+// ═══ INIT ═══
+document.addEventListener('DOMContentLoaded',detectMobile);
+</script>
+</body>
+</html>

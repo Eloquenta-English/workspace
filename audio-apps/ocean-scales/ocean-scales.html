@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>🌊 Ocean Scales — Alien Fretboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e1a;--bg2:#0d1117;--bg3:#111827;--bg4:#162032;
+  --border:#1e3a5f;--border-light:#2a4a7f;
+  --text:#e0f2fe;--text-muted:#94a3b8;--text-dim:#4a6080;
+  --cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--rose:#fb7185;--violet:#a78bfa;
+  --neck-dark:#1a0a10;--neck-mid:#2a1818;
+  --fret-wire:rgba(192,160,112,.3);--string-color:rgba(200,190,180,.4);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px}
+body{font-family:'Share Tech Mono',monospace;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;position:relative}
+button{font-family:inherit}
+
+/* Stars bg */
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle var(--dur) ease-in-out infinite;opacity:var(--op)}
+@keyframes twinkle{0%,100%{opacity:var(--op)}50%{opacity:.1}}
+
+/* Rings bg */
+.ring{position:fixed;border:1px solid rgba(34,211,238,.04);border-radius:50%;pointer-events:none;z-index:0}
+
+/* ═══ TOP BAR ═══ */
+.topbar{display:flex;align-items:center;gap:10px;padding:8px 16px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;min-height:52px;position:relative;z-index:10}
+.logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.logo-icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:22px;animation:alienPulse 2s ease-in-out infinite}
+@keyframes alienPulse{0%,100%{filter:drop-shadow(0 0 6px rgba(34,211,238,.6));transform:scale(1)}50%{filter:drop-shadow(0 0 18px rgba(34,211,238,.9)) drop-shadow(0 0 30px rgba(167,139,250,.4));transform:scale(1.08)}}
+.logo-text{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;color:var(--cyan);text-shadow:0 0 10px rgba(34,211,238,.3);letter-spacing:1px;white-space:nowrap}
+.topbar-sep{width:1px;height:24px;background:var(--border);flex-shrink:0}
+.topbar-label{font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);white-space:nowrap}
+.sel{height:32px;padding:0 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;outline:none;cursor:pointer;appearance:auto}
+.sel:focus{border-color:var(--cyan);box-shadow:0 0 6px rgba(34,211,238,.2)}
+.sel option{background:var(--bg3)}
+.btn{height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text-muted);font-family:'Orbitron',sans-serif;font-size:10px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s;white-space:nowrap}
+.btn:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(34,211,238,.06)}
+.btn.active{background:rgba(34,211,238,.1);border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 8px rgba(34,211,238,.15)}
+.btn-play{border-color:var(--green);color:var(--green)}
+.btn-play:hover{background:var(--green);color:#000;box-shadow:0 0 15px rgba(52,211,153,.4)}
+.btn-play.playing{border-color:var(--rose);color:var(--rose);background:rgba(251,113,133,.08)}
+.btn-play.playing:hover{background:var(--rose);color:#000;box-shadow:0 0 15px rgba(251,113,133,.4)}
+.btn-play .icon{display:inline-block;transition:transform .15s}
+.btn-play.playing .icon{animation:btnPulse 1s ease-in-out infinite}
+.btn-play .label{display:block;font-size:9px;margin-top:1px;text-transform:uppercase;letter-spacing:1px}
+.btn-play.playing .label{color:var(--rose)}
+@keyframes btnPulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* ═══ PLAY WRAP + SPARKLE ═══ */
+.play-wrap{position:relative;display:inline-flex;align-items:center;justify-content:center}
+.sparkle-container{position:absolute;inset:-20px;pointer-events:none;z-index:3;overflow:visible}
+.sparkle-particle{position:absolute;width:5px;height:5px;border-radius:50%;pointer-events:none;animation:sparkleFly .6s ease-out forwards}
+@keyframes sparkleFly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0)}}
+
+/* ═══ METER PANEL ═══ */
+.meter-panel{display:flex;align-items:center;gap:12px;padding:6px 16px;background:var(--bg3);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;position:relative;z-index:10}
+.meter-group{display:flex;align-items:center;gap:6px}
+.meter-label{font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim)}
+.meter-wrap{display:flex;align-items:center;gap:4px}
+.meter-val{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;color:var(--cyan);min-width:40px;text-align:center;text-shadow:0 0 8px rgba(34,211,238,.3)}
+.meter-unit{font-size:9px;color:var(--text-dim)}
+.meter-btn{width:24px;height:24px;border-radius:4px;border:1px solid var(--border);background:var(--bg2);color:var(--text-muted);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .1s}
+.meter-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.meter-slider{flex:1;min-width:80px;max-width:140px;-webkit-appearance:none;appearance:none;height:4px;background:var(--bg2);border-radius:2px;outline:none;cursor:pointer}
+.meter-slider::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px rgba(34,211,238,.4);cursor:pointer}
+.meter-slider::-moz-range-thumb{width:12px;height:12px;border-radius:50%;bg:var(--cyan);border:none;box-shadow:0 0 8px rgba(34,211,238,.4);cursor:pointer}
+
+/* ═══ MAIN AREA ═══ */
+.main-area{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;z-index:10}
+.fretboard-area{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;padding:16px}
+
+/* ═══ FRETBOARD ═══ */
+.fretboard-outer{position:relative;background:linear-gradient(180deg,var(--neck-dark),var(--neck-mid));border-radius:12px;overflow:hidden;border:1px solid var(--border);min-width:640px;box-shadow:0 0 30px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.03)}
+.fret-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.string-label{width:36px;text-align:center;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;color:var(--text-dim);padding:0;white-space:nowrap}
+.fret-num-cell{text-align:center;font-family:'Orbitron',sans-serif;font-size:9px;color:var(--text-dim);padding:3px 0;text-align:center}
+.nut-col{width:3px;background:rgba(255,255,255,.12)}
+.fret-cell{position:relative;height:40px;border-right:1px solid var(--fret-wire);border-bottom:1px solid var(--string-color);text-align:center;padding:0}
+.fret-cell.nut{border-right:3px solid rgba(220,200,170,.5)}
+.note-dot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .1s;z-index:2;flex-direction:column;font-size:9px;font-weight:700;color:#000;line-height:1;border:1px solid rgba(0,0,0,.2)}
+.note-dot:hover{transform:translate(-50%,-50%) scale(1.25);z-index:5;box-shadow:0 0 12px currentColor}
+.note-dot .nn{font-size:9px;font-weight:800}
+.note-dot .ni{font-size:6px;opacity:.7}
+.note-dot .tip{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);color:var(--text);font-size:10px;padding:3px 7px;border-radius:4px;white-space:nowrap;z-index:10;pointer-events:none;font-weight:600;font-family:'Share Tech Mono',monospace}
+.note-dot:hover .tip{display:block}
+.note-dot.root-dot{box-shadow:0 0 10px var(--cyan),0 0 20px rgba(34,211,238,.3)}
+.note-dot.active-dot{animation:dotSwell .6s ease-out forwards;box-shadow:0 0 20px 6px var(--cyan),0 0 40px rgba(34,211,250,.6),0 0 60px rgba(34,211,250,.3);transform:translate(-50%,-50%) scale(1.4);z-index:6}
+@keyframes dotSwell{0%{transform:translate(-50%,-50%) scale(1);box-shadow:0 0 8px 2px var(--cyan),0 0 16px rgba(34,211,250,.3)}50%{transform:translate(-50%,-50%) scale(1.5);box-shadow:0 0 24px 8px var(--cyan),0 0 48px rgba(34,211,250,.5),0 0 72px rgba(34,211,250,.2)}100%{transform:translate(-50%,-50%) scale(1.35);box-shadow:0 0 16px 4px var(--cyan),0 0 32px rgba(34,211,250,.4),0 0 48px rgba(34,211,250,.15)}}
+.note-dot.active-dot .nn{text-shadow:0 0 8px var(--cyan),0 0 16px rgba(34,211,250,.5)}
+.string-line{position:absolute;left:0;right:0;height:var(--sw);background:linear-gradient(90deg,rgba(200,190,180,.15),rgba(220,210,195,.35),rgba(200,190,180,.15));pointer-events:none;z-index:1}
+.fret-cell.play-range{background:rgba(34,211,238,.04)}
+.fret-cell.position-range{background:rgba(52,211,153,.08)}
+
+/* Note color wheel */
+.dot-C{background:#ef4444;color:#fff} .dot-Cs{background:#f97316;color:#000}
+.dot-D{background:#eab308;color:#000} .dot-Ds{background:#84cc16;color:#000}
+.dot-E{background:#22c55e;color:#000} .dot-F{background:#14b8a6;color:#000}
+.dot-Fs{background:#06b6d4;color:#000} .dot-G{background:#3b82f6;color:#fff}
+.dot-Gs{background:#6366f1;color:#fff} .dot-A{background:#8b5cf6;color:#fff}
+.dot-As{background:#a855f7;color:#fff} .dot-B{background:#d946ef;color:#fff}
+
+/* ═══ INFO BAR ═══ */
+.info-bar{display:flex;gap:10px;padding:8px 16px;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;overflow-x:auto;position:relative;z-index:10}
+.info-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;min-width:120px;flex:1}
+.info-label{font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:3px}
+.info-val{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;color:var(--cyan);text-shadow:0 0 8px rgba(34,211,238,.2)}
+.info-sub{font-size:10px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.note-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.note-pill{padding:2px 8px;border-radius:10px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);color:var(--cyan);font-size:10px;font-weight:700;font-family:'Share Tech Mono',monospace}
+
+/* ═══ SCALE PRESETS ═══ */
+.scale-presets{display:flex;gap:6px;padding:8px 16px;background:var(--bg3);border-top:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;overflow-x:auto}
+.scale-preset-btn{height:78px;padding:0 30px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--text-dim);font-family:'Orbitron',sans-serif;font-size:24px;font-weight:600;cursor:pointer;transition:all .1s;white-space:nowrap}
+.scale-preset-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.scale-preset-btn.active{background:rgba(34,211,238,.1);border-color:var(--cyan);color:var(--cyan)}
+
+/* ═══ CROPCIRCLE OVERLAY ═══ */
+.cropcircle-overlay{position:fixed;inset:0;pointer-events:none;z-index:100;display:none;align-items:center;justify-content:center}
+.cropcircle-overlay.show{display:flex}
+.cropcircle-svg{width:300px;height:300px;color:var(--cyan);filter:drop-shadow(0 0 20px var(--cyan));animation:ccPulse 2s ease-in-out infinite}
+@keyframes ccPulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:.3;transform:scale(1.05)}}
+
+/* ═══ SPARKLE ═══ */
+.sparkle{position:absolute;width:4px;height:4px;border-radius:50%;pointer-events:none;animation:sparkleAnim .6s ease-out forwards;z-index:50}
+@keyframes sparkleAnim{0%{opacity:1;transform:scale(1) translate(0,0)}100%{opacity:0;transform:scale(0) translate(var(--sx),var(--sy))}}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:768px){
+  .scale-preset-btn{height:56px;font-size:18px;padding:0 16px}
+  .fretboard-outer{min-width:480px}
+  .info-bar{gap:6px;padding:6px 8px}
+  .info-card{min-width:80px;padding:6px 8px}
+  .meter-panel{gap:8px;padding:6px 8px}
+}
+@media(max-width:480px){
+  .fretboard-outer{min-width:360px;border-radius:8px}
+  .note-dot{width:22px;height:22px;font-size:7px}
+  .note-dot .nn{font-size:7px}
+  .fret-cell{height:32px}
+}
+</style>
+</head>
+<body>
+
+<!-- Stars -->
+<div class="stars" id="stars"></div>
+
+<!-- Rings -->
+<div class="ring" style="width:400px;height:400px;top:10%;left:-10%;animation:spin 60s linear infinite"></div>
+<div class="ring" style="width:600px;height:600px;bottom:-20%;right:-15%;animation:spin 80s linear infinite reverse"></div>
+<div class="ring" style="width:300px;height:300px;top:60%;left:70%;animation:spin 40s linear infinite"></div>
+<style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
+
+<!-- Crop circle overlay (hidden) -->
+<div class="cropcircle-overlay" id="cropOverlay">
+  <svg class="cropcircle-svg" viewBox="0 0 144 144">
+    <circle cx="72" cy="72" r="68" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="8 4"/>
+    <circle cx="72" cy="72" r="50" fill="none" stroke="currentColor" stroke-width="1" opacity=".5"/>
+    <line x1="72" y1="4" x2="72" y2="140" stroke="currentColor" stroke-width="1" opacity=".3"/>
+    <line x1="4" y1="72" x2="144" y2="72" stroke="currentColor" stroke-width="1" opacity=".3"/>
+  </svg>
+</div>
+
+<div style="display:flex;flex-direction:column;height:100vh;position:relative;z-index:10">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-icon">🌊</div>
+      <div class="logo-text">OCEAN<span>SCALES</span></div>
+    </div>
+    <div class="topbar-sep"></div>
+    <span class="topbar-label">Root</span>
+    <select class="sel" id="rootSelect" onchange="selectRootNote(parseInt(this.value))"></select>
+    <div class="topbar-sep"></div>
+    <span class="topbar-label">Category</span>
+    <select class="sel" id="categorySelect" onchange="changeCategory(this.value)">
+      <option value="all">All</option>
+      <option value="Common">Common</option>
+      <option value="Rare">Rare</option>
+      <option value="Exotic">Exotic</option>
+    </select>
+    <div class="topbar-sep"></div>
+    <button class="btn btn-play" id="playBtn" onclick="playScale()">
+      <span class="icon">▶</span>
+      <span class="label">PLAY</span>
+    </button>
+    <button class="btn" onclick="stopPlayback()">■</button>
+  </div>
+
+  <!-- METER PANEL -->
+  <div class="meter-panel">
+    <div class="meter-group">
+      <span class="meter-label">BPM</span>
+      <button class="meter-btn" onclick="adjustTempo(-5)">−</button>
+      <span class="meter-val" id="bpmVal">80</span>
+      <button class="meter-btn" onclick="adjustTempo(5)">+</button>
+      <span class="meter-unit">bpm</span>
+      <input type="range" class="meter-slider" id="bpmSlider" min="40" max="200" value="80" oninput="setTempo(this.value)">
+    </div>
+    <div class="meter-group">
+      <span class="meter-label">Direction</span>
+      <select class="sel" id="directionSel" style="width:90px" onchange="direction=this.value">
+        <option value="up">↑ Ascending</option>
+        <option value="down">↓ Descending</option>
+        <option value="both">↕ Both</option>
+      </select>
+    </div>
+    <div class="meter-group">
+      <span class="meter-label">Position</span>
+      <select class="sel" id="positionSel" style="width:70px" onchange="setPosition(parseInt(this.value))">        <option value="1" selected>Fret 1</option>
+        <option value="2">Fret 2</option>
+        <option value="3">Fret 3</option>
+        <option value="4">Fret 4</option>
+        <option value="5">Fret 5</option>
+        <option value="6">Fret 6</option>
+        <option value="7">Fret 7</option>
+        <option value="8">Fret 8</option>
+        <option value="9">Fret 9</option>
+        <option value="10">Fret 10</option>
+        <option value="11">Fret 11</option>
+        <option value="12">Fret 12</option>
+      </select>
+    </div>
+    <div class="meter-group">
+      <span class="meter-label">Octaves</span>
+      <select class="sel" id="octaveSel" style="width:60px" onchange="setOctaves(parseInt(this.value))">
+        <option value="1" selected>1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+    </div>
+    <div class="meter-group">
+      <span class="meter-label">Shift</span>
+      <button class="meter-btn" onclick="shiftPosition(-1)" title="Shift hand position down">−</button>
+      <button class="meter-btn" onclick="shiftPosition(1)" title="Shift hand position up">+</button>
+    </div>
+  </div>
+
+  <!-- SCALE PRESETS -->
+  <div class="scale-presets" id="scalePresets"></div>
+
+  <!-- MAIN AREA -->
+  <div class="main-area">
+    <div class="fretboard-area">
+      <div class="fretboard-outer">
+        <div class="fretboard" id="fretboard"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO BAR -->
+  <div class="info-bar" id="infoBar"></div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// SCALE DATA
+// ═══════════════════════════════════════════
+var NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+var NOTE_CLASSES = ['C','Cs','D','Ds','E','F','Fs','G','Gs','A','As','B'];
+
+var SCALES = {
+  'major': {name:'Major (Ionian)', intervals:[0,2,4,5,7,9,11], category:'Common'},
+  'minor_natural': {name:'Natural Minor', intervals:[0,2,3,5,7,8,10], category:'Common'},
+  'minor_harmonic': {name:'Harmonic Minor', intervals:[0,2,3,5,7,8,11], category:'Common'},
+  'minor_melodic': {name:'Melodic Minor', intervals:[0,2,3,5,7,9,11], category:'Rare'},
+  'dorian': {name:'Dorian', intervals:[0,2,3,5,7,9,10], category:'Common'},
+  'phrygian': {name:'Phrygian', intervals:[0,1,3,5,7,8,10], category:'Rare'},
+  'lydian': {name:'Lydian', intervals:[0,2,4,6,7,9,11], category:'Common'},
+  'mixolydian': {name:'Mixolydian', intervals:[0,2,4,5,7,9,10], category:'Common'},
+  'locrian': {name:'Locrian', intervals:[0,1,3,5,6,8,10], category:'Rare'},
+  'pentatonic_major': {name:'Pentatonic Major', intervals:[0,2,4,7,9], category:'Common'},
+  'pentatonic_minor': {name:'Pentatonic Minor', intervals:[0,3,5,7,10], category:'Common'},
+  'blues': {name:'Blues', intervals:[0,3,5,6,7,10], category:'Common'},
+  'whole_tone': {name:'Whole Tone', intervals:[0,2,4,6,8,10], category:'Exotic'},
+  'diminished': {name:'Diminished', intervals:[0,2,3,5,6,8,9,11], category:'Exotic'},
+  'chromatic': {name:'Chromatic', intervals:[0,1,2,3,4,5,6,7,8,9,10,11], category:'Exotic'},
+  'hungarian_minor': {name:'Hungarian Minor', intervals:[0,2,3,6,7,8,11], category:'Exotic'},
+  'persian': {name:'Persian', intervals:[0,1,4,5,6,8,11], category:'Exotic'},
+  'japanese': {name:'Japanese', intervals:[0,1,5,7,8], category:'Exotic'},
+  'arabic': {name:'Arabic', intervals:[0,1,4,5,7,8,11], category:'Exotic'},
+  'flamenco': {name:'Flamenco', intervals:[0,1,3,4,5,7,8,10], category:'Exotic'}
+};
+
+var rootNote = 0;
+var activeScale = 'major';
+var POSITION = 1;          // starting hand position (fret)
+var POSITION_SPAN = 4;     // number of frets in hand position
+var OCTAVES = 1;           // how many octaves to play
+var audioCtx = null;
+var isPlaying = false;
+var currentOscillator = null;
+var direction = 'up';
+var tempo = 80;
+
+// ═══════════════════════════════════════════
+// STARS
+// ═══════════════════════════════════════════
+function createStars(){
+  var el = document.getElementById('stars');
+  for(var i = 0; i < 80; i++){
+    var s = document.createElement('div');
+    s.className = 'star';
+    var size = 1 + Math.random() * 2;
+    s.style.cssText = 'width:'+size+'px;height:'+size+'px;left:'+(Math.random()*100)+'%;top:'+(Math.random()*100)+'%;--dur:'+(2+Math.random()*5)+'s;--op:'+(0.3+Math.random()*0.7)+';animation-delay:'+(Math.random()*5)+'s';
+    el.appendChild(s);
+  }
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+function init(){
+  createStars();
+  populateRootSelect();
+  renderScalePresets();
+  renderFretboard();
+  updateInfo();
+}
+
+function populateRootSelect(){
+  var sel = document.getElementById('rootSelect');
+  for(var i = 0; i < 12; i++){
+    var opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = NOTES[i];
+    if(i === rootNote) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+
+function renderScalePresets(){
+  var el = document.getElementById('scalePresets');
+  el.innerHTML = '';
+  var presets = Object.keys(SCALES);
+  presets.forEach(function(key){
+    var btn = document.createElement('button');
+    btn.className = 'scale-preset-btn' + (key === activeScale ? ' active' : '');
+    btn.textContent = NOTES[rootNote] + ' ' + key.replace(/_/g,' ').replace(/\b\w/g, function(c){return c.toUpperCase()});
+    btn.dataset.scale = key;
+    btn.onclick = function(){
+      activeScale = this.dataset.scale;
+      document.querySelectorAll('.scale-preset-btn').forEach(function(b){b.classList.remove('active')});
+      this.classList.add('active');
+      renderFretboard();
+      updateInfo();
+    };
+    el.appendChild(btn);
+  });
+}
+
+// ═══════════════════════════════════════════
+// FRETBOARD
+// ═══════════════════════════════════════════
+function renderFretboard(){
+  var fb = document.getElementById('fretboard');
+  fb.innerHTML = '';
+  var frets = 15;
+  var strings = 6;
+  var tuning = [4, 9, 11, 2, 7, 4]; // E A D G B E
+
+  var table = document.createElement('table');
+  table.className = 'fret-table';
+
+  // Fret numbers row
+  var fretRow = document.createElement('tr');
+  var emptyCell = document.createElement('td');
+  emptyCell.className = 'string-label';
+  fretRow.appendChild(emptyCell);
+  for(var f = 0; f < frets; f++){
+    var fc = document.createElement('td');
+    fc.className = 'fret-num-cell';
+    fc.textContent = f;
+    fretRow.appendChild(fc);
+  }
+  table.appendChild(fretRow);
+
+  for(var s = 0; s < strings; s++){
+    var tr = document.createElement('tr');
+
+    // String label
+    var label = document.createElement('td');
+    label.className = 'string-label';
+    label.textContent = ['E','B','G','D','A','E'][5-s];
+    tr.appendChild(label);
+
+    var openNote = tuning[5-s]; // reverse order (high E on top)
+    for(var f = 0; f < frets; f++){
+      var td = document.createElement('td');
+      var inPosition = (f >= POSITION && f < POSITION + POSITION_SPAN);
+      td.className = 'fret-cell' + (f === 0 ? ' nut' : '') + (inPosition ? ' position-range' : '');
+
+      var noteNum = (openNote + f) % 12;
+      var absNote = openNote + f;
+      var inScale = isInScale(absNote);
+      var isRoot = (noteNum === rootNote);
+      var nc = 'dot-' + NOTE_CLASSES[noteNum];
+
+      // String line
+      var sw = 1 + (5-s) * 0.5;
+      var sl = document.createElement('div');
+      sl.className = 'string-line';
+      sl.style.setProperty('--sw', sw + 'px');
+      sl.style.top = '50%';
+      sl.style.transform = 'translateY(-50%)';
+      td.appendChild(sl);
+
+      // Nut
+      if(f === 0){
+        var nut = document.createElement('div');
+        nut.style.cssText = 'position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:3px;background:rgba(255,255,255,.12)';
+        td.appendChild(nut);
+      }
+
+      // Note dot
+      if(inScale){
+        var dot = document.createElement('div');
+        dot.className = 'note-dot ' + nc + (isRoot ? ' root-dot' : '');
+        dot.id = 'dot-s' + s + 'f' + f;
+        dot.dataset.note = absNote;
+        dot.dataset.fret = f;
+        dot.dataset.string = s;
+
+        var nn = document.createElement('span');
+        nn.className = 'nn';
+        nn.textContent = NOTES[noteNum];
+        dot.appendChild(nn);
+
+        var ni = document.createElement('span');
+        ni.className = 'ni';
+        ni.textContent = (absNote % 12).toString();
+        dot.appendChild(ni);
+
+        // Tooltip
+        var tip = document.createElement('span');
+        tip.className = 'tip';
+        tip.textContent = NOTES[noteNum] + ' — ' + Math.round(noteToFreq(absNote)) + ' Hz';
+        dot.appendChild(tip);
+
+        td.appendChild(dot);
+      }
+
+      tr.appendChild(td);
+    }
+    table.appendChild(tr);
+  }
+
+  fb.appendChild(table);
+}
+
+function isInScale(note){
+  var scale = SCALES[activeScale];
+  var normalized = ((note % 12) + 12) % 12;
+  return scale.intervals.indexOf(normalized) >= 0;
+}
+
+function noteToFreq(noteNum){
+  return 440 * Math.pow(2, (noteNum - 9) / 12);
+}
+
+// ═══════════════════════════════════════════
+// AUDIO ENGINE
+// ═══════════════════════════════════════════
+function getAudioCtx(){
+  if(!audioCtx){
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if(AC) audioCtx = new AC();
+  }
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function playNote(freq, duration, startTime){
+  var ctx = getAudioCtx();
+  if(!ctx) return;
+  var osc = ctx.createOscillator();
+  var gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, startTime);
+  gain.gain.setValueAtTime(0, startTime);
+  gain.gain.linearRampToValueAtTime(0.25, startTime + 0.04);
+  gain.gain.setValueAtTime(0.25, startTime + duration - 0.08);
+  gain.gain.linearRampToValueAtTime(0, startTime + duration);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(startTime);
+  osc.stop(startTime + duration);
+}
+
+var playbackTimers = [];
+
+function playScale(){
+  if(isPlaying){ stopPlayback(); return; }
+  var ctx = getAudioCtx();
+  if(!ctx) return;
+
+  var seq = getScaleSequence();
+  if(seq.length === 0) return;
+
+  var noteDur = 60 / tempo;
+  var now = ctx.currentTime + 0.1;
+
+  isPlaying = true;
+  document.getElementById('playBtn').classList.add('playing');
+  document.getElementById('playBtn').innerHTML = '<span class="icon">▶</span><span class="label">PLAYING</span>';
+
+  pendingShift = 0;
+
+  for(var i = 0; i < seq.length; i++){
+    var item = seq[i];
+    var freq = noteToFreq(item.absNote);
+    var start = now + i * noteDur;
+    var dur = noteDur * 0.9;
+
+    (function(idx, it){
+      var timer = setTimeout(function(){
+        // Apply queued position shift before this note if any
+        if(pendingShift !== 0){
+          setPosition(POSITION + pendingShift);
+          pendingShift = 0;
+        }
+        clearAllHighlights();
+        highlightDot(it.string, it.fret, true);
+        spawnSparkleAtDot(it.string, it.fret);
+      }, Math.max(0, (start - ctx.currentTime) * 1000));
+      playbackTimers.push(timer);
+    })(i, item);
+
+    playNote(freq, dur, start);
+  }
+
+  var totalDur = seq.length * noteDur;
+  var endTimer = setTimeout(function(){
+    clearAllHighlights();
+    isPlaying = false;
+    document.getElementById('playBtn').classList.remove('playing');
+    document.getElementById('playBtn').innerHTML = '<span class="icon">▶</span><span class="label">PLAY</span>';
+    document.getElementById('cropOverlay').classList.remove('show');
+  }, (totalDur + 0.1) * 1000);
+  playbackTimers.push(endTimer);
+
+  document.getElementById('cropOverlay').classList.add('show');
+  setTimeout(function(){ document.getElementById('cropOverlay').classList.remove('show'); }, totalDur * 1000);
+}
+
+function stopPlayback(){
+  isPlaying = false;
+  document.getElementById('playBtn').classList.remove('playing');
+  document.getElementById('playBtn').innerHTML = '<span class="icon">▶</span><span class="label">PLAY</span>';
+  playbackTimers.forEach(function(t){ clearTimeout(t); });
+  playbackTimers = [];
+  clearAllHighlights();
+  document.getElementById('cropOverlay').classList.remove('show');
+}
+
+function clearAllHighlights(){
+  document.querySelectorAll('.note-dot').forEach(function(d){ d.classList.remove('active-dot'); });
+}
+
+function highlightDot(string, fret, on){
+  var dot = document.getElementById('dot-s' + string + 'f' + fret);
+  if(!dot) return;
+  if(on) dot.classList.add('active-dot');
+  else dot.classList.remove('active-dot');
+  // Scroll into view if needed
+  if(on && dot.scrollIntoView){
+    dot.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+  }
+}
+
+function highlightNote(noteNum, on){
+  var dots = document.querySelectorAll('.note-dot');
+  for(var i = 0; i < dots.length; i++){
+    if(parseInt(dots[i].dataset.note) === noteNum){
+      if(on) dots[i].classList.add('active-dot');
+      else dots[i].classList.remove('active-dot');
+    }
+  }
+}
+
+function spawnSparkleAtDot(string, fret){
+  var dot = document.getElementById('dot-s' + string + 'f' + fret);
+  if(!dot) return;
+  var rect = dot.getBoundingClientRect();
+  for(var j = 0; j < 4; j++){
+    var sp = document.createElement('div');
+    sp.className = 'sparkle';
+    sp.style.cssText = 'left:'+(rect.left+rect.width/2)+'px;top:'+(rect.top+rect.height/2)+'px;background:var(--cyan);--sx:'+(Math.random()*40-20)+'px;--sy:'+(Math.random()*40-20)+'px;position:fixed';
+    document.body.appendChild(sp);
+    setTimeout(function(){ sp.remove(); }, 700);
+  }
+}
+
+function spawnSparkle(noteNum){
+  var dots = document.querySelectorAll('.note-dot');
+  for(var i = 0; i < dots.length; i++){
+    if(parseInt(dots[i].dataset.note) === noteNum){
+      var rect = dots[i].getBoundingClientRect();
+      for(var j = 0; j < 4; j++){
+        var sp = document.createElement('div');
+        sp.className = 'sparkle';
+        sp.style.cssText = 'left:'+(rect.left+rect.width/2)+'px;top:'+(rect.top+rect.height/2)+'px;background:var(--cyan);--sx:'+(Math.random()*40-20)+'px;--sy:'+(Math.random()*40-20)+'px;position:fixed';
+        document.body.appendChild(sp);
+        setTimeout(function(){ sp.remove(); }, 700);
+      }
+      break;
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════
+function selectRootNote(n){
+  rootNote = n;
+  document.getElementById('rootSelect').value = n;
+  renderFretboard();
+  renderScalePresets();
+  updateInfo();
+}
+
+function changeCategory(cat){
+  var scales = Object.keys(SCALES).filter(function(k){
+    return cat === 'all' || SCALES[k].category === cat;
+  });
+  if(scales.length > 0){
+    activeScale = scales[0];
+    renderScalePresets();
+    renderFretboard();
+    updateInfo();
+  }
+}
+
+function setPosition(pos){
+  POSITION = Math.max(1, Math.min(12, pos));
+  document.getElementById('positionSel').value = POSITION;
+  renderFretboard();
+}
+
+function setOctaves(o){
+  OCTAVES = Math.max(1, Math.min(3, o));
+  document.getElementById('octaveSel').value = OCTAVES;
+}
+
+function shiftPosition(delta){
+  if(!isPlaying){
+    setPosition(POSITION + delta);
+    return;
+  }
+  // During playback: queue a position shift for the next note
+  pendingShift = delta;
+}
+
+var pendingShift = 0;
+
+function getScaleSequence(){
+  var scale = SCALES[activeScale];
+  if(!scale) return [];
+  var intervals = scale.intervals;
+  var seq = [];
+  var currentPos = POSITION;
+  var currentString = 0; // 0 = high E
+  var tuning = [4, 9, 11, 2, 7, 4]; // E A D G B E (high to low)
+
+  // Build sequence octave by octave, staying within current hand position
+  for(var oct = 0; oct < OCTAVES; oct++){
+    var octaveRoot = rootNote + oct * 12;
+    for(var i = 0; i < intervals.length; i++){
+      var targetNote = octaveRoot + intervals[i];
+      var found = findNoteInPosition(targetNote, currentPos, currentString, tuning);
+      if(found){
+        seq.push(found);
+        currentString = found.string;
+        currentPos = found.position;
+      }
+    }
+  }
+  // Add final root above if completing full octaves
+  var finalRoot = rootNote + OCTAVES * 12;
+  var last = findNoteInPosition(finalRoot, currentPos, currentString, tuning);
+  if(last) seq.push(last);
+
+  // Direction handling
+  var dir = document.getElementById('directionSel').value;
+  if(dir === 'down'){
+    seq.reverse();
+  } else if(dir === 'both'){
+    var desc = seq.slice().reverse();
+    seq = seq.concat(desc.slice(1));
+  }
+  return seq;
+}
+
+function findNoteInPosition(targetNote, position, startString, tuning){
+  // Search within current 4-fret position, preferring same or lower strings
+  for(var s = startString; s < 6; s++){
+    var open = tuning[5 - s];
+    for(var f = position; f < position + POSITION_SPAN && f < 15; f++){
+      var abs = open + f;
+      var normalized = ((abs % 12) + 12) % 12;
+      var targetNormalized = ((targetNote % 12) + 12) % 12;
+      if(normalized === targetNormalized){
+        return {note: targetNote, absNote: abs, string: s, fret: f, position: position};
+      }
+    }
+  }
+  // If not found in current position, try next position up
+  if(position + POSITION_SPAN < 15){
+    return findNoteInPosition(targetNote, position + 1, startString, tuning);
+  }
+  return null;
+}
+
+function adjustTempo(delta){
+  tempo = Math.max(40, Math.min(200, tempo + delta));
+  document.getElementById('bpmVal').textContent = tempo;
+  document.getElementById('bpmSlider').value = tempo;
+}
+
+function setTempo(val){
+  tempo = parseInt(val);
+  document.getElementById('bpmVal').textContent = tempo;
+}
+
+// ═══════════════════════════════════════════
+// INFO BAR
+// ═══════════════════════════════════════════
+function updateInfo(){
+  var scale = SCALES[activeScale];
+  var rootName = NOTES[rootNote];
+  var notes = [];
+  scale.intervals.forEach(function(iv){ notes.push((rootNote + iv) % 12); });
+  var noteNames = notes.map(function(n){ return NOTES[n]; });
+
+  var intervalStr = '';
+  for(var i = 0; i < scale.intervals.length; i++){
+    if(i > 0){
+      var diff = scale.intervals[i] - scale.intervals[i-1];
+      intervalStr += diff === 2 ? ' W' : diff === 1 ? ' H' : ' +' + diff;
+    }
+  }
+
+  var pattern = scale.intervals.map(function(iv, i){
+    if(i === 0) return 'R';
+    var diff = scale.intervals[i] - scale.intervals[i-1];
+    return diff === 2 ? 'W' : diff === 1 ? 'H' : '+' + diff;
+  }).join('-');
+
+  var html = '';
+  html += '<div class="info-card"><div class="info-label">Scale</div><div class="info-val">'+rootName+' '+scale.name+'</div></div>';
+  html += '<div class="info-card"><div class="info-label">Notes</div><div class="note-row">'+notes.map(function(n){return '<span class="note-pill">'+NOTES[n]+'</span>'}).join('')+'</div></div>';
+  html += '<div class="info-card"><div class="info-label">Pattern</div><div class="info-val">'+pattern+'</div><div class="info-sub">'+intervalStr+' (from root)</div></div>';
+  html += '<div class="info-card"><div class="info-label">Tuning</div><div class="info-sub">Standard: E A D G B E</div><div class="info-sub">'+notes.length+' notes · '+scale.category+'</div></div>';
+  document.getElementById('infoBar').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════
+// START
+// ═══════════════════════════════════════════
+init();
+</script>
+</body>
+</html>

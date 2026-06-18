@@ -1,0 +1,22 @@
+{
+  "project": "Music By Humans",
+  "created_at": "2026-06-12T12:00:00Z",
+  "description": "Rights and permissions log for all content on the Music By Humans platform",
+  "rules": {
+    "no_trademarked_names": true,
+    "copyright_check_before_publish": true,
+    "log_all_sources": true,
+    "never_host_audio": true,
+    "youtube_embed_only": true
+  },
+  "entries": [
+    {
+      "id": "entry-001",
+      "date": "2026-06-12",
+      "type": "system",
+      "description": "Copyright check system initialized. All content types and rules defined.",
+      "source": "backend/copyright_check.py",
+      "status": "active"
+    }
+  ]
+}

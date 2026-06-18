@@ -1,0 +1,22 @@
+{
+  "name": "Alien Metronome",
+  "short_name": "AlienMetro",
+  "description": "A cosmic metronome with MAGDA-style FX, alien synth, and theremin.",
+  "start_url": "/web-apps/Guitar-apps/Alien-Metronome/Alien%20Metronome/index.html",
+  "display": "standalone",
+  "background_color": "#0a0e1a",
+  "theme_color": "#22d3ee",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "Alien Metronome no BG.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "Alien Metronome no BG.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

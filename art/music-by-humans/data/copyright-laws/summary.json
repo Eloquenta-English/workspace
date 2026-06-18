@@ -1,0 +1,125 @@
+{
+  "generated_at": "2026-06-12T10:58:36.159055+00:00",
+  "sources": {
+    "us_dmca": {
+      "label": "US DMCA",
+      "url": "https://www.copyright.gov/dmca/",
+      "cached_at": "2026-06-12T10:58:19.047932+00:00",
+      "size_chars": 5200,
+      "status": "ok"
+    },
+    "eu_copyright_directive": {
+      "label": "EU Copyright Directive",
+      "url": "https://eur-lex.europa.eu/eli/dir/2019/790/oj",
+      "cached_at": "2026-06-12T10:58:21.870180+00:00",
+      "size_chars": 0,
+      "status": "ok"
+    },
+    "sa_copyright_act": {
+      "label": "SA Copyright Act",
+      "url": "https://www.gov.za/documents/copyright-act",
+      "cached_at": "2026-06-12T10:58:24.220276+00:00",
+      "size_chars": 32,
+      "status": "error"
+    },
+    "creative_commons": {
+      "label": "Creative Commons Licenses",
+      "url": "https://creativecommons.org/licenses/",
+      "cached_at": "2026-06-12T10:58:26.889466+00:00",
+      "size_chars": 25265,
+      "status": "ok"
+    },
+    "youtube_tos": {
+      "label": "YouTube Terms of Service",
+      "url": "https://www.youtube.com/t/terms",
+      "cached_at": "2026-06-12T10:58:29.541756+00:00",
+      "size_chars": 23387,
+      "status": "ok"
+    },
+    "youtube_api_tos": {
+      "label": "YouTube API Terms",
+      "url": "https://developers.google.com/youtube/terms",
+      "cached_at": "2026-06-12T10:58:34.158887+00:00",
+      "size_chars": 41021,
+      "status": "ok"
+    }
+  },
+  "rules": {
+    "youtube_embed": {
+      "risk": "low",
+      "rule": "YouTube embeds via official IFrame API are generally permitted under YouTube ToS. Do NOT download/rehost audio or video.",
+      "conditions": [
+        "Must use official YouTube IFrame API",
+        "Must not modify or obscure YouTube branding",
+        "Must not download audio/video for rehosting",
+        "Must comply with YouTube API rate limits"
+      ]
+    },
+    "artist_image": {
+      "risk": "medium",
+      "rule": "Artist images/EPK material may be copyrighted. Need permission, fair use analysis, or use CC-licensed images only.",
+      "conditions": [
+        "Check for Creative Commons license first",
+        "If no CC license, seek explicit permission from artist/label",
+        "Fair use may apply for editorial/review purposes (case-by-case)",
+        "Always attribute the source",
+        "Log all image sources in rights-log.json"
+      ]
+    },
+    "music_snippet": {
+      "risk": "high",
+      "rule": "NEVER host audio files. Only embed via YouTube. Music snippets may require licensing.",
+      "conditions": [
+        "Never upload MP3/WAV/FLAC to the site",
+        "Only embed via YouTube IFrame API",
+        "Do not create 'preview clips' from downloaded audio",
+        "Link to Bandcamp/SoundCloud for full tracks"
+      ]
+    },
+    "user_content": {
+      "risk": "medium",
+      "rule": "User-generated content requires Terms of Service covering content ownership and licensing.",
+      "conditions": [
+        "ToS must state user grants license to display content",
+        "ToS must include DMCA takedown procedure",
+        "Must have process for handling copyright complaints"
+      ]
+    },
+    "bandcamp_embed": {
+      "risk": "low",
+      "rule": "Bandcamp embeds are permitted under Bandcamp's terms. Use official embed codes.",
+      "conditions": [
+        "Use official Bandcamp embed widget",
+        "Do not scrape or rehost Bandcamp audio",
+        "Link to Bandcamp for purchases"
+      ]
+    },
+    "soundcloud_embed": {
+      "risk": "low",
+      "rule": "SoundCloud embeds are permitted for tracks with embedding enabled. Use official embed codes.",
+      "conditions": [
+        "Use official SoundCloud embed widget",
+        "Only embed tracks where artist has enabled embedding",
+        "Do not download or rehost audio"
+      ]
+    },
+    "rss_content": {
+      "risk": "low",
+      "rule": "RSS feed content aggregation is generally permitted for headlines and summaries. Full article text may require permission.",
+      "conditions": [
+        "Only display headlines, short summaries, and links",
+        "Do not republish full articles without permission",
+        "Always link to original source",
+        "Respect robots.txt and feed terms"
+      ]
+    },
+    "original_content": {
+      "risk": "none",
+      "rule": "Original written content (reviews, interviews, articles) is owned by Music By Humans.",
+      "conditions": [
+        "All original content is (c) Music By Humans",
+        "License original content under CC BY-NC-SA 4.0 unless otherwise stated"
+      ]
+    }
+  }
+}

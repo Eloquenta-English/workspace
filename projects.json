@@ -1,0 +1,158 @@
+[
+  {
+    "category": "Audio Apps",
+    "name": "alien-metronome",
+    "title": "Alien Metronome \u2014 Tempo Control Unit",
+    "path": "./audio-apps/alien-metronome/index.html"
+  },
+  {
+    "category": "Audio Apps",
+    "name": "alien-recorder",
+    "title": "Alien Recorder",
+    "path": "./audio-apps/alien-recorder/index.html"
+  },
+  {
+    "category": "Audio Apps",
+    "name": "alien-guitar-tuner",
+    "title": "Alien Guitar Tuner v2",
+    "path": "./audio-apps/alien-guitar-tuner/index.html"
+  },
+  {
+    "category": "Audio Apps",
+    "name": "alien-fret",
+    "title": "Alien Fret \u2014 Interactive Fretboard",
+    "path": "./audio-apps/alien-fret/index.html"
+  },
+  {
+    "category": "Audio Apps",
+    "name": "scalien",
+    "title": "Scalien \u2014 Guitar Scale & Chord Explorer",
+    "path": "./audio-apps/scalien/index.html"
+  },
+  {
+    "category": "Audio Apps",
+    "name": "ocean-scales",
+    "title": "\ud83c\udf0a Ocean Scales \u2014 Alien Fretboard",
+    "path": "./audio-apps/ocean-scales/index.html"
+  },
+  {
+    "category": "Audio Apps",
+    "name": "resonance-daw",
+    "title": "Resonance DAW",
+    "path": "./audio-apps/resonance-daw/index.html"
+  },
+  {
+    "category": "Life Apps",
+    "name": "akasha-qi-gong",
+    "title": "Akasha Qi Gong",
+    "path": "./life-apps/akasha-qi-gong/index.html"
+  },
+  {
+    "category": "Growing",
+    "name": "health-diabetes-anandamide",
+    "title": "Diabetes & Anandamide Deficiency",
+    "path": "./growing/health-diabetes-anandamide/index.html"
+  },
+  {
+    "category": "ESL Sites",
+    "name": "william-thomason-english",
+    "title": "William Thomason English \u2014 English... adapted to your needs",
+    "path": "./esl-sites/william-thomason-english/index.html"
+  },
+  {
+    "category": "ESL Sites",
+    "name": "speak-easy-english",
+    "title": "Speak Easy English \u2014 Online English Lessons for Everyone",
+    "path": "./esl-sites/speak-easy-english/index.html"
+  },
+  {
+    "category": "ESL Sites",
+    "name": "eloquenta",
+    "title": "Eloquenta \u2014 Online English for Adults",
+    "path": "./esl-sites/eloquenta/index.html"
+  },
+  {
+    "category": "ESL Sites",
+    "name": "linguatron",
+    "title": "Langui \u2014 Translation Tool",
+    "path": "./esl-sites/linguatron/index.html"
+  },
+  {
+    "category": "ESL Materials",
+    "name": "forest-friends",
+    "title": "Forest Friends \u2014 Learn English!",
+    "path": "./esl-materials/forest-friends/index.html"
+  },
+  {
+    "category": "ESL Materials",
+    "name": "past-simple-masterclass",
+    "title": "Past Simple Masterclass \ud83c\udfaf",
+    "path": "./esl-materials/past-simple-masterclass/index.html"
+  },
+  {
+    "category": "ESL Materials",
+    "name": "wte-curriculum",
+    "title": "WTE \u2014 William Thomason English",
+    "path": "./esl-materials/wte-curriculum/index.html"
+  },
+  {
+    "category": "ESL Materials",
+    "name": "vocabforge",
+    "title": "VocabForge",
+    "path": "./esl-materials/vocabforge/index.html"
+  },
+  {
+    "category": "ESL Materials",
+    "name": "past-participles",
+    "title": "PARTICIPLE_CORE // Neural Knowledge Base",
+    "path": "./esl-materials/past-participles/index.html"
+  },
+  {
+    "category": "ESL Materials",
+    "name": "language-widget",
+    "title": "Language Widget \u2014 Demo",
+    "path": "./esl-materials/language-widget/index.html"
+  },
+  {
+    "category": "Games",
+    "name": "oobzoo",
+    "title": "OobzoO \u2014 4 Track DAW",
+    "path": "./games/oobzoo/index.html"
+  },
+  {
+    "category": "Planning & Productivity",
+    "name": "agentic-os",
+    "title": "Agentic OS \u2014 Orchestration &amp; Governance",
+    "path": "./planning-productivity/agentic-os/index.html"
+  },
+  {
+    "category": "Planning & Productivity",
+    "name": "hermes-dashboard",
+    "title": "Hermes Dashboard",
+    "path": "./planning-productivity/hermes-dashboard/index.html"
+  },
+  {
+    "category": "Planning & Productivity",
+    "name": "hermes-window-manager",
+    "title": "Hermes Window Manager",
+    "path": "./planning-productivity/hermes-window-manager/index.html"
+  },
+  {
+    "category": "Art",
+    "name": "chromaskin",
+    "title": "ChromaSkin \u2014 Theme Popup",
+    "path": "./art/chromaskin/index.html"
+  },
+  {
+    "category": "Art",
+    "name": "crop-circles",
+    "title": "Crop Circles Font",
+    "path": "./art/crop-circles/index.html"
+  },
+  {
+    "category": "Art",
+    "name": "music-by-humans",
+    "title": "Music By Humans \u2014 Underground Music Discovery",
+    "path": "./art/music-by-humans/index.html"
+  }
+]

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/static/styles.css">
+  <title>Approval Notifications</title>
+</head>
+<body>
+  <h1>Approval Notifications</h1>
+  <table>
+    <tr>
+      <th>Title</th>
+      <th>Source</th>
+      <th>Actions</th>
+    </tr>
+    {% for link in notifications %}
+    <tr>
+      <td>{{ link.title }}</td>
+      <td>{{ link.source }}</td>
+      <td>
+        <form action="{{ url_for('approve', link_id=link.id) }}" method="POST">
+          <button type="submit">Approve</button>
+        </form>
+        <form action="{{ url_for('reject', link_id=link.id) }}" method="POST">
+          <button type="submit">Reject</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

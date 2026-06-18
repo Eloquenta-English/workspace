@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alien Metronome Signal Tester</title>
+<style>
+body{font-family:'Share Tech Mono',monospace;background:#0a0e1a;color:#e0f2fe;padding:20px;max-width:900px;margin:0 auto}
+h1{color:#22d3ee;text-shadow:0 0 10px #22d3ee}
+h2{color:#a78bfa;margin-top:30px;font-size:1rem;letter-spacing:2px}
+.test{background:#111827;border:1px solid #1e3a5f;border-radius:8px;padding:12px;margin:8px 0;display:flex;align-items:center;gap:10px}
+.pass{border-left:4px solid #34d399}
+.fail{border-left:4px solid #fb7185}
+.warn{border-left:4px solid #fbbf24}
+.icon{font-size:1.5rem}
+.msg{flex:1}
+.detail{font-size:.75rem;color:#94a3b8;margin-top:4px}
+button{background:#1e3a5f;border:1px solid #22d3ee;color:#22d3ee;padding:10px 20px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:1rem;margin:5px}
+button:hover{background:#22d3ee;color:#0a0e1a}
+#log{margin-top:20px;background:#0a0e1a;border:1px solid #1e3a5f;border-radius:8px;padding:12px;max-height:500px;overflow-y:auto;font-size:.8rem}
+.log-line{padding:2px 0;border-bottom:1px solid #111827}
+.log-pass{color:#34d399}
+.log-fail{color:#fb7185}
+.log-warn{color:#fbbf24}
+.log-info{color:#94a3b8}
+canvas{background:#05080f;border:1px solid #1e3a5f;border-radius:8px;width:100%;height:160px;margin-top:10px}
+</style>
+</head>
+<body>
+
+<h1>Alien Metronome Signal Tester</h1>
+<p>Objective measurements of the FX chain after the refactor. Connect headphones/speakers — some tests make sound.</p>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin:20px 0">
+  <button onclick="runAllTests()">▶ Run All Tests</button>
+  <button onclick="clearLog()">Clear Log</button>
+</div>
+
+<div id="results"></div>
+<div id="log"></div>
+<h2>Waveform / Spectrum</h2>
+<canvas id="scope" width="900" height="160"></canvas>
+
+<script src="index.html" id="appScript"></script>
+<script>
+/*
+  This tester embeds the metronome by extracting its <script> block from index.html.
+  It then runs automated signal tests against the live audio engine.
+*/
+var logEl = document.getElementById('log');
+var resultsEl = document.getElementById('results');
+var scope = document.getElementById('scope');
+var ctx2d = scope.getContext('2d');
+
+function log(msg, type) {
+  var line = document.createElement('div');
+  line.className = 'log-line log-' + (type || 'info');
+  line.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+  logEl.appendChild(line);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+function clearLog() { logEl.innerHTML = ''; resultsEl.innerHTML = ''; }
+
+function addResult(name, pass, detail, warn) {
+  var d = document.createElement('div');
+  d.className = 'test ' + (pass ? 'pass' : (warn ? 'warn' : 'fail'));
+  d.innerHTML = '<span class="icon">' + (pass ? '✅' : (warn ? '⚠️' : '❌')) + '</span><div class="msg"><strong>' + name + '</strong><div class="detail">' + (detail || '') + '</div></div>';
+  resultsEl.appendChild(d);
+}
+
+// Load index.html as text, eval the <script> block
+function loadAppEngine() {
+  return new Promise(function(resolve){
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET','index.html',true);
+    xhr.onreadystatechange = function(){
+      if (xhr.readyState === 4) {
+        if (xhr.status !== 200) { addResult('Load index.html',false,'status '+xhr.status); resolve(false); return; }
+        var html = xhr.responseText;
+        var m = html.match(/<script>([\s\S]*?)<\/script>/g);
+        if (!m || !m.length) { addResult('Find script block',false,'no <script> found'); resolve(false); return; }
+        // The last big inline script is the app
+        var script = m[m.length-1].replace(/<script>/,'').replace(/<\/script>/,'');
+        try {
+          // Provide a minimal DOM stub for the script's top-level references
+          window.originalCreateElement = document.createElement;
+          window.originalGetElementById = document.getElementById;
+          window.originalQuerySelector = document.querySelector;
+          window.originalQuerySelectorAll = document.querySelectorAll;
+          document.getElementById = function(id){
+            var real = window.originalGetElementById.call(document,id);
+            if (real) return real;
+            return {
+              value:'', textContent:'', classList:{add:function(){},remove:function(){},toggle:function(){}},
+              style:{}, setAttribute:function(){}, getAttribute:function(){return null;},
+              querySelector:function(){return null;}, querySelectorAll:function(){return [];},
+              appendChild:function(){}, addEventListener:function(){}, removeEventListener:function(){},
+              getBoundingClientRect:function(){return {left:0,top:0,width:100,height:100};}
+            };
+          };
+          document.querySelector = function(sel){ return window.originalQuerySelector.call(document,sel) || document.getElementById(''); };
+          document.querySelectorAll = function(sel){ var r = window.originalQuerySelectorAll.call(document,sel); return r.length ? r : []; };
+          eval(script);
+          resolve(true);
+        } catch(e) {
+          addResult('Eval app script',false,e.message);
+          resolve(false);
+        }
+      }
+    };
+    xhr.send();
+  });
+}
+
+function wait(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
+
+// Capture a short offline-ish measurement by probing analyser after playing a sound
+async function capturePulse(soundFunc, durationSec) {
+  if (!audioCtx) throw new Error('no audioCtx');
+  if (audioCtx.state === 'suspended') await audioCtx.resume();
+  await wait(50);
+
+  var analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 4096;
+  analyser.smoothingTimeConstant = 0;
+  masterGain.disconnect();
+  masterGain.connect(analyser);
+  analyser.connect(audioCtx.destination);
+
+  var t0 = audioCtx.currentTime + 0.02;
+  soundFunc(t0, true);
+
+  var sampleRate = audioCtx.sampleRate;
+  var totalSamples = Math.ceil(durationSec * sampleRate);
+  var bufferLen = analyser.fftSize;
+  var waveform = new Float32Array(totalSamples);
+  var spectrum = new Float32Array(analyser.frequencyBinCount);
+
+  var startTime = performance.now();
+  var collected = 0;
+  var tmp = new Float32Array(bufferLen);
+
+  return new Promise(function(resolve){
+    function collect(){
+      if (collected >= totalSamples || performance.now() - startTime > durationSec*1000 + 500) {
+        analyser.getFloatFrequencyData(spectrum);
+        masterGain.disconnect();
+        masterGain.connect(audioCtx.destination);
+        analyser.disconnect();
+        drawScope(waveform, spectrum);
+        resolve({waveform:waveform, spectrum:spectrum, sampleRate:sampleRate, length:collected});
+        return;
+      }
+      analyser.getFloatTimeDomainData(tmp);
+      var take = Math.min(bufferLen, totalSamples - collected);
+      waveform.set(tmp.subarray(0,take), collected);
+      collected += take;
+      requestAnimationFrame(collect);
+    }
+    setTimeout(collect, Math.max(0, durationSec*1000 + 50));
+  });
+}
+
+function drawScope(waveform, spectrum){
+  var w = scope.width, h = scope.height;
+  ctx2d.clearRect(0,0,w,h);
+  ctx2d.strokeStyle = '#22d3ee';
+  ctx2d.lineWidth = 1;
+  ctx2d.beginPath();
+  var step = Math.max(1, Math.floor(waveform.length / w));
+  for (var x = 0; x < w; x++) {
+    var idx = x * step;
+    var y = (0.5 - waveform[idx] * 0.45) * h;
+    if (x === 0) ctx2d.moveTo(x,y); else ctx2d.lineTo(x,y);
+  }
+  ctx2d.stroke();
+
+  // draw spectrum overlay on right half
+  ctx2d.strokeStyle = 'rgba(167,139,250,0.5)';
+  ctx2d.beginPath();
+  var bins = spectrum.length;
+  var nyquist = audioCtx.sampleRate / 2;
+  var maxFreq = 4000;
+  var maxBin = Math.floor(bins * maxFreq / nyquist);
+  step = Math.max(1, Math.floor(maxBin / (w/2)));
+  var xOffset = w/2;
+  for (var i = 0; i < maxBin; i += step) {
+    var x = xOffset + (i / maxBin) * (w/2);
+    var db = spectrum[i];
+    var amp = Math.max(0, (db + 100) / 100);
+    var y = h - amp * h * 0.9;
+    if (i === 0) ctx2d.moveTo(x,y); else ctx2d.lineTo(x,y);
+  }
+  ctx2d.stroke();
+}
+
+function rms(buf){
+  var sum = 0;
+  for (var i=0;i<buf.length;i++) sum += buf[i]*buf[i];
+  return Math.sqrt(sum/buf.length);
+}
+function peak(buf){
+  var p = 0;
+  for (var i=0;i<buf.length;i++) p = Math.max(p, Math.abs(buf[i]));
+  return p;
+}
+function findPeaks(buf, threshold){
+  var peaks = [];
+  for (var i=1;i<buf.length-1;i++){
+    if (buf[i] > threshold && buf[i] > buf[i-1] && buf[i] > buf[i+1]) peaks.push(i);
+  }
+  return peaks;
+}
+function findFirstPeak(buf, threshold){
+  for (var i=0;i<buf.length;i++) if (Math.abs(buf[i]) > threshold) return i;
+  return -1;
+}
+
+// ═══════════════════════════════════════════════════════════
+// TESTS
+// ═══════════════════════════════════════════════════════════
+
+async function testContextAndChain(){
+  log('TEST: AudioContext + chain init','info');
+  if (!audioCtx) { addResult('AudioContext exists',false,'audioCtx is null'); return false; }
+  if (audioCtx.state === 'suspended') await audioCtx.resume();
+  ensureEffectChain();
+  await wait(50);
+  addResult('AudioContext state', audioCtx.state === 'running', audioCtx.state);
+  addResult('masterGain exists', !!masterGain, masterGain ? 'gain='+masterGain.gain.value : 'null');
+  addResult('fxInputGain exists', !!fxInputGain, fxInputGain ? 'gain='+fxInputGain.gain.value : 'null');
+  addResult('fxReturn exists', !!fxReturn, fxReturn ? 'gain='+fxReturn.gain.value : 'null');
+  return !!masterGain && !!fxInputGain && !!fxReturn;
+}
+
+async function testDryClick(){
+  log('TEST: Dry click level','info');
+  ringMix = 0; delayMix = 0; reverbMix = 0;
+  ensureEffectChain();
+  var cap = await capturePulse(playVanillaClick, 0.3);
+  var p = peak(cap.waveform);
+  var r = rms(cap.waveform);
+  addResult('Dry click peak', p > 0.05 && p < 1.0, 'peak='+p.toFixed(4)+', rms='+r.toFixed(4));
+  return p > 0.05;
+}
+
+async function testDelayTime(){
+  log('TEST: DD-3 delay time accuracy','info');
+  bpm = 120;
+  delayMode = 'dot8';
+  ringMix = 0; reverbMix = 0; delayMix = 0.6; delayFeedbackAmt = 0.0;
+  ensureEffectChain();
+  var cap = await capturePulse(playVanillaClick, 1.2);
+  // dot8 at 120 BPM = 60/120 * 0.75 = 0.375s = 375ms, clamped inside DD3 range OK
+  var expected = clampDelayTime((60/bpm) * 0.75);
+  var p1 = findFirstPeak(cap.waveform, 0.02);
+  if (p1 < 0) { addResult('Delay first peak',false,'no peak found'); return false; }
+  var sr = cap.sampleRate;
+  var second = findFirstPeak(cap.waveform.subarray(p1 + Math.floor(sr*0.05)), 0.02);
+  if (second < 0) { addResult('Delay echo peak',false,'no echo found'); return false; }
+  var measured = second / sr;
+  var err = Math.abs(measured - expected);
+  addResult('Delay echo time', err < 0.030, 'measured='+measured.toFixed(3)+'s expected='+expected.toFixed(3)+'s err='+err.toFixed(3)+'s');
+  addResult('DD-3 range 12.5..800ms', expected >= 0.0125 && expected <= 0.800, expected.toFixed(3)+'s');
+  return err < 0.030;
+}
+
+async function testDelayFeedback(){
+  log('TEST: Delay feedback','info');
+  bpm = 120; delayMode = 'dot8'; ringMix = 0; reverbMix = 0; delayMix = 0.7;
+  delayFeedbackAmt = 0.0;
+  ensureEffectChain();
+  var cap0 = await capturePulse(playVanillaClick, 1.0);
+  var peaks0 = findPeaks(cap0.waveform, 0.03).length;
+
+  delayFeedbackAmt = 0.6;
+  ensureEffectChain();
+  var cap1 = await capturePulse(playVanillaClick, 1.5);
+  var peaks1 = findPeaks(cap1.waveform, 0.03).length;
+  addResult('Feedback creates more echoes', peaks1 > peaks0, 'fb=0: '+peaks0+' peaks, fb=0.6: '+peaks1+' peaks');
+  return peaks1 > peaks0;
+}
+
+async function testDelayMix(){
+  log('TEST: Delay wet/dry mix','info');
+  bpm = 120; delayMode = 'dot8'; ringMix = 0; reverbMix = 0; delayFeedbackAmt = 0.0;
+  delayMix = 0.0; ensureEffectChain();
+  var capDry = await capturePulse(playVanillaClick, 0.4);
+  var dryRms = rms(capDry.waveform);
+
+  delayMix = 0.8; ensureEffectChain();
+  var capWet = await capturePulse(playVanillaClick, 0.4);
+  var wetRms = rms(capWet.waveform);
+  addResult('Wet mix increases RMS', wetRms > dryRms * 1.2, 'dry='+dryRms.toFixed(4)+' wet='+wetRms.toFixed(4));
+  return wetRms > dryRms;
+}
+
+async function testRingMod(){
+  log('TEST: Ring modulator sidebands','info');
+  bpm = 60; delayMix = 0; reverbMix = 0; ringMix = 0.0;
+  ensureEffectChain();
+  var capDry = await capturePulse(playVanillaClick, 0.2);
+  var specDry = capDry.spectrum;
+
+  ringFreq = 200; ringMix = 0.8; ensureEffectChain();
+  var cap = await capturePulse(playVanillaClick, 0.3);
+  var spec = cap.spectrum;
+
+  // find bins near 200Hz and near sidebands
+  var binWidth = cap.sampleRate / 2 / spec.length;
+  var targetBin = Math.round(200 / binWidth);
+  var sideband = Math.round((1000-200) / binWidth); // vanilla click fundamental ~1000Hz
+  var carrierBin = Math.round(200 / binWidth);
+
+  var carrierLevel = spec[carrierBin];
+  var sidebandLevel = spec[sideband];
+  var dryCarrier = specDry[carrierBin];
+  addResult('Ring mod carrier present', carrierLevel > dryCarrier + 3, 'carrier='+carrierLevel.toFixed(1)+'dB dry='+dryCarrier.toFixed(1)+'dB');
+  addResult('Ring mod sideband present', sidebandLevel > -80, 'sideband='+sidebandLevel.toFixed(1)+'dB @'+(sideband*binWidth).toFixed(0)+'Hz');
+  return carrierLevel > dryCarrier + 3 && sidebandLevel > -80;
+}
+
+async function testReverb(){
+  log('TEST: Reverb decay','info');
+  ringMix = 0; delayMix = 0; reverbMix = 0.6; ensureEffectChain();
+  var cap = await capturePulse(playVanillaClick, 2.0);
+  var p = peak(cap.waveform);
+  var tailEnd = cap.waveform.subarray(Math.floor(cap.waveform.length*0.8));
+  var tailRms = rms(tailEnd);
+  addResult('Reverb tail present', tailRms > 0.0005 && p > 0.05, 'peak='+p.toFixed(4)+' tail rms='+tailRms.toFixed(5));
+  return tailRms > 0.0005;
+}
+
+async function testPingPong(){
+  log('TEST: Ping-pong delay aux send','info');
+  bpm = 100; delayMode = 'dot8'; ringMix = 0; reverbMix = 0; delayMix = 0;
+  pingPongEnabled = true; pingPongFb = 0.5; ensureEffectChain();
+  var cap = await capturePulse(playVanillaClick, 1.5);
+  var peaks = findPeaks(cap.waveform, 0.02);
+  addResult('Ping-pong produces echoes', peaks.length >= 2, peaks.length + ' peaks detected');
+  pingPongEnabled = false; ensureEffectChain();
+  return peaks.length >= 2;
+}
+
+async function testNoNan(){
+  log('TEST: No NaN / no exceptions during rebuilds','info');
+  var ok = true;
+  try {
+    for (var i=0;i<5;i++){
+      ringMix = Math.random(); delayMix = Math.random(); reverbMix = Math.random();
+      ensureEffectChain();
+      await wait(20);
+    }
+    ringMix = 0; delayMix = 0; reverbMix = 0; ensureEffectChain();
+  } catch(e) { ok = false; log('Rebuild exception: '+e.message,'fail'); }
+  addResult('Chain rebuild stress', ok, '5 random mix rebuilds');
+  return ok;
+}
+
+async function testSliderUpdates(){
+  log('TEST: Live slider parameter updates','info');
+  ringMix = 0.5; delayMix = 0.5; reverbMix = 0.5; ensureEffectChain();
+  await wait(30);
+  var ok = true;
+  try {
+    setRingMix(80);
+    setDelay(30);
+    setReverb(70);
+    setDelayFeedback(60);
+    setRingFreq(330);
+    await wait(50);
+  } catch(e) { ok = false; log('Slider update exception: '+e.message,'fail'); }
+  addResult('Live slider updates', ok,
+    'ring='+ringMix.toFixed(2)+' delay='+delayMix.toFixed(2)+' reverb='+reverbMix.toFixed(2)+
+    ' fb='+delayFeedbackAmt.toFixed(2)+' freq='+ringFreq);
+  return ok;
+}
+
+async function runAllTests(){
+  clearLog();
+  log('═══ Loading engine ═══','info');
+  var loaded = await loadAppEngine();
+  if (!loaded) { log('Engine load failed; cannot continue','fail'); return; }
+
+  log('═══ Running signal tests ═══','info');
+  await testContextAndChain();
+  await testDryClick();
+  await testDelayTime();
+  await testDelayFeedback();
+  await testDelayMix();
+  await testRingMod();
+  await testReverb();
+  await testPingPong();
+  await testNoNan();
+  await testSliderUpdates();
+
+  // Restore sane defaults
+  ringMix = 0; delayMix = 0; reverbMix = 0; pingPongEnabled = false;
+  ensureEffectChain();
+  log('═══ Tests complete ═══','info');
+}
+</script>
+</body>
+</html>

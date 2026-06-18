@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Reading Practice — Alice in Wonderland</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0f1a;--bg2:#111827;--bg3:#1e293b;--border:#374151;--text:#f1f5f9;--dim:#94a3b8;--muted:#64748b;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--rose:#fb7185;--violet:#a78bfa}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+.header{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.back{color:var(--dim);text-decoration:none;font-size:13px;font-weight:600;padding:6px 12px;border-radius:6px;border:1px solid var(--border)}
+.back:hover{color:var(--cyan);border-color:var(--cyan)}
+.title{font-size:16px;font-weight:700;flex:1}
+.main{max-width:900px;margin:0 auto;padding:24px 20px}
+.level-bar{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.level-btn{height:36px;padding:0 18px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:13px;font-weight:600;cursor:pointer}
+.level-btn:hover{border-color:var(--text)}
+.level-btn.active{background:var(--cyan);border-color:var(--cyan);color:var(--bg)}
+.chapter-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.chtab{height:32px;padding:0 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:12px;font-weight:600;cursor:pointer}
+.chtab.active{background:rgba(34,211,238,.12);border-color:var(--cyan);color:var(--cyan)}
+.tts-bar{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;flex-wrap:wrap}
+.tts-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.tts-btn{height:32px;padding:0 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px}
+.tts-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.tts-btn.playing{background:rgba(34,211,238,.12);border-color:var(--cyan);color:var(--cyan)}
+.tts-ctrl{display:flex;align-items:center;gap:6px}
+.tts-ctrl label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.tts-ctrl input[type="range"]{width:70px;accent-color:var(--cyan)}
+.tts-speed-val{font-size:11px;font-weight:600;color:var(--cyan);min-width:30px;text-align:right}
+.tts-progress{flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;min-width:60px}
+.tts-progress-fill{height:100%;background:var(--cyan);width:0%;transition:width .25s}
+.voice-select{background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--dim);font-size:11px;padding:4px 8px;outline:none;cursor:pointer;max-width:160px}
+.voice-select:focus{border-color:var(--cyan)}
+.reading-area{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:24px;position:relative}
+.chapter-title{font-size:1.4rem;font-weight:800;margin-bottom:4px;line-height:1.2}
+.chapter-author{font-size:12px;color:var(--muted);margin-bottom:16px;font-style:italic}
+.passage-text{font-family:'Merriweather',serif;font-size:1.05rem;line-height:1.9;color:var(--dim);letter-spacing:.2px;text-align:justify}
+.passage-text .vocab{color:var(--amber);cursor:help;border-bottom:1px dashed rgba(251,191,36,.4);position:relative}
+.passage-text .vocab:hover{border-bottom-color:var(--amber)}
+.passage-text .vocab .vtip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.passage-text .vocab:hover .vtip{opacity:1}
+.passage-text .sentence{border-radius:3px;padding:1px 0;transition:background .3s}
+.speaking-line{background:rgba(34,211,238,.08)!important;border-left:3px solid var(--cyan);padding-left:12px!important;margin-left:-15px;border-radius:0 4px 4px 0}
+.word{display:inline;transition:background .15s;border-radius:2px;padding:1px 2px;margin:-1px -2px;cursor:pointer}
+.word:hover{background:rgba(34,211,238,.12)}
+.word.speaking{background:rgba(34,211,238,.2)!important;color:var(--cyan);font-weight:600}
+.word.vocab-word{color:var(--amber);cursor:help;border-bottom:1px dashed rgba(251,191,36,.4)}
+.word.vocab-word:hover{border-bottom-color:var(--amber)}
+.word.vocab-word .vtip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.word.vocab-word:hover .vtip{opacity:1}
+.reading-time{font-size:11px;color:var(--muted);text-align:right;margin-top:16px}
+.questions{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px}
+.q-header{font-size:1.1rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.q-score{font-size:12px;color:var(--muted);margin-left:auto}
+.question{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.question:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.q-text{font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5}
+.q-num{color:var(--cyan);margin-right:6px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:13px;transition:all .15s}
+.opt:hover{border-color:var(--cyan)}
+.opt.sel{background:rgba(34,211,238,.08);border-color:var(--cyan)}
+.opt.correct{background:rgba(52,211,153,.1);border-color:var(--green);color:var(--green)}
+.opt.wrong{background:rgba(251,113,133,.1);border-color:var(--rose);color:var(--rose)}
+.opt .letter{display:inline-block;width:22px;height:22px;border-radius:50%;background:var(--bg3);text-align:center;font-size:11px;font-weight:700;line-height:22px;flex-shrink:0}
+.short-answer{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;outline:none;resize:vertical;min-height:60px;font-family:'Inter',sans-serif}
+.short-answer:focus{border-color:var(--cyan)}
+.submit-row{display:flex;gap:8px;justify-content:center;margin-top:20px}
+.btn{height:40px;padding:0 24px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:13px;font-weight:600;cursor:pointer}
+.btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn.primary{background:var(--cyan);border-color:var(--cyan);color:var(--bg)}
+.results{display:none;text-align:center;padding:40px 20px}
+.results.show{display:block}
+.results h2{font-size:1.6rem;font-weight:800;margin-bottom:8px}
+.res-stats{display:flex;gap:16px;justify-content:center;margin:20px 0;flex-wrap:wrap}
+.rstat{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 20px;min-width:100px}
+.rstat .val{font-size:1.5rem;font-weight:800;display:block}
+.rstat .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.start-msg{text-align:center;padding:60px 20px}
+.start-msg h2{font-size:1.6rem;font-weight:800;margin-bottom:8px}
+.start-msg p{color:var(--dim);margin-bottom:24px}
+</style>
+</head>
+<body>
+<div class="header">
+  <a href="index.html" class="back">&larr; Back</a>
+  <div class="title">Reading Practice — Alice in Wonderland</div>
+</div>
+<div class="main">
+  <div class="level-bar" id="levelBar">
+    <button class="level-btn active" onclick="setLevel('a1',this)">A1 Beginner</button>
+    <button class="level-btn" onclick="setLevel('a2',this)">A2 Elementary</button>
+    <button class="level-btn" onclick="setLevel('b1',this)">B1 Intermediate</button>
+    <button class="level-btn" onclick="setLevel('b2',this)">B2 Upper Intermediate</button>
+  </div>
+  <div class="chapter-tabs" id="chapterTabs"></div>
+  <div class="tts-bar" id="ttsBar" style="display:none">
+    <span class="tts-label">TTS</span>
+    <button class="tts-btn" id="ttsPlayBtn" onclick="toggleTTS()">&#9654; Play</button>
+    <button class="tts-btn" onclick="stopTTS()">&#9632; Stop</button>
+    <button class="tts-btn" onclick="pauseTTS()" id="ttsPauseBtn" style="display:none">&#10074;&#10074;</button>
+    <select class="voice-select" id="voiceSelect" onchange="ttsVoice=this.value">
+      <option value="">Loading voices...</option>
+    </select>
+    <div class="tts-ctrl">
+      <label>Speed</label>
+      <input type="range" id="ttsRate" min="40" max="150" value="85" oninput="updateTTSRate(this.value)">
+      <span class="tts-speed-val" id="ttsSpeedVal">0.85x</span>
+    </div>
+    <div class="tts-progress"><div class="tts-progress-fill" id="ttsProgressFill"></div></div>
+    <label style="font-size:9px;color:var(--muted);display:flex;align-items:center;gap:4px;cursor:pointer">
+      <input type="checkbox" id="ttsWordMode" onchange="ttsWordMode=this.checked" style="accent-color:var(--cyan)">
+      Word mode
+    </label>
+  </div>
+  <div class="start-msg" id="startMsg">
+    <h2>Alice in Wonderland</h2>
+    <p>Read chapters from Lewis Carroll's classic, with vocabulary support and comprehension questions. Use the TTS button to listen with realistic text-to-speech.</p>
+    <button class="btn primary" onclick="startQuiz()">Start Reading</button>
+  </div>
+  <div id="quizArea" style="display:none">
+    <div class="reading-area" id="readingArea"></div>
+    <div class="questions" id="questionsArea"></div>
+    <div class="results" id="resultsArea"></div>
+  </div>
+</div>
+<script>
+var LEVEL='a1',CHAPTER=0,questions=[],answers=[],submitted=false,readStart=0;
+var ttsUtterance=null,ttsPlaying=false,ttsPaused=false,ttsVoice='',ttsSentences=[],ttsCurrentSentence=0;
+
+function loadVoices(){
+  var sel=document.getElementById('voiceSelect');
+  var voices=window.speechSynthesis.getVoices();
+  if(!voices.length){setTimeout(loadVoices,200);return}
+  sel.innerHTML='';
+  var preferred=['Google US English','Google UK English Female','Google UK English Male','Samantha','Alex','Victoria','Daniel','Karen','Moira','Tessa','Microsoft Zira','Microsoft David','en-US','en-GB'];
+  var good=[],other=[];
+  voices.forEach(function(v){
+    var name=v.name;
+    var isPreferred=preferred.some(function(p){return name.indexOf(p)!==-1});
+    if(isPreferred)good.push(v);else other.push(v);
+  });
+  var sorted=good.concat(other);
+  sorted.forEach(function(v,i){
+    var opt=document.createElement('option');
+    opt.value=v.name;
+    opt.textContent=v.name+(v.default?' (default)':'');
+    if(i===0)opt.selected=true;
+    sel.appendChild(opt);
+  });
+  if(sorted.length>0)ttsVoice=sorted[0].name;
+}
+if('speechSynthesis' in window){
+  loadVoices();
+  window.speechSynthesis.onvoiceschanged=loadVoices;
+}
+
+function toggleTTS(){
+  if(ttsPlaying&&!ttsPaused){pauseTTS();return}
+  if(ttsPaused){resumeTTS();return}
+  startTTS();
+}
+
+function startTTS(){
+  if(!('speechSynthesis' in window)){alert('Text-to-speech not supported.');return}
+  var p=CHAPTERS[LEVEL][CHAPTER];
+  speechSynthesis.cancel();
+  ttsPaused=false;
+  ttsCurrentSentence=0;
+  ttsCurrentWord=0;
+  ttsSentences=p.text.split(/(?<=[.!?])\s+/);
+  ttsWordMode=document.getElementById('ttsWordMode').checked;
+  speakNext();
+}
+
+function speakNext(){
+  if(ttsCurrentSentence>=ttsSentences.length){stopTTS();return}
+  var sentence=ttsSentences[ttsCurrentSentence];
+  if(ttsWordMode){
+    var words=sentence.split(/\s+/);
+    if(ttsCurrentWord>=words.length){
+      ttsCurrentSentence++;
+      ttsCurrentWord=0;
+      highlightWord(ttsCurrentSentence-1,-1,false);
+      speakNext();
+      return;
+    }
+    var word=words[ttsCurrentWord];
+    ttsUtterance=new SpeechSynthesisUtterance(word);
+    ttsUtterance.rate=parseInt(document.getElementById('ttsRate').value)/100;
+    ttsUtterance.lang='en-US';
+    if(ttsVoice){
+      var voices=window.speechSynthesis.getVoices();
+      var v=voices.find(function(x){return x.name===ttsVoice});
+      if(v)ttsUtterance.voice=v;
+    }
+    ttsUtterance.onend=function(){
+      highlightWord(ttsCurrentSentence,ttsCurrentWord,false);
+      ttsCurrentWord++;
+      speakNext();
+    };
+    ttsUtterance.onerror=function(){stopTTS();};
+    highlightWord(ttsCurrentSentence,ttsCurrentWord,true);
+    speechSynthesis.speak(ttsUtterance);
+    ttsPlaying=true;
+    updateTTSUI();
+  } else {
+    ttsUtterance=new SpeechSynthesisUtterance(sentence);
+    ttsUtterance.rate=parseInt(document.getElementById('ttsRate').value)/100;
+    ttsUtterance.lang='en-US';
+    if(ttsVoice){
+      var voices=window.speechSynthesis.getVoices();
+      var v=voices.find(function(x){return x.name===ttsVoice});
+      if(v)ttsUtterance.voice=v;
+    }
+    ttsUtterance.onend=function(){
+      ttsCurrentSentence++;
+      highlightSentence(ttsCurrentSentence-1,false);
+      speakNext();
+    };
+    ttsUtterance.onerror=function(){stopTTS();};
+    highlightSentence(ttsCurrentSentence,true);
+    speechSynthesis.speak(ttsUtterance);
+    ttsPlaying=true;
+    updateTTSUI();
+  }
+}
+
+function pauseTTS(){speechSynthesis.pause();ttsPaused=true;updateTTSUI();}
+function resumeTTS(){speechSynthesis.resume();ttsPaused=false;updateTTSUI();}
+
+function stopTTS(){
+  speechSynthesis.cancel();
+  ttsPlaying=false;ttsPaused=false;ttsUtterance=null;ttsCurrentSentence=0;ttsCurrentWord=0;
+  document.getElementById('ttsProgressFill').style.width='0%';
+  document.querySelectorAll('.speaking-line').forEach(function(el){el.classList.remove('speaking-line')});
+  document.querySelectorAll('.word.speaking').forEach(function(el){el.classList.remove('speaking')});
+  updateTTSUI();
+}
+
+function updateTTSRate(val){document.getElementById('ttsSpeedVal').textContent=(val/100).toFixed(1)+'x';}
+
+function highlightSentence(idx,active){
+  var lines=document.querySelectorAll('.passage-text .sentence');
+  lines.forEach(function(el,i){
+    if(i===idx)el.classList.toggle('speaking-line',active);
+    else if(i<idx)el.classList.remove('speaking-line');
+  });
+  if(active&&lines[idx]){
+    var r=lines[idx].getBoundingClientRect();
+    if(r.top<80||r.top>window.innerHeight-100)lines[idx].scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  var pct=Math.min(100,Math.round((idx+1)/ttsSentences.length*100));
+  document.getElementById('ttsProgressFill').style.width=pct+'%';
+}
+
+function highlightWord(si,wi,active){
+  var words=document.querySelectorAll('.word');
+  words.forEach(function(el){
+    if(el.dataset.si==si&&el.dataset.wi==wi)el.classList.toggle('speaking',active);
+    else if(el.dataset.si<si||(el.dataset.si==si&&el.dataset.wi<wi))el.classList.remove('speaking');
+  });
+  if(active&&wi>=0){
+    var el=document.querySelector('.word[data-si="'+si+'"][data-wi="'+wi+'"]');
+    if(el){
+      var r=el.getBoundingClientRect();
+      if(r.top<80||r.top>window.innerHeight-100)el.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+  }
+  var totalWords=0,spoken=0;
+  var sentences=CHAPTERS[LEVEL][CHAPTER].text.split(/(?<=[.!?])\s+/);
+  sentences.forEach(function(s,i){
+    var w=s.split(/\s+/).length;
+    if(i<si)spoken+=w;
+  });
+  spoken+=wi+1;
+  sentences.forEach(function(s){totalWords+=s.split(/\s+/).length;});
+  var pct=Math.min(100,Math.round(spoken/totalWords*100));
+  document.getElementById('ttsProgressFill').style.width=pct+'%';
+}
+
+function speakWord(word){
+  if(!('speechSynthesis' in window))return;
+  speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(word.replace(/[^a-zA-Z']/g,''));
+  u.rate=0.8;
+  u.lang='en-US';
+  if(ttsVoice){
+    var voices=window.speechSynthesis.getVoices();
+    var v=voices.find(function(x){return x.name===ttsVoice});
+    if(v)u.voice=v;
+  }
+  speechSynthesis.speak(u);
+}
+
+function updateTTSUI(){
+  var btn=document.getElementById('ttsPlayBtn');
+  var pauseBtn=document.getElementById('ttsPauseBtn');
+  if(ttsPlaying&&!ttsPaused){btn.textContent='&#9632; Stop';btn.classList.add('playing');pauseBtn.style.display='inline-flex';}
+  else if(ttsPaused){btn.textContent='&#9654; Resume';btn.classList.add('playing');pauseBtn.style.display='inline-flex';}
+  else{btn.textContent='&#9654; Play';btn.classList.remove('playing');pauseBtn.style.display='none';}
+}
+
+var CHAPTERS={
+  "a1": [
+    {
+      "title": "Chapter 1: Down the Rabbit-Hole (Part 1)",
+      "author": "Lewis Carroll (1865) \u2014 Adapted for A1",
+      "text": "Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do. Once or twice she had looked into the book her sister was reading, but it had no pictures or conversations in it. \"And what is the use of a book,\" thought Alice, \"without pictures or conversations?\"\n\nSo she was thinking about this, and she was very sleepy. Suddenly a white rabbit with pink eyes ran close by her. Alice did not think this was very strange. But when the rabbit took a watch out of its pocket and looked at it, Alice jumped to her feet. She ran across the field after the rabbit. She saw it go down a large rabbit-hole under the hedge.\n\nAlice followed the rabbit down the hole. She fell very slowly. She had plenty of time to look around her. She saw bookshelves on the walls. She picked up a jar from a shelf. It was empty. She put it down on another shelf.\n\n\"Well!\" thought Alice. \"After a fall like this, I will not be afraid of falling down stairs. How brave they will all think me at home!\"\n\nDown, down, down. Would the fall never end? \"I wonder how many miles I have fallen?\" she said aloud. \"I must be getting somewhere near the centre of the earth.\"\n\nAlice fell for a long time. Then she suddenly landed on a heap of sticks and dry leaves. She was not hurt. She jumped to her feet and looked up. It was dark above her. There was a long passage in front of her, and the White Rabbit was still in sight.\n\nAlice ran down the passage. She turned the corner. The Rabbit was gone. Alice found herself in a long, low hall. There were doors all around the hall, but they were all locked. She walked sadly down the middle, wondering how she was ever to get out again.\n\nSuddenly she found a little three-legged table. On it was a tiny golden key. Alice tried the key in all the doors, but it did not open any of them. Then she saw a small door, about fifteen inches high. She tried the little key in the lock. It opened!\n\nAlice looked through the door. She saw the most beautiful garden you ever saw. She wanted to get out of the dark hall and walk among the bright flowers. But she was too big. She could not even get her head through the door.\n\n\"Oh, how I wish I could shut up like a telescope!\" thought Alice. \"If only I knew how to begin.\"\n\nShe went back to the table. She found a little bottle with a label that said \"DRINK ME.\" She drank it. It tasted very nice. And soon she began to get smaller and smaller.",
+      "vocab": {
+        "tired": "feeling that you want to rest",
+        "bank": "the side of a river",
+        "strange": "unusual or surprising",
+        "hedge": "a line of bushes",
+        "suddenly": "quickly and without warning",
+        "heap": "a pile of things",
+        "sadly": "in an unhappy way",
+        "locked": "closed with a key",
+        "inches": "a small unit of measurement (about 2.5 cm)",
+        "telescope": "a tool for seeing far away things",
+        "label": "a piece of paper with writing on it",
+        "aloud": "speaking so others can hear",
+        "brave": "not afraid",
+        "centre": "the middle point"
+      },
+      "q": [
+        {
+          "t": "Why was Alice tired?",
+          "o": [
+            "She was sick",
+            "She had nothing to do",
+            "She was running",
+            "She was hungry"
+          ],
+          "a": 1
+        },
+        {
+          "t": "What was strange about the White Rabbit?",
+          "o": [
+            "It was very big",
+            "It had pink eyes and took out a watch",
+            "It could talk",
+            "It wore a dress"
+          ],
+          "a": 1
+        },
+        {
+          "t": "What did Alice find on the three-legged table?",
+          "o": [
+            "A book",
+            "A golden key",
+            "A bottle of water",
+            "A map"
+          ],
+          "a": 1
+        },
+        {
+          "t": "Why couldn't Alice go through the small door?",
+          "o": [
+            "It was locked",
+            "She was too big",
+            "The key didn't fit",
+            "There was a wall"
+          ],
+          "a": 1
+        },
+        {
+          "t": "What happened when Alice drank from the bottle?",
+          "o": [
+            "She got bigger",
+            "She got smaller",
+            "She fell asleep",
+            "She could fly"
+          ],
+          "a": 1
+        },
+        {
+          "t": "What did Alice wish she could do?",
+          "o": [
+            "Fly",
+            "Become small like a telescope",
+            "Find her sister",
+            "Go home"
+          ],
+          "a": 1
+        }
+      ]
+    },
+    {
+      "title": "Chapter 1: Down the Rabbit-Hole (Part 2)",
+      "author": "Lewis Carroll (1865) \u2014 Adapted for A1",
+      "text": "Alice was now very small. She was only about ten inches tall. She ran to the little door. She opened it with the golden key. She looked through it at the beautiful garden.\n\n\"Oh, how I wish I could go there!\" she cried. \"If only I were the right size!\"\n\nSoon she went back to the table. She found a small cake with the words \"EAT ME\" on it. She ate a little bit. She looked up. Nothing happened. She ate more. And then \u2014 oh! \u2014 her head hit the ceiling! She was now more than nine feet tall!\n\n\"Oh! What has happened to me?\" she cried. She was so big that she could not see her feet. She began to cry. Her tears fell on the floor. Soon there was a large pool of water around her.\n\nThen she heard something. It was the White Rabbit. He was running back through the hall. He had white gloves in one hand and a large fan in the other. He was talking to himself. \"Oh! The Duchess! The Duchess! Oh! My dear paws! She will be so angry!\"\n\nAlice wanted help. She said, in a small voice, \"If you please, sir \u2014\" The Rabbit jumped and dropped the gloves and the fan. He ran away into the darkness.\n\nAlice picked up the gloves and the fan. She was still very big. But then she began to get smaller again. She had finished the cake! Soon she was only two feet tall.\n\nShe ran to the little door. But it was closed again. The golden key was on the table. She could not reach it. She was too small.\n\nShe cried again. Then she saw a little glass box under the table. Inside was a very small cake. On it were the words \"EAT ME\" in small letters.\n\n\"Well, I'll eat it,\" said Alice. \"And if it makes me grow bigger, I can reach the key. And if it makes me grow smaller, I can go under the door. Either way, I'll get into the garden!\"",
+      "vocab": {
+        "ceiling": "the top of a room",
+        "pool": "a small area of water",
+        "gloves": "coverings for your hands",
+        "fan": "a tool to make air move",
+        "duchess": "a woman of high rank",
+        "paws": "animal feet",
+        "darkness": "where there is no light",
+        "reach": "to stretch out to touch something",
+        "either": "one or the other of two things"
+      },
+      "q": [
+        {
+          "t": "How tall was Alice after drinking from the bottle?",
+          "o": [
+            "Nine feet",
+            "Ten inches",
+            "Two feet",
+            "Five feet"
+          ],
+          "a": 1
+        },
+        {
+          "t": "What happened when Alice ate the cake?",
+          "o": [
+            "She got smaller",
+            "She got very big",
+            "Nothing happened",
+            "She could fly"
+          ],
+          "a": 1
+        },
+        {
+          "t": "Why did the White Rabbit run away?",
+          "o": [
+            "He was late",
+            "He was afraid of Alice",
+            "He lost his gloves",
+            "He was looking for the door"
+          ],
+          "a": 0
+        },
+        {
+          "t": "What did Alice find in the glass box?",
+          "o": [
+            "Another key",
+            "A small cake",
+            "A bottle",
+            "A map"
+          ],
+          "a": 1
+        },
+        {
+          "t": "What was Alice's plan with the small cake?",
+          "o": [
+            "Give it to the Rabbit",
+            "Use it to grow bigger or smaller to get the key or fit through the door",
+            "Throw it away",
+            "Save it for later"
+          ],
+          "a": 1
+        },
+        {
+          "t": "How did Alice feel at the end of this part?",
+          "o": [
+            "Happy",
+            "Worried but hopeful",
+            "Angry",
+            "Sleepy"
+          ],
+          "a": 1
+        }
+      ]
+    }
+  ],
+  "a2": [
+    {
+      "title": "Chapter 2: The Pool of Tears",
+      "author": "Lewis Carroll (1865) \u2014 Adapted for A2",
+      "text": "\"Curiouser and curiouser!\" cried Alice. She was so surprised that she could not speak good English. \"Now I'm opening out like the largest telescope that ever was! Good-bye, feet!\" She looked down at her feet. They seemed to be almost out of sight.\n\nJust then her head struck against the roof of the hall. She was now more than nine feet high. She took up the golden key and hurried off to the garden door.\n\nPoor Alice! It was as much as she could do, lying down on one side, to look through into the garden with one eye. But to get through was more hopeless than ever. She sat down and began to cry again.\n\n\"You ought to be ashamed of yourself,\" said Alice, \"a great girl like you, to go on crying in this way! Stop this moment, I tell you!\" But she could not stop. She went on crying until there was a large pool all around her, about four inches deep.\n\nAfter a time she heard a little pattering of feet in the distance. She hastily dried her eyes to see what was coming. It was the White Rabbit returning, splendidly dressed, with a pair of white kid gloves in one hand and a large fan in the other. He came trotting along in a great hurry, muttering to himself. \"Oh! The Duchess, the Duchess! Oh! Won't she be savage if I've kept her waiting!\"\n\nAlice felt so desperate that she was ready to ask help of any one. So, when the Rabbit came near her, she began, in a low, timid voice, \"If you please, sir \u2014\" The Rabbit started violently, dropped the white kid gloves and the fan, and hurried away into the darkness as hard as he could go.\n\nAlice took up the fan and gloves. As the hall was very hot, she kept fanning herself all the time she went on talking. \"Dear, dear! How queer everything is to-day! And yesterday things went on just as usual. I wonder if I've been changed in the night?\"\n\nAs she said this she looked down at her hands, and was surprised to see that she had put on one of the Rabbit's little white kid gloves while she was talking. \"How can I have done that?\" she thought. \"I must be growing small again.\" She went and looked at herself. She was now only two feet high.",
+      "vocab": {
+        "curious": "wanting to know or learn something",
+        "telescope": "a tool for seeing far away",
+        "struck": "hit against something",
+        "hopeless": "without hope, impossible",
+        "hastily": "quickly",
+        "splendidly": "very well, beautifully",
+        "trotting": "running with small steps",
+        "muttering": "speaking quietly to yourself",
+        "desperate": "feeling hopeless, ready to try anything",
+        "timid": "shy and not confident",
+        "violently": "with sudden strong movement",
+        "queer": "strange or unusual"
+      },
+      "q": [
+        {
+          "t": "What did Alice say when she started growing?",
+          "o": [
+            "'How wonderful!'",
+            "'Curiouser and curiouser!'",
+            "'I want to go home!'",
+            "'Help me!'"
+          ],
+          "a": 1
+        },
+        {
+          "t": "Why did Alice cry?",
+          "o": [
+            "She was hungry",
+            "She could not get through the garden door",
+            "The Rabbit was mean",
+            "She lost her key"
+          ],
+          "a": 1
+        },
+        {
+          "t": "What was the White Rabbit carrying?",
+          "o": [
+            "A book and a pen",
+            "White gloves and a fan",
+            "A watch and a key",
+            "A cake and a bottle"
+          ],
+          "a": 1
+        },
+        {
+          "t": "Why did the Rabbit run away from Alice?",
+          "o": [
+            "He was late",
+            "He was frightened by Alice's voice and size",
+            "He lost his gloves",
+            "He was looking for the door"
+          ],
+          "a": 1
+        },
+        {
+          "t": "How did Alice know she was getting small again?",
+          "o": [
+            "She looked in a mirror",
+            "She could see her feet",
+            "She put on the Rabbit's glove",
+            "Both the glove and looking at herself"
+          ],
+          "a": 3
+        }
+      ]
+    }
+  ],
+  "b1": [
+    {
+      "title": "Chapter 4: The Rabbit Sends in a Little Bill",
+      "author": "Lewis Carroll (1865) \u2014 Adapted for B1",
+      "text": "It was the White Rabbit, trotting slowly back again, and looking anxiously about as it went, as if it had lost something. Alice heard it muttering to itself, \"The Duchess! The Duchess! Oh! My dear paws! Oh! My fur and whiskers! She'll have me executed, as sure as ferrets are ferrets! Where can I have dropped them, I wonder?\"\n\nAlice guessed in a moment that it was looking for the fan and the pair of white kid gloves. She very good-naturedly began hunting about for them, but they were nowhere to be seen. Everything seemed to have changed since her swim in the pool. The great hall, with the glass table and the little door, had vanished completely.\n\nVery soon the Rabbit noticed Alice, and called out to her in an angry tone, \"Why, Mary Ann, what are you out here for? Run home this moment, and fetch me a pair of gloves and a fan! Quick, now!\" Alice was so frightened that she ran off at once in the direction it pointed to, without trying to explain the mistake.\n\n\"He took me for his housemaid,\" she said to herself as she ran. \"How surprised he'll be when he finds out who I am! But I'd better take him his fan and gloves \u2014 that is, if I can find them.\"\n\nAs she said this, she came upon a neat little house, on the door of which was a bright brass plate with the name \"W. RABBIT\" upon it. She went in without knocking, and hurried upstairs, lest she should meet the real Mary Ann and be turned out of the house before she had found the fan and gloves.\n\n\"How queer it seems,\" Alice said to herself, \"to be going messages for a rabbit! I suppose Dinah'll be sending me on messages next!\" And she began fancying the sort of thing that would happen: \"'Miss Alice! Come here directly, and get ready for your walk!' 'Coming in a minute, nurse! But I've got to see that the mouse doesn't get out.' Only I don't think,\" Alice went on, \"that they'd let Dinah stop in the house if it began ordering people about like that!\"",
+      "vocab": {
+        "anxiously": "in a worried way",
+        "executed": "killed as a punishment",
+        "ferrets": "small furry animals",
+        "good-naturedly": "in a kind and helpful way",
+        "vanished": "disappeared completely",
+        "housemaid": "a woman who cleans houses",
+        "brass": "a yellow metal",
+        "queer": "strange or unusual",
+        "fancying": "imagining or thinking about",
+        "messages": "short pieces of information sent to someone",
+        "ordering": "telling people what to do"
+      },
+      "q": [
+        {
+          "t": "What was the White Rabbit looking for?",
+          "o": [
+            "Alice",
+            "His fan and gloves",
+            "The golden key",
+            "The Duchess"
+          ],
+          "a": 1
+        },
+        {
+          "t": "Why did the Rabbit call Alice 'Mary Ann'?",
+          "o": [
+            "That was her real name",
+            "He mistook her for his housemaid",
+            "He was being rude",
+            "He forgot her name"
+          ],
+          "a": 1
+        },
+        {
+          "t": "What did Alice find on the door of the Rabbit's house?",
+          "o": [
+            "A golden key",
+            "A brass plate with 'W. RABBIT' on it",
+            "A picture of the Duchess",
+            "A warning sign"
+          ],
+          "a": 1
+        },
+        {
+          "t": "What did Alice imagine happening at the end?",
+          "o": [
+            "The Rabbit would thank her",
+            "Her cat Dinah would send her on messages",
+            "She would become the Duchess",
+            "She would find a way home"
+          ],
+          "a": 1
+        },
+        {
+          "t": "What does this passage tell us about Alice's character?",
+          "o": [
+            "She is lazy",
+            "She is helpful and has a good imagination",
+            "She is angry at the Rabbit",
+            "She wants to go home"
+          ],
+          "a": 1
+        }
+      ]
+    }
+  ],
+  "b2": [
+    {
+      "title": "Chapter 5: Advice from a Caterpillar",
+      "author": "Lewis Carroll (1865) \u2014 Adapted for B2",
+      "text": "Alice folded her hands, and began: \"You are old, Father William,\" the young man said, \"And your hair has become very white; And yet you incessantly stand on your head \u2014 Do you think, at your age, it is right?\"\n\nBut Alice did not wait for the rest. She had heard enough. She was not sure if this was the right poem or not. She felt confused.\n\nShe looked up at the Caterpillar. He was sitting on the mushroom, with his arms folded, quietly smoking a long hookah. He did not look at Alice for some time. At last he took the hookah out of his mouth, and said, \"So you think you're changed, do you?\"\n\n\"I'm afraid I am, sir,\" said Alice. \"I can't remember things as I used \u2014 and I don't keep the same size for ten minutes together!\"\n\n\"Can't remember what things?\" said the Caterpillar.\n\n\"Well, I've tried to say 'How doth the little butterfly,' but it all came different!\" Alice replied in a very sad voice.\n\n\"You!\" said the Caterpillar contemptuously. \"Who are YOU?\"\n\nAlice did not know how to answer this. She had changed size so many times that day. She felt very confused. \"I \u2014 I hardly know, sir, just at present,\" she said. \"I knew who I was when I got up this morning, but I think I must have been changed several times since then.\"\n\n\"What do you mean by that?\" said the Caterpillar sternly. \"Explain yourself!\"\n\n\"I can't explain myself, I'm afraid, sir,\" said Alice, \"because I'm not myself, you see.\"\n\n\"I don't see,\" said the Caterpillar.\n\n\"I'm afraid I can't put it more clearly,\" Alice replied very politely, \"for I can't understand it myself. And being so many different sizes in a day is very confusing.\"\n\n\"It isn't,\" said the Caterpillar.",
+      "vocab": {
+        "incessantly": "without stopping",
+        "injure": "to hurt or damage",
+        "uncommonly": "very, unusually",
+        "somersault": "a rolling movement",
+        "hookah": "a pipe for smoking",
+        "contemptuously": "showing that you think someone is worthless",
+        "sternly": "in a serious and strict way",
+        "confused": "unable to understand clearly"
+      },
+      "q": [
+        {
+          "t": "What poem did Alice try to recite?",
+          "o": [
+            "'Twinkle Twinkle Little Star'",
+            "'You are old, Father William'",
+            "'Humpty Dumpty'",
+            "'The Queen of Hearts'"
+          ],
+          "a": 1
+        },
+        {
+          "t": "Why couldn't Alice recite the poem correctly?",
+          "o": [
+            "She was too small",
+            "She was confused because she had changed so many times",
+            "She didn't know the words",
+            "The Caterpillar interrupted her"
+          ],
+          "a": 1
+        },
+        {
+          "t": "What was the Caterpillar doing when Alice approached?",
+          "o": [
+            "Eating the mushroom",
+            "Sleeping",
+            "Smoking a hookah and sitting quietly",
+            "Talking to other insects"
+          ],
+          "a": 2
+        },
+        {
+          "t": "Why couldn't Alice answer 'Who are YOU?'",
+          "o": [
+            "She forgot her name",
+            "She had changed size many times and felt confused about her identity",
+            "She was afraid of the Caterpillar",
+            "She didn't speak English well"
+          ],
+          "a": 1
+        },
+        {
+          "t": "What does the Caterpillar think about Alice's confusion?",
+          "o": [
+            "He feels sorry for her",
+            "He thinks it's normal and not confusing",
+            "He is angry at her",
+            "He wants to help her"
+          ],
+          "a": 1
+        }
+      ]
+    }
+  ]
+};
+
+function setLevel(l,btn){
+  LEVEL=l;CHAPTER=0;submitted=false;
+  document.querySelectorAll('.level-btn').forEach(function(b){b.classList.remove('active')});
+  if(btn)btn.classList.add('active');
+  buildChapterTabs();
+}
+
+function buildChapterTabs(){
+  var tabs=document.getElementById('chapterTabs');
+  var p=CHAPTERS[LEVEL];
+  tabs.innerHTML='';
+  if(!p||p.length===0){tabs.innerHTML='<span style="color:var(--muted);font-size:12px">No chapters for this level yet.</span>';return}
+  p.forEach(function(ch,i){
+    var b=document.createElement('button');
+    b.className='chtab'+(i===0?' active':'');
+    b.textContent=ch.title.split(':')[0];
+    b.title=ch.title;
+    b.onclick=function(){CHAPTER=i;loadChapter();document.querySelectorAll('.chtab').forEach(function(x){x.classList.remove('active')});b.classList.add('active');};
+    tabs.appendChild(b);
+  });
+}
+
+function loadChapter(){
+  var p=CHAPTERS[LEVEL][CHAPTER];
+  document.getElementById('ttsBar').style.display='flex';
+  var html='<div class="chapter-title">'+p.title+'</div>';
+  if(p.author) html+='<div class="chapter-author">'+p.author+'</div>';
+  html+='<div class="passage-text">';
+  var sentences=p.text.split(/(?<=[.!?])\s+/);
+  sentences.forEach(function(s,si){
+    html+='<span class="sentence">';
+    var words=s.split(/\s+/);
+    words.forEach(function(w,wi){
+      var clean=w.toLowerCase().replace(/[^a-z]/g,'');
+      var isVocab=p.vocab&&p.vocab[clean];
+      if(isVocab){
+        html+='<span class="word vocab-word" data-si="'+si+'" data-wi="'+wi+'" onclick="speakWord(\''+w.replace(/'/g,"\\'")+'\')">'+w+'<span class="vtip"><strong>'+clean+'</strong>: '+p.vocab[clean]+'</span></span> ';
+      } else {
+        html+='<span class="word" data-si="'+si+'" data-wi="'+wi+'" onclick="speakWord(\''+w.replace(/'/g,"\\'")+'\')">'+w+'</span> ';
+      }
+    });
+    html+='</span> ';
+  });
+  html+='</div>';
+  html+='<div class="reading-time">Reading time: <span id="readTimer">0:00</span></div>';
+  document.getElementById('readingArea').innerHTML=html;
+  readStart=Date.now();
+  var ti=setInterval(function(){
+    var el=document.getElementById('readTimer');
+    if(!el){clearInterval(ti);return}
+    var s=Math.floor((Date.now()-readStart)/1000);
+    el.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+  },1000);
+  buildQuestions();
+}
+
+function buildQuestions(){
+  var p=CHAPTERS[LEVEL][CHAPTER];
+  questions=p.q;
+  answers={};
+  var html='<div class="q-header">Comprehension Questions <span class="q-score" id="qScore"></span></div>';
+  questions.forEach(function(q,i){
+    html+='<div class="question" id="q'+i+'">';
+    html+='<div class="q-text"><span class="q-num">'+(i+1)+'.</span>'+q.t+'</div>';
+    if(q.o==='free'){
+      html+='<textarea class="short-answer" id="ans'+i+'" placeholder="Type your answer here..."></textarea>';
+    } else {
+      html+='<div class="opts">';
+      q.o.forEach(function(opt,j){
+        html+='<div class="opt" id="q'+i+'o'+j+'" onclick="selectOpt('+i+','+j+')"><span class="letter">'+String.fromCharCode(65+j)+'</span>'+opt+'</div>';
+      });
+      html+='</div>';
+    }
+    html+='<div id="feedback'+i+'" style="margin-top:8px;font-size:13px;display:none"></div>';
+    html+='</div>';
+  });
+  document.getElementById('questionsArea').innerHTML=html;
+}
+
+function selectOpt(qi,oi){
+  submitted=false;
+  var q=questions[qi];
+  if(q.o==='free')return;
+  for(var j=0;j<q.o.length;j++){document.getElementById('q'+qi+'o'+j).classList.remove('sel');}
+  document.getElementById('q'+qi+'o'+oi).classList.add('sel');
+  answers[qi]=oi;
+}
+
+function startQuiz(){
+  document.getElementById('startMsg').style.display='none';
+  document.getElementById('quizArea').style.display='block';
+  document.getElementById('ttsBar').style.display='flex';
+  buildChapterTabs();
+  loadChapter();
+}
+
+function submitAnswers(){
+  submitted=true;
+  var correct=0;
+  questions.forEach(function(q,i){
+    var fb=document.getElementById('feedback'+i);
+    fb.style.display='block';
+    if(q.o==='free'){
+      var ans=document.getElementById('ans'+i).value.trim();
+      if(ans.length>0){correct++;fb.style.color='var(--green)';fb.textContent='Your answer: '+ans;}
+      else{fb.style.color='var(--muted)';fb.textContent='No answer given.';}
+      document.getElementById('ans'+i).readOnly=true;
+      fb.innerHTML+='<br><span style="color:var(--dim)">Expected: '+q.a+'</span>';
+    } else {
+      for(var j=0;j<q.o.length;j++){
+        var el=document.getElementById('q'+i+'o'+j);
+        el.classList.remove('sel');
+        if(j===q.a)el.classList.add('correct');
+        if(answers[i]===j&&j!==q.a)el.classList.add('wrong');
+      }
+      if(answers[i]===q.a){correct++;fb.style.color='var(--green)';fb.textContent='Correct!';}
+      else{fb.style.color='var(--rose)';fb.textContent='Incorrect. The answer is: '+q.o[q.a];}
+    }
+  });
+  document.getElementById('qScore').textContent=correct+'/'+questions.length+' correct';
+  setTimeout(function(){
+    document.getElementById('resultsArea').classList.add('show');
+    document.getElementById('resultsArea').innerHTML='<h2>Results</h2>'+statHtml(correct, questions.length)+'<button class="btn primary" onclick="restartQuiz()">Try Another Chapter</button>';
+  },500);
+}
+
+function statHtml(c,t){
+  var pct=Math.round(c/t*100);
+  return '<div class="res-stats"><div class="rstat"><span class="val">'+pct+'%</span><span class="lbl">Score</span></div><div class="rstat"><span class="val">'+c+'</span><span class="lbl">Correct</span></div><div class="rstat"><span class="val">'+(t-c)+'</span><span class="lbl">Wrong</span></div></div>';
+}
+
+function restartQuiz(){
+  document.getElementById('resultsArea').classList.remove('show');
+  document.getElementById('questionsArea').innerHTML='';
+  answers={};submitted=false;
+  loadChapter();
+}
+</script>
+</body>
+</html>

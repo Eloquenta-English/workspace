@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Image Manager — Sliding In</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Blogger+Sans:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1c1c1c;--bg2:#161616;--bg3:#222222;--bg-card:#232323;--border:#333333;--border-light:#444444;--text:#e8e8e8;--text-muted:#999999;--text-dim:#555555;--accent:#a3e635;--accent-dim:rgba(163,230,53,.08);--accent-glow:rgba(163,230,53,.3);--cta:#fcbe6a;--cta-hover:#fdb553;--cta-text:#1c1c1c;--violet:#a78bfa;--rose:#fb7185;--amber:#fbbf24;--green:#34d399}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Blogger Sans','Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+::selection{background:var(--accent);color:var(--bg)}
+
+.topbar{position:sticky;top:0;z-index:50;background:rgba(28,28,28,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:12px}
+.topbar h1{font-family:'Fira Code',monospace;font-size:.85rem;font-weight:700;color:var(--text)}
+.topbar h1 span{color:var(--accent)}
+.topbar-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:7px 16px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text-muted);font-family:'Fira Code',monospace;font-size:.65rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.btn.primary:hover{background:var(--accent);opacity:.9}
+.btn.danger{border-color:var(--rose);color:var(--rose)}
+.btn.danger:hover{background:rgba(251,113,133,.1)}
+
+.stats-bar{display:flex;gap:24px;padding:10px 24px;border-bottom:1px solid var(--border);font-family:'Fira Code',monospace;font-size:.65rem;color:var(--text-dim)}
+.stats-bar span{color:var(--accent);font-weight:700}
+
+.filter-bar{display:flex;gap:8px;padding:10px 24px;border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center}
+.filter-bar input{flex:1;min-width:200px;max-width:400px;padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:.8rem;outline:none}
+.filter-bar input:focus{border-color:var(--accent)}
+.filter-bar select{padding:6px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:.75rem;outline:none;cursor:pointer}
+
+.bulk-zone{margin:12px 24px;padding:16px;border:2px dashed var(--border);border-radius:10px;text-align:center;font-size:.8rem;color:var(--text-dim);transition:all .2s;cursor:pointer}
+.bulk-zone.dragover{border-color:var(--accent);background:var(--accent-dim)}
+.bulk-zone input[type=file]{display:none}
+
+.grid{padding:16px 24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+
+.topic-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:12px;transition:all .15s}
+.topic-card:hover{border-color:var(--accent)}
+.topic-card.has-images{border-color:var(--green);border-color:rgba(52,211,153,.3)}
+.topic-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px}
+.topic-card-cat{font-family:'Fira Code',monospace;font-size:.5rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+.topic-card-title{font-family:'Fira Code',monospace;font-size:.75rem;font-weight:600;color:var(--text);line-height:1.3}
+.topic-card-count{font-family:'Fira Code',monospace;font-size:.55rem;color:var(--text-dim);flex-shrink:0;padding:2px 6px;border-radius:4px;background:var(--bg3)}
+.topic-card-count.has{color:var(--green);background:rgba(52,211,153,.1)}
+
+.img-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.img-slot{position:relative;aspect-ratio:16/10;min-height:60px;border-radius:6px;overflow:hidden;background:var(--bg2);border:1px solid var(--border)}
+.img-slot img{width:100%;height:100%;object-fit:cover;display:block}
+.img-slot .slot-num{position:absolute;top:2px;left:4px;font-family:'Fira Code',monospace;font-size:.5rem;color:var(--text-dim);z-index:2;text-shadow:0 1px 2px rgba(0,0,0,.8)}
+.img-slot .remove-btn{position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:rgba(0,0,0,.7);color:var(--rose);border:none;cursor:pointer;font-size:.5rem;display:none;align-items:center;justify-content:center;z-index:2}
+.img-slot:hover .remove-btn{display:flex}
+.img-slot .upload-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:var(--text-dim);cursor:pointer;transition:background .15s}
+.img-slot .upload-label:hover{background:rgba(163,230,53,.08);color:var(--accent)}
+.img-slot.has-img .upload-label{display:none}
+.img-slot input[type=file]{display:none}
+
+.topic-card-actions{display:flex;gap:6px}
+.topic-card-actions button{flex:1;padding:4px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg3);color:var(--text-dim);font-family:'Fira Code',monospace;font-size:.55rem;cursor:pointer;transition:all .15s}
+.topic-card-actions button:hover{border-color:var(--accent);color:var(--accent)}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:8px 20px;border-radius:8px;background:var(--accent);color:var(--bg);font-family:'Fira Code',monospace;font-size:.7rem;font-weight:700;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+
+@media(max-width:700px){
+  .grid{grid-template-columns:1fr;padding:12px}
+  .topbar{padding:10px 12px}
+  .stats-bar{padding:8px 12px}
+  .filter-bar{padding:8px 12px}
+  .bulk-zone{margin:8px 12px}
+}
+
+/* ═══ TABS ═══ */
+.tabs{display:flex;gap:4px;padding:8px 24px;border-bottom:1px solid var(--border);background:var(--bg2)}
+.tab{padding:8px 20px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--text-dim);font-family:'Fira Code',monospace;font-size:.65rem;font-weight:600;cursor:pointer;transition:all .15s}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--bg3);color:var(--accent);border-color:var(--border)}
+
+/* ═══ CONTENT EDITOR ═══ */
+.content-view{display:none;padding:16px 24px}
+.content-view.active{display:block}
+.content-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.content-header h2{font-family:'Fira Code',monospace;font-size:.85rem;font-weight:700;color:var(--text)}
+.content-stats{margin-left:auto;font-family:'Fira Code',monospace;font-size:.6rem;color:var(--text-dim)}
+
+/* ═══ TOPIC EDITOR CARD ═══ */
+.topic-editor{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden;transition:border-color .15s}
+.topic-editor:hover{border-color:var(--border-light)}
+.topic-editor.expanded{border-color:var(--accent)}
+.topic-editor-header{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;user-select:none}
+.topic-editor-header:hover{background:rgba(163,230,53,.03)}
+.topic-editor-title{flex:1;font-family:'Fira Code',monospace;font-size:.75rem;font-weight:600;color:var(--text)}
+.topic-editor-cat{font-family:'Fira Code',monospace;font-size:.5rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);padding:2px 8px;border-radius:4px;background:rgba(163,230,53,.08)}
+.topic-editor-count{font-family:'Fira Code',monospace;font:.55rem;color:var(--text-dim);padding:2px 8px;border-radius:4px;background:var(--bg3)}
+.topic-editor-count.has{color:var(--green);background:rgba(52,211,153,.1)}
+.topic-editor-toggle{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--text-dim);transition:transform .2s;font-size:.7rem}
+.topic-editor.expanded .topic-editor-toggle{transform:rotate(90deg)}
+.topic-editor-body{display:none;padding:0 14px 14px}
+.topic-editor.expanded .topic-editor-body{display:block}
+
+/* ═══ EDITABLE FIELDS ═══ */
+.field-row{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.field-label{font-family:'Fira Code',monospace;font-size:.55rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);min-width:80px;padding-top:8px;flex-shrink:0}
+.field-input{flex:1;padding:6px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:.75rem;outline:none;transition:border-color .15s;font-family:'Fira Code',monospace}
+.field-input:focus{border-color:var(--accent)}
+.field-input.sm{max-width:200px}
+.field-select{flex:1;padding:6px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:.75rem;outline:none;cursor:pointer;font-family:'Fira Code',monospace}
+.field-select:focus{border-color:var(--accent)}
+
+/* ═══ QUESTION LIST ═══ */
+.q-list{max-height:300px;overflow-y:auto;margin-bottom:10px}
+.q-item{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;transition:border-color .15s}
+.q-item:hover{border-color:var(--border-light)}
+.q-item-row{display:flex;gap:8px;margin-bottom:6px;align-items:flex-start}
+.q-item-label{font-family:'Fira Code',monospace;font-size:.5rem;font-weight:700;letter:1px;text-transform:uppercase;color:var(--text-dim);min-width:50px;padding-top:6px;flex-shrink:0}
+.q-item-input{flex:1;padding:5px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.7rem;outline:none;resize:none;font-family:'Blogger Sans',sans-serif;line-height:1.5;transition:border-color .15s}
+.q-item-input:focus{border-color:var(--accent)}
+.q-item-actions{display:flex;gap:4px;justify-content:flex-end}
+.q-item-actions button{padding:3px 8px;border-radius:4px;border:1px solid var(--border);background:var(--bg3);color:var(--text-dim);font-family:'Fira Code',monospace;font-size:.5rem;cursor:pointer;transition:all .15s}
+.q-item-actions button:hover{border-color:var(--accent);color:var(--accent)}
+.q-item-actions button.danger:hover{border-color:var(--rose);color:var(--rose)}
+.q-add-btn{width:100%;padding:8px;border-radius:6px;border:1px dashed var(--border);background:transparent;color:var(--text-dim);font-family:'Fira Code',monospace;font-size:.6rem;cursor:pointer;transition:all .15s;text-align:center}
+.q-add-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+
+/* ═══ ADD TOPIC ═══ */
+.add-topic-btn{width:100%;padding:12px;border-radius:10px;border:2px dashed var(--border);background:transparent;color:var(--text-dim);font-family:'Fira Code',monospace;font-size:.7rem;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;margin-top:8px}
+.add-topic-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+
+/* ═══ EXPORT/IMPORT BAR ═══ */
+.data-bar{display:flex;gap:8px;padding:10px 24px;border-bottom:1px solid var(--border);background:var(--bg2);flex-wrap:align-items:center}
+.data-bar .btn{font-size:.6rem}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>&#9670; <span>SLIDING</span> IN</h1>
+  <div style="flex:1"></div>
+  <div class="topbar-actions">
+    <button class="btn" onclick="exportImages()">&#128228; Export JSON</button>
+    <button class="btn" onclick="document.getElementById('importFile').click()">&#128229; Import JSON</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importImages(event)">
+    <button class="btn danger" onclick="clearAll()">&#128465; Clear All</button>
+    <button class="btn" onclick="syncFromSlidingIn()">&#128260; Sync from Sliding In</button>
+    <a href="Sliding In.html" class="btn primary">&#8592; Back to Lessons</a>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" id="tabImages" onclick="switchTab('images')">&#9679; Images</div>
+  <div class="tab" id="tabContent" onclick="switchTab('content')">&#9679; Topics &amp; Questions</div>
+</div>
+
+<div id="imagesView">
+<div class="stats-bar">
+  Topics: <span id="totalTopics">0</span> &nbsp;|&nbsp;
+  With images: <span id="topicsWithImages">0</span> &nbsp;|&nbsp;
+  Total images: <span id="totalImages">0</span>
+</div>
+
+<div class="filter-bar">
+  <input type="text" id="searchInput" placeholder="Search topics..." oninput="renderGrid()">
+  <select id="catFilter" onchange="renderGrid()">
+    <option value="">All Categories</option>
+  </select>
+  <select id="imgFilter" onchange="renderGrid()">
+    <option value="">All Topics</option>
+    <option value="has">Has Images</option>
+    <option value="missing">Missing Images</option>
+  </select>
+</div>
+
+<div class="bulk-zone" id="bulkZone" onclick="document.getElementById('bulkFile').click()">
+  <div style="font-size:1.2rem;margin-bottom:4px">&#128230;</div>
+  <div><strong>Bulk Upload</strong> — Drop image files here or click to select</div>
+  <div style="font-size:.7rem;margin-top:4px">Auto-matches by filename: "age.jpg" → Age topic, "food-1.jpg" → Food topic (slot 1)</div>
+  <input type="file" id="bulkFile" multiple accept="image/*" onchange="handleBulkUpload(event)">
+</div>
+
+<div class="grid" id="topicGrid"></div>
+</div>
+
+<div id="contentView" class="content-view">
+  <div class="content-header">
+    <h2>&#9679; Topics &amp; Questions</h2>
+    <div class="content-stats" id="contentStats"></div>
+    <div style="margin-left:auto;display:flex;gap:6px">
+      <input type="text" class="field-input" id="contentSearch" placeholder="Search topics..." oninput="renderContent()" style="width:200px">
+      <select class="field-select" id="contentCatFilter" onchange="renderContent()" style="width:180px">
+        <option value="">All Categories</option>
+      </select>
+    </div>
+  </div>
+  <div class="data-bar">
+    <button class="btn" onclick="exportLessonData()">&#8599; Export lessonData JSON</button>
+    <button class="btn" onclick="document.getElementById('importLessonFile').click()">&#8595; Import lessonData JSON</button>
+    <input type="file" id="importLessonFile" accept=".json" style="display:none" onchange="importLessonData(event)">
+    <button class="btn" onclick="exportForSlidingIn()">&#8599; Export for Sliding In.html</button>
+    <button class="btn" onclick="exportFullPackage()">&#128193; Export Full Package</button>
+  </div>
+  <div id="contentGrid"></div>
+  <div class="add-topic-btn" onclick="addNewTopic()">+ Add New Topic</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// IMAGE MANAGER — Sliding In
+// Manages topic images + topic names/questions
+// ============================================================
+
+// ─── TOPIC SLUGS ───
+var topicSlugs=[
+  "age","appearance","beautyselfcare","beliefs","birthday","body","bodylanguage","books","business",
+  "childhood","choices","cities","climatechange","clothes","communication","community","cooking","creativity",
+  "culture","death","diet","disabilities","doyouthinkyouare","dreams","driving","education","environment",
+  "family","fashion","favouritethings","fearsphobias","food","freetime","friends","future","gadgets",
+  "gambling","gender","generations","globalisation","goals","habits","happiness","healthwellbeing","hobbies",
+  "holidays","home","humour","identity","illness","immigration","intelligence","internet","jobs","justice",
+  "languages","law","leadership","lifestages","loneliness","love","luck","manners","marriage","media",
+  "memories","money","moodemotion","morality","music","nature","news","parenting","personalfinance",
+  "personality","pets","photography","politics","poverty","privacy","psychology","racism","relationships",
+  "religion","retirement","risk","rolemodels","romance","school","science","seasons","shopping","sleep",
+  "socialmedia","society","sport","stress","success","technology","teenagers","time","tourism","transport",
+  "travel","urbanisation","vegetarianism","violence","volunteering","war","weather","work","youth"
+];
+
+
+// ─── SLUG MAPPING (old image-manager -> new lessonData) ───
+var slugRemap={
+  "birthday":"birthdays","books":"booksreading","cities":"yourneighbourhood",
+  "climatechange":"theenvironment","clothes":"fashion","communication":"conversation",
+  "community":"socialissues","cooking":"cooking","creativity":"artdesign",
+  "culture":"culturetradition","death":"death","diet":"dieting",
+  "disabilities":"disabilities","driving":"carsdriving","environment":"theenvironment",
+  "family":"family","food":"fooddiet","freetime":"freetimehobbies",
+  "friends":"friendsfriendship","future":"futureplansgoals","gadgets":"cellphones",
+  "gambling":"gambling","gender":"gendersexism","generations":"geneticscloning",
+  "globalisation":"socialdemographictrends","goals":"futureplansgoals",
+  "habits":"habits","identity":"identity","illness":"sickness",
+  "immigration":"immigration","intelligence":"intelligenceability",
+  "internet":"socialnetworksmessaging","jobs":"workjobs","justice":"lawjustice",
+  "languages":"learningenglish","law":"lawjustice","leadership":"leadership",
+  "lifestages":"whatsthebestage","loneliness":"loneliness","love":"dating",
+  "luck":"luck","media":"tvmovies","memories":"memories","morality":"morality",
+  "news":"news","parenting":"parenting","personalfinance":"investing",
+  "pets":"animalspets","photography":"photography","psychology":"psychology",
+  "racism":"raceracism","relationships":"dating","religion":"religionfaith",
+  "retirement":"retirement","risk":"risksdanger","rolemodels":"famecelebrities",
+  "romance":"dating","school":"education","science":"sciencetechnology",
+  "seasons":"weatherclimateseasons","socialmedia":"socialnetworksmessaging",
+  "society":"socialissues","sport":"sportsexercise","success":"success",
+  "technology":"robotsartificialintelligence","teenagers":"teenagers",
+  "time":"whattime","tourism":"travel","transport":"airportsflying",
+  "urbanisation":"yourneighbourhood","vegetarianism":"dieting",
+  "violence":"conflictarguments","volunteering":"volunteering",
+  "weather":"weatherclimateseasons","work":"workjobs","youth":"teenagers",
+  "body":"body","beliefs":"beliefs","bodylanguage":"bodylanguage"
+};
+
+// Remap old localStorage images to new slugs
+function remapOldImages(){
+  var imgs=loadImages();
+  var changed=false;
+  for(var oldSlug in slugRemap){
+    if(imgs[oldSlug]){
+      var newSlug=slugRemap[oldSlug];
+      if(!imgs[newSlug]) imgs[newSlug]=[];
+      // Merge images into new slug
+      for(var i=0;i<imgs[oldSlug].length;i++){
+        if(imgs[oldSlug][i]){
+          // Find empty slot
+          while(imgs[newSlug].length<3&&imgs[newSlug].indexOf(null)>=0){
+            // extend
+          }
+          if(imgs[newSlug].length<3) imgs[newSlug].push(imgs[oldSlug][i]);
+          else imgs[newSlug][i]=imgs[oldSlug][i];
+        }
+      }
+      delete imgs[oldSlug];
+      changed=true;
+    }
+  }
+  if(changed){
+    saveImages(imgs);
+    showToast('Remapped '+Object.keys(slugRemap).length+' old slugs to new format');
+  }
+}
+
+// ─── SLUG TO TITLE MAP ───
+var slugTitleMap={
+  age:"Age & Ageing",appearance:"Appearance",beautyselfcare:"Beauty & Self Care",beliefs:"Beliefs",
+  birthday:"Birthday",body:"Body",bodylanguage:"Body Language",books:"Books",business:"Business",
+  childhood:"Childhood",choices:"Choices",cities:"Cities",climatechange:"Climate Change",clothes:"Clothes",
+  communication:"Communication",community:"Community",cooking:"Cooking",creativity:"Creativity",
+  culture:"Culture",death:"Death",diet:"Diet",disabilities:"Disabilities",doyouthinkyouare:"Do You Think You Are",
+  dreams:"Dreams",driving:"Driving",education:"Education",environment:"Environment",family:"Family",
+  fashion:"Fashion",favouritethings:"Favourite Things",fearsphobias:"Fears & Phobias",food:"Food",
+  freetime:"Free Time",friends:"Friends",future:"Future",gadgets:"Gadgets",gambling:"Gambling",
+  gender:"Gender",generations:"Generations",globalisation:"Globalisation",goals:"Goals",habits:"Habits",
+  happiness:"Happiness",healthwellbeing:"Health & Wellbeing",hobbies:"Hobbies",holidays:"Holidays",
+  home:"Home",humour:"Humour",identity:"Identity",illness:"Illness",immigration:"Immigration",
+  intelligence:"Intelligence",internet:"Internet",jobs:"Jobs",justice:"Justice",languages:"Languages",
+  law:"Law",leadership:"Leadership",lifestages:"Life Stages",loneliness:"Loneliness",love:"Love",
+  luck:"Luck",manners:"Manners",marriage:"Marriage",media:"Media",memories:"Memories",money:"Money",
+  moodemotion:"Mood & Emotion",morality:"Morality",music:"Music",nature:"Nature",news:"News",
+  parenting:"Parenting",personalfinance:"Personal Finance",personality:"Personality",pets:"Pets",
+  photography:"Photography",politics:"Politics",poverty:"Poverty",privacy:"Privacy",psychology:"Psychology",
+  racism:"Racism",relationships:"Relationships",religion:"Religion",retirement:"Retirement",risk:"Risk",
+  rolemodels:"Role Models",romance:"Romance",school:"School",science:"Science",seasons:"Seasons",
+  shopping:"Shopping",sleep:"Sleep",socialmedia:"Social Media",society:"Society",sport:"Sport",
+  stress:"Stress",success:"Success",technology:"Technology",teenagers:"Teenagers",time:"Time",
+  tourism:"Tourism",transport:"Transport",travel:"Travel",urbanisation:"Urbanisation",
+  vegetarianism:"Vegetarianism",violence:"Violence",volunteering:"Volunteering",war:"War",
+  weather:"Weather",work:"Work",youth:"Youth"
+};
+
+function slugToTitle(slug){ return slugTitleMap[slug]||slug; }
+
+// ─── CATEGORY MAP ───
+function slugToCategory(slug){
+  // Try to find category from lessonData first
+  if(lessonData){
+    for(var ci=0;ci<lessonData.length;ci++){
+      for(var ti=0;ti<lessonData[ci].topics.length;ti++){
+        if(lessonData[ci].topics[ti].slug===slug) return lessonData[ci].category;
+      }
+    }
+  }
+  // Fallback to hardcoded mapping
+  var personal=["age","appearance","beautyselfcare","beliefs","birthdays","body","bodylanguage","choices","doyouthinkyouare","dreams","fearsphobias","gendersexism","happiness","healthwellbeing","identity","illness","intelligenceability","lifestages","loneliness","dating","luck","manners","marriage","memories","money","moodemotion","morality","personality","sleep","stress","success","whattime"];
+  var social=["booksreading","conversation","socialissues","culturetradition","education","friendsfriendship","generations","humour","immigration","socialnetworksmessaging","lawjustice","learningenglish","leadership","tvmovies","music","news","parenting","politics","privacy","psychology","raceracism","religionfaith","school","shopping","socialmedia","society","sportsexercise","technology","teenagers","violence","volunteering","war","youth"];
+  var lifestyle=["childhood","fashion","cooking","artdesign","dieting","carsdriving","theenvironment","favouritethings","fooddiet","freetimehobbies","cellphones","gambling","futureplansgoals","habits","holidays","yourneighbourhood","jokeshumour","animalspets","photography","retirement","risksdanger","famecelebrities","weatherclimateseasons","travel","vegetarianism","workjobs"];
+  var gbl=["business","theenvironment","death","disabilities","globalisation","poverty","sciencetechnology","urbanisation"];
+  if(personal.indexOf(slug)>=0) return "Personal Life & Identity";
+  if(social.indexOf(slug)>=0) return "Society & Culture";
+  if(lifestyle.indexOf(slug)>=0) return "Lifestyle & Leisure";
+  if(gbl.indexOf(slug)>=0) return "Global & Environment";
+  return "Other";
+}
+var allCategories=["Personal Life & Identity","Society & Culture","Lifestyle & Leisure","Global & Environment"];
+
+// ─── LESSON DATA (topics + questions) ───
+// Stored in localStorage as 'slidingInLessonData'
+// Users can import from Sliding In.html or edit inline
+
+function getDefaultLessonData(){
+  // Build default lessonData from topicSlugs with empty questions
+  // Uses lessonData categories if available
+  var cats={};
+  for(var i=0;i<topicSlugs.length;i++){
+    var cat=slugToCategory(topicSlugs[i]);
+    if(!cats[cat]) cats[cat]=[];
+    cats[cat].push({title:slugToTitle(topicSlugs[i]),slug:topicSlugs[i],questions:[]});
+  }
+  var result=[];
+  // Use allCategories order
+  for(var c=0;c<allCategories.length;c++){
+    if(cats[allCategories[c]]){
+      result.push({category:allCategories[c],topics:cats[allCategories[c]]});
+    }
+  }
+  // Add any remaining categories
+  for(var cat in cats){
+    var found=false;
+    for(var c=0;c<result.length;c++){if(result[c].category===cat){found=true;break;}}
+    if(!found) result.push({category:cat,topics:cats[cat]});
+  }
+  return result;
+}
+
+function loadLessonData(){
+  try{
+    var saved=localStorage.getItem('slidingInLessonData');
+    if(saved) return JSON.parse(saved);
+  }catch(e){}
+  return null;
+}
+
+function saveLessonData(data){
+  localStorage.setItem('slidingInLessonData',JSON.stringify(data));
+}
+
+// Get or init lessonData
+var lessonData=loadLessonData();
+if(!lessonData || !lessonData.length){
+  lessonData=getDefaultLessonData();
+  saveLessonData(lessonData);
+}
+
+// ─── IMAGES (existing) ───
+function loadImages(){
+  try{
+    var saved=localStorage.getItem('slidingInImages');
+    return saved?JSON.parse(saved):{};
+  }catch(e){return{};}
+}
+function saveImages(imgs){
+  localStorage.setItem('slidingInImages',JSON.stringify(imgs));
+}
+
+// ─── TAB SWITCHING ───
+var currentTab='images';
+function switchTab(tab){
+  currentTab=tab;
+  var imgView=document.getElementById('imagesView');
+  var contentView=document.getElementById('contentView');
+  var tabImg=document.getElementById('tabImages');
+  var tabContent=document.getElementById('tabContent');
+  if(tab==='images'){
+    imgView.style.display='block';
+    contentView.classList.remove('active');
+    tabImg.classList.add('active');
+    tabContent.classList.remove('active');
+    remapOldImages();
+renderGrid();
+  }else{
+    imgView.style.display='none';
+    contentView.classList.add('active');
+    tabImg.classList.remove('active');
+    tabContent.classList.add('active');
+    renderContent();
+  }
+}
+
+// ─── IMAGE GRID (existing functionality) ───
+function renderGrid(){
+  var imgs=loadImages();
+  var search=document.getElementById('searchInput').value.toLowerCase();
+  var catFilter=document.getElementById('catFilter').value;
+  var imgFilter=document.getElementById('imgFilter').value;
+  var grid=document.getElementById('topicGrid');
+  grid.innerHTML='';
+  var total=0,withImg=0,totalImgs=0;
+  var cats={};
+  for(var i=0;i<topicSlugs.length;i++){
+    var cat=slugToCategory(topicSlugs[i]);
+    cats[cat]=true;
+  }
+  var catSelect=document.getElementById('catFilter');
+  var currentCat=catSelect.value;
+  catSelect.innerHTML='<option value="">All Categories</option>';
+  var catNames=Object.keys(cats).sort();
+  for(var c=0;c<catNames.length;c++){
+    catSelect.innerHTML+='<option value="'+catNames[c]+'"'+(currentCat===catNames[c]?' selected':'')+'>'+catNames[c]+'</option>';
+  }
+  for(var i=0;i<topicSlugs.length;i++){
+    var slug=topicSlugs[i];
+    var title=slugToTitle(slug);
+    var cat=slugToCategory(slug);
+    var topicImgs=imgs[slug]||[];
+    var imgCount=topicImgs.filter(function(x){return !!x;}).length;
+    total++;
+    if(imgCount>0){withImg++;totalImgs+=imgCount;}
+    if(search&&title.toLowerCase().indexOf(search)<0&&slug.indexOf(search)<0) continue;
+    if(catFilter&&cat!==catFilter) continue;
+    if(imgFilter==='has'&&imgCount===0) continue;
+    if(imgFilter==='missing'&&imgCount>0) continue;
+    var card=document.createElement('div');
+    card.className='topic-card'+(imgCount>0?' has-images':'');
+    card.id='card-'+slug;
+    var imgSlotsHtml='';
+    for(var s=0;s<3;s++){
+      var slotImg=topicImgs[s]||null;
+      imgSlotsHtml+='<div class="img-slot'+(slotImg?' has-img':'')+'" id="slot-'+slug+'-'+s+'">';
+      if(slotImg){
+        imgSlotsHtml+='<img src="'+slotImg+'" alt="" onerror="this.style.display=\'none\';this.parentElement.classList.remove(\'has-img\')">';
+        imgSlotsHtml+='<span class="slot-num">'+(s+1)+'</span>';
+        imgSlotsHtml+='<button class="remove-btn" onclick="removeImage(\''+slug+'\','+s+')">&#10005;</button>';
+      }else{
+        imgSlotsHtml+='<label class="upload-label" for="file-'+slug+'-'+s+'">+ Image '+(s+1)+'</label>';
+        imgSlotsHtml+='<input type="file" id="file-'+slug+'-'+s+'" accept="image/*" onchange="uploadImage(\''+slug+'\','+s+',event)">';
+      }
+      imgSlotsHtml+='</div>';
+    }
+    card.innerHTML=
+      '<div class="topic-card-header">'+
+        '<div><div class="topic-card-cat">'+cat+'</div><div class="topic-card-title">'+title+'</div></div>'+
+        '<div class="topic-card-count'+(imgCount>0?' has':'')+'">'+imgCount+'/3</div>'+
+      '</div>'+
+      '<div class="img-slots">'+imgSlotsHtml+'</div>'+
+      '<div class="topic-card-actions">'+
+        '<button onclick="clearTopic(\''+slug+'\')">Clear</button>'+
+        '<button onclick="copySlug(\''+slug+'\')">Copy Slug</button>'+
+      '</div>';
+    grid.appendChild(card);
+  }
+  document.getElementById('totalTopics').textContent=total;
+  document.getElementById('topicsWithImages').textContent=withImg;
+  document.getElementById('totalImages').textContent=totalImgs;
+}
+
+function uploadImage(slug,slot,e){
+  var file=e.target.files[0];
+  if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    var imgs=loadImages();
+    if(!imgs[slug]) imgs[slug]=[];
+    while(imgs[slug].length<=slot) imgs[slug].push(null);
+    imgs[slug][slot]=ev.target.result;
+    saveImages(imgs);
+    remapOldImages();
+renderGrid();
+    showToast('Image saved for '+slugToTitle(slug));
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImage(slug,slot){
+  var imgs=loadImages();
+  if(imgs[slug]&&imgs[slug][slot]){
+    imgs[slug][slot]=null;
+    while(imgs[slug].length>0&&!imgs[slug][imgs[slug].length-1]) imgs[slug].pop();
+    if(imgs[slug].length===0) delete imgs[slug];
+    saveImages(imgs);
+    remapOldImages();
+renderGrid();
+    showToast('Image removed');
+  }
+}
+
+function clearTopic(slug){
+  var imgs=loadImages();
+  delete imgs[slug];
+  saveImages(imgs);
+  remapOldImages();
+renderGrid();
+  showToast('Cleared '+slugToTitle(slug));
+}
+
+function copySlug(slug){
+  navigator.clipboard.writeText(slug).then(function(){
+    showToast('Copied: '+slug);
+  });
+}
+
+// ─── BULK UPLOAD ───
+var bulkZone=document.getElementById('bulkZone');
+bulkZone.addEventListener('dragover',function(e){e.preventDefault();this.classList.add('dragover')});
+bulkZone.addEventListener('dragleave',function(){this.classList.remove('dragover')});
+bulkZone.addEventListener('drop',function(e){e.preventDefault();this.classList.remove('dragover');document.getElementById('bulkFile').files=e.dataTransfer.files;handleBulkUpload({target:document.getElementById('bulkFile')})});
+
+function handleBulkUpload(e){
+  var files=e.target.files;
+  if(!files.length) return;
+  var imgs=loadImages();
+  var matched=0,unmatched=0;
+  var fileList=[];
+  for(var i=0;i<files.length;i++) fileList.push(files[i]);
+  function processFile(idx){
+    if(idx>=fileList.length){
+      saveImages(imgs);
+      remapOldImages();
+renderGrid();
+      showToast('Bulk upload: '+matched+' matched, '+unmatched+' unmatched');
+      return;
+    }
+    var file=fileList[idx];
+    var name=file.name.replace(/\.[^.]+$/,'').toLowerCase().replace(/[-_]/g,'').replace(/\d+$/,'');
+    var matchedSlug=null;
+    for(var s=0;s<topicSlugs.length;s++){
+      if(topicSlugs[s]===name||topicSlugs[s].indexOf(name)===0||name.indexOf(topicSlugs[s])===0){
+        matchedSlug=topicSlugs[s];break;
+      }
+    }
+    if(matchedSlug){
+      var reader=new FileReader();
+      reader.onload=function(ev){
+        if(!imgs[matchedSlug]) imgs[matchedSlug]=[];
+        imgs[matchedSlug].push(ev.target.result);
+        if(imgs[matchedSlug].length>3) imgs[matchedSlug].length=3;
+        matched++;
+        processFile(idx+1);
+      };
+      reader.readAsDataURL(file);
+    }else{
+      unmatched++;
+      processFile(idx+1);
+    }
+  }
+  processFile(0);
+  e.target.value='';
+}
+
+// ─── EXPORT / IMPORT IMAGES ───
+function exportImages(){
+  var imgs=loadImages();
+  var exportData={};
+  for(var slug in imgs){
+    exportData[slug]=[];
+    for(var i=0;i<imgs[slug].length;i++){
+      if(imgs[slug][i]&&imgs[slug][i].startsWith('data:')){
+        exportData[slug].push('base64:'+imgs[slug][i].substring(0,50)+'...');
+      }else{
+        exportData[slug].push(imgs[slug][i]);
+      }
+    }
+  }
+  var blob=new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sliding-in-images.json';a.click();
+  showToast('Exported '+Object.keys(exportData).length+' topics');
+}
+
+function importImages(e){
+  var file=e.target.files[0];
+  if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      var data=JSON.parse(ev.target.result);
+      var imgs=loadImages();
+      var count=0;
+      for(var slug in data){
+        if(data[slug]&&data[slug].length>0){imgs[slug]=data[slug];count++;}
+      }
+      saveImages(imgs);
+      remapOldImages();
+renderGrid();
+      showToast('Imported '+count+' topics');
+    }catch(err){
+      showToast('Import failed: '+err.message);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+function clearAll(){
+  if(!confirm('Clear ALL image assignments? This cannot be undone.')) return;
+  localStorage.removeItem('slidingInImages');
+  remapOldImages();
+renderGrid();
+  showToast('All images cleared');
+}
+
+// ─── CONTENT EDITOR (Topics & Questions) ───
+var expandedSlug=null;
+
+function renderContent(){
+  var search=(document.getElementById('contentSearch').value||'').toLowerCase();
+  var catFilter=document.getElementById('contentCatFilter').value;
+  var grid=document.getElementById('contentGrid');
+  grid.innerHTML='';
+
+  // Build cat filter
+  var catSelect=document.getElementById('contentCatFilter');
+  var curCat=catSelect.value;
+  catSelect.innerHTML='<option value="">All Categories</option>';
+  for(var c=0;c<allCategories.length;c++){
+    var has=lessonData.filter(function(cat){return cat.category===allCategories[c];}).length;
+    if(has) catSelect.innerHTML+='<option value="'+allCategories[c]+'"'+(curCat===allCategories[c]?' selected':'')+'>'+allCategories[c]+'</option>';
+  }
+
+  var totalTopics=0,totalQuestions=0;
+
+  for(var ci=0;ci<lessonData.length;ci++){
+    var cat=lessonData[ci];
+    if(catFilter&&cat.category!==catFilter) continue;
+    var hasVisible=false;
+    var catHtml='';
+    for(var ti=0;ti<cat.topics.length;ti++){
+      var topic=cat.topics[ti];
+      var title=topic.title||slugToTitle(topic.slug);
+      var slug=topic.slug;
+      if(search&&title.toLowerCase().indexOf(search)<0&&slug.indexOf(search)<0) continue;
+      hasVisible=true;
+      totalTopics++;
+      var qCount=(topic.questions||[]).length;
+      totalQuestions+=qCount;
+      var isExpanded=(expandedSlug===slug);
+
+      catHtml+='<div class="topic-editor'+(isExpanded?' expanded':'')+'" id="te-'+slug+'">';
+      catHtml+='<div class="topic-editor-header" onclick="toggleTopic(\''+slug+'\')">';
+      catHtml+='<span class="topic-editor-toggle">&#9654;</span>';
+      catHtml+='<span class="topic-editor-cat">'+cat.category+'</span>';
+      catHtml+='<span class="topic-editor-title">'+title+'</span>';
+      catHtml+='<span class="topic-editor-count'+(qCount>0?' has':'')+'">'+qCount+' q'+(qCount!==1?'s':'')+'</span>';
+      catHtml+='</div>';
+      catHtml+='<div class="topic-editor-body">';
+
+      // Title field
+      catHtml+='<div class="field-row"><span class="field-label">Title</span><input class="field-input" value="'+esc(title)+'" onchange="updateTopicField(\''+slug+'\',\'title\',this.value)"></div>';
+      // Slug field
+      catHtml+='<div class="field-row"><span class="field-label">Slug</span><input class="field-input sm" value="'+esc(slug)+'" onchange="updateTopicSlug(\''+slug+'\',this.value)"></div>';
+      // Category field
+      catHtml+='<div class="field-row"><span class="field-label">Category</span><select class="field-select" onchange="updateTopicField(\''+slug+'\',\'category\',this.value)">';
+      for(var k=0;k<allCategories.length;k++){
+        catHtml+='<option value="'+allCategories[k]+'"'+(cat.category===allCategories[k]?' selected':'')+'>'+allCategories[k]+'</option>';
+      }
+      catHtml+='</select></div>';
+
+      // Questions
+      catHtml+='<div style="font-family:Fira Code,monospace;font-size:.55rem;font-weight:700;letter:1px;text-transform:uppercase;color:var(--text-dim);margin:10px 0 6px">Questions</div>';
+      catHtml+='<div class="q-list" id="qlist-'+slug+'">';
+      var questions=topic.questions||[];
+      for(var qi=0;qi<questions.length;qi++){
+        var q=questions[qi];
+        catHtml+=renderQuestionItem(slug,qi,q);
+      }
+      catHtml+='</div>';
+      catHtml+='<div class="q-add-btn" onclick="addQuestion(\''+slug+'\')">+ Add Question</div>';
+
+      // Delete topic button
+      catHtml+='<div style="margin-top:10px;text-align:right"><button class="btn danger" style="font-size:.55rem;padding:4px 10px" onclick="deleteTopic(\''+slug+'\')">Delete Topic</button></div>';
+      catHtml+='</div></div>';
+    }
+    if(hasVisible) grid.innerHTML+=catHtml;
+  }
+
+  document.getElementById('contentStats').textContent=totalTopics+' topics, '+totalQuestions+' questions';
+}
+
+function renderQuestionItem(slug,qi,q){
+  var html='<div class="q-item" id="qi-'+slug+'-'+qi+'">';
+  html+='<div class="q-item-row"><span class="q-item-label">Q'+(qi+1)+'</span><textarea class="q-item-input" rows="2" onchange="updateQuestion(\''+slug+'\','+qi+',\'original\',this.value)">'+(q.original||'')+'</textarea></div>';
+  html+='<div class="q-item-row"><span class="q-item-label">Para</span><textarea class="q-item-input" rows="2" onchange="updateQuestion(\''+slug+'\','+qi+',\'paraphrased\',this.value)">'+(q.paraphrased||'')+'</textarea></div>';
+  html+='<div class="q-item-actions">';
+  html+='<button onclick="moveQuestion(\''+slug+'\','+qi+',-1)" title="Move up">&#9650;</button>';
+  html+='<button onclick="moveQuestion(\''+slug+'\','+qi+',1)" title="Move down">&#9660;</button>';
+  html+='<button class="danger" onclick="deleteQuestion(\''+slug+'\','+qi+')">&#10005;</button>';
+  html+='</div></div>';
+  return html;
+}
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function toggleTopic(slug){
+  if(expandedSlug===slug){ expandedSlug=null; }
+  else{ expandedSlug=slug; }
+  renderContent();
+}
+
+function findTopic(slug){
+  for(var ci=0;ci<lessonData.length;ci++){
+    for(var ti=0;ti<lessonData[ci].topics.length;ti++){
+      if(lessonData[ci].topics[ti].slug===slug){
+        return {cat:lessonData[ci],topic:lessonData[ci].topics[ti],ci:ci,ti:ti};
+      }
+    }
+  }
+  return null;
+}
+
+function updateTopicField(slug,field,value){
+  var found=findTopic(slug);
+  if(!found) return;
+  if(field==='category'){
+    var newCat=value;
+    var oldCat=found.cat.category;
+    if(newCat===oldCat) return;
+    // Move topic to new category
+    var topicData=found.topic;
+    found.cat.topics.splice(found.ti,1);
+    var targetCat=null;
+    for(var ci=0;ci<lessonData.length;ci++){
+      if(lessonData[ci].category===newCat){ targetCat=lessonData[ci]; break; }
+    }
+    if(!targetCat){
+      targetCat={category:newCat,topics:[]};
+      lessonData.push(targetCat);
+    }
+    targetCat.topics.push(topicData);
+  }else{
+    found.topic[field]=value;
+  }
+  saveLessonData(lessonData);
+}
+
+function updateTopicSlug(oldSlug,newSlug){
+  if(oldSlug===newSlug) return;
+  if(!newSlug||newSlug.indexOf(' ')>=0){ showToast('Slug must be single word, no spaces'); return; }
+  var found=findTopic(oldSlug);
+  if(!found) return;
+  // Check duplicate
+  if(findTopic(newSlug)){ showToast('Slug "'+newSlug+'" already exists'); return; }
+  found.topic.slug=newSlug;
+  // Update slugTitleMap
+  slugTitleMap[newSlug]=found.topic.title;
+  // Update topicSlugs array
+  var idx=topicSlugs.indexOf(oldSlug);
+  if(idx>=0) topicSlugs[idx]=newSlug;
+  saveLessonData(lessonData);
+  expandedSlug=newSlug;
+  renderContent();
+  showToast('Slug updated to "'+newSlug+'"');
+}
+
+function addQuestion(slug){
+  var found=findTopic(slug);
+  if(!found) return;
+  if(!found.topic.questions) found.topic.questions=[];
+  found.topic.questions.push({original:'',paraphrased:''});
+  saveLessonData(lessonData);
+  renderContent();
+  showToast('Question added');
+}
+
+function updateQuestion(slug,qi,field,value){
+  var found=findTopic(slug);
+  if(!found||!found.topic.questions||!found.topic.questions[qi]) return;
+  found.topic.questions[qi][field]=value;
+  saveLessonData(lessonData);
+}
+
+function moveQuestion(slug,qi,dir){
+  var found=findTopic(slug);
+  if(!found) return;
+  var qs=found.topic.questions;
+  var newIdx=qi+dir;
+  if(newIdx<0||newIdx>=qs.length) return;
+  var tmp=qs[qi]; qs[qi]=qs[newIdx]; qs[newIdx]=tmp;
+  saveLessonData(lessonData);
+  renderContent();
+}
+
+function deleteQuestion(slug,qi){
+  var found=findTopic(slug);
+  if(!found) return;
+  found.topic.questions.splice(qi,1);
+  saveLessonData(lessonData);
+  renderContent();
+  showToast('Question deleted');
+}
+
+function deleteTopic(slug){
+  if(!confirm('Delete topic "'+slug+'" and all its questions?')) return;
+  var found=findTopic(slug);
+  if(!found) return;
+  found.cat.topics.splice(found.ti,1);
+  if(found.cat.topics.length===0){
+    lessonData.splice(found.ci,1);
+  }
+  var idx=topicSlugs.indexOf(slug);
+  if(idx>=0) topicSlugs.splice(idx,1);
+  delete slugTitleMap[slug];
+  saveLessonData(lessonData);
+  expandedSlug=null;
+  renderContent();
+  showToast('Topic deleted');
+}
+
+function addNewTopic(){
+  var slug=prompt('New topic slug (single word, e.g. "mytopic"):');
+  if(!slug) return;
+  slug=slug.toLowerCase().replace(/[^a-z0-9]/g,'');
+  if(!slug){ showToast('Invalid slug'); return; }
+  if(findTopic(slug)){ showToast('Slug "'+slug+'" already exists'); return; }
+  var title=prompt('Topic title:',slugToTitle(slug));
+  if(!title) return;
+  var cat=prompt('Category (one of: '+allCategories.join(', ')+')','Personal Life & Identity');
+  if(!cat) cat='Other';
+  var targetCat=null;
+  for(var ci=0;ci<lessonData.length;ci++){
+    if(lessonData[ci].category===cat){ targetCat=lessonData[ci]; break; }
+  }
+  if(!targetCat){
+    targetCat={category:cat,topics:[]};
+    lessonData.push(targetCat);
+  }
+  targetCat.topics.push({title:title,slug:slug,questions:[]});
+  topicSlugs.push(slug);
+  slugTitleMap[slug]=title;
+  saveLessonData(lessonData);
+  expandedSlug=slug;
+  renderContent();
+  showToast('Topic "'+title+'" added');
+}
+
+// ─── EXPORT / IMPORT LESSON DATA ───
+function exportLessonData(){
+  var blob=new Blob([JSON.stringify(lessonData,null,2)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sliding-in-lesson-data.json';a.click();
+  var totalQ=0;
+  for(var ci=0;ci<lessonData.length;ci++) for(var ti=0;ti<lessonData[ci].topics.length;ti++) totalQ+=(lessonData[ci].topics[ti].questions||[]).length;
+  showToast('Exported '+lessonData.length+' categories, '+totalQ+' questions');
+}
+
+function importLessonData(e){
+  var file=e.target.files[0];
+  if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      var data=JSON.parse(ev.target.result);
+      if(!Array.isArray(data)||!data.length){ showToast('Invalid format: expected array'); return; }
+      lessonData=data;
+      saveLessonData(lessonData);
+      // Rebuild topicSlugs and slugTitleMap from imported data
+      topicSlugs=[];
+      for(var ci=0;ci<lessonData.length;ci++){
+        for(var ti=0;ti<lessonData[ci].topics.length;ti++){
+          var t=lessonData[ci].topics[ti];
+          topicSlugs.push(t.slug);
+          slugTitleMap[t.slug]=t.title;
+        }
+      }
+      expandedSlug=null;
+      renderContent();
+      showToast('Imported '+topicSlugs.length+' topics');
+    }catch(err){
+      showToast('Import failed: '+err.message);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+function exportForSlidingIn(){
+  // Export lessonData + image references in one package
+  var imgs=loadImages();
+  var exportObj={
+    lessonData:lessonData,
+    topicImages:imgs,
+    exportedAt:new Date().toISOString()
+  };
+  var output='var lessonData = '+JSON.stringify(lessonData,null+2)+';\n';
+  output+='var topicImages = '+JSON.stringify(imgs,null,2)+';\n';
+  var blob=new Blob([output],{type:'text/javascript'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sliding-in-data.js';a.click();
+  showToast('Exported lessonData + images for Sliding In');
+}
+
+// Export full package as JSON (for backup/restore)
+function exportFullPackage(){
+  var imgs=loadImages();
+  var exportObj={
+    lessonData:lessonData,
+    topicImages:imgs,
+    exportedAt:new Date().toISOString(),
+    version:'2.0'
+  };
+  var blob=new Blob([JSON.stringify(exportObj,null,2)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sliding-in-full-package.json';a.click();
+  var imgCount=0;for(var k in imgs) imgCount+=(imgs[k]||[]).length;
+  showToast('Exported full package: '+Object.keys(imgs).length+' topics, '+imgCount+' images');
+}
+
+// ─── TOAST ───
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show')},2500);
+}
+
+
+// ─── SYNC FROM SLIDING IN ───
+// Imports lessonData from Sliding In.html export
+// This rebuilds topicSlugs and slugTitleMap from the lesson data
+function syncFromSlidingIn(){
+  // Create a file input to import the lessonData JSON
+  var input=document.createElement('input');
+  input.type='file';
+  input.accept='.json';
+  input.onchange=function(e){
+    var file=e.target.files[0];
+    if(!file) return;
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      try{
+        var data=JSON.parse(ev.target.result);
+        if(!Array.isArray(data)||!data.length){
+          showToast('Invalid format: expected lessonData array');
+          return;
+        }
+        // Rebuild topicSlugs and slugTitleMap from lessonData
+        topicSlugs=[];
+        for(var ci=0;ci<data.length;ci++){
+          for(var ti=0;ti<data[ci].topics.length;ti++){
+            var t=data[ci].topics[ti];
+            topicSlugs.push(t.slug);
+            slugTitleMap[t.slug]=t.title;
+          }
+        }
+        // Save lesson data
+        lessonData=data;
+        saveLessonData(data);
+        // Remap old images
+        remapOldImages();
+        // Re-render
+        remapOldImages();
+renderGrid();
+        renderContent();
+        showToast('Synced '+topicSlugs.length+' topics from Sliding In');
+      }catch(err){
+        showToast('Import failed: '+err.message);
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// ─── INIT ───
+remapOldImages();
+renderGrid();
+
+</script>
+</body>
+</html>

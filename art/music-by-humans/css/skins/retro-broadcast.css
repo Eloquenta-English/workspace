@@ -1,0 +1,62 @@
+/* Music By Humans — Retro Broadcast Skin */
+/* Early-2000s music TV aesthetic: bold colors, scanlines, glitch effects */
+
+:root {
+  --skin-bg: #0d0015;
+  --skin-bg-surface: #1a002a;
+  --skin-bg-elevated: #2a0040;
+  --skin-bg-overlay: rgba(13, 0, 21, 0.92);
+
+  --skin-text: #f0e0ff;
+  --skin-text-dim: #b080d0;
+  --skin-text-bright: #ffffff;
+
+  --skin-primary: #ff1493;
+  --skin-primary-dim: #cc1070;
+  --skin-primary-glow: rgba(255, 20, 147, 0.4);
+
+  --skin-accent: #00f5ff;
+  --skin-accent-dim: #00c4cc;
+  --skin-accent-glow: rgba(0, 245, 255, 0.4);
+
+  --skin-secondary: #a855f7;
+  --skin-secondary-dim: #8644c9;
+
+  --skin-font-main: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --skin-font-mono: 'Fira Code', monospace;
+  --skin-font-display: 'Impact', 'Arial Black', sans-serif;
+
+  --skin-radius-sm: 2px;
+  --skin-radius-md: 4px;
+  --skin-radius-lg: 8px;
+  --skin-radius-xl: 12px;
+
+  --skin-border: 1px solid rgba(255, 20, 147, 0.3);
+  --skin-border-bright: 1px solid rgba(255, 20, 147, 0.6);
+  --skin-border-primary: 2px solid #ff1493;
+
+  --skin-chrome-bg: linear-gradient(90deg, #2a0040 0%, #1a002a 50%, #2a0040 100%);
+  --skin-chrome-border: 1px solid rgba(255, 20, 147, 0.4);
+  --skin-chrome-text: #ff1493;
+
+  --skin-player-bg: linear-gradient(180deg, #1a002a 0%, #0d0015 100%);
+  --skin-player-progress-bg: rgba(255, 20, 147, 0.15);
+  --skin-player-progress-fill: linear-gradient(90deg, #ff1493, #a855f7);
+
+  --skin-scrollbar-thumb: rgba(255, 20, 147, 0.3);
+  --skin-scrollbar-thumb-hover: rgba(255, 20, 147, 0.5);
+}
+
+/* Scanline overlay for retro broadcast */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  animation: skin-scanline 4s linear infinite;
+  pointer-events: none;
+  z-index: var(--skin-z-easter-egg);
+}

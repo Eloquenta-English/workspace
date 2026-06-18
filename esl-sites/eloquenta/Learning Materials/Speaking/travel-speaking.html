@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Travel &amp; Places — Speaking Lesson | Eloquenta</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#020617;
+  --bg2:#0f172a;
+  --bg3:#1e293b;
+  --bg-card:#0f172a;
+  --bg-hover:#1e293b;
+  --border:#1e3a5f;
+  --border-light:#2a4a7f;
+  --text:#e0f2fe;
+  --text-muted:#94a3b8;
+  --text-dim:#4a6080;
+  --accent:#22d3ee;
+  --accent-dim:rgba(34,211,238,.08);
+  --accent-glow:rgba(34,211,238,.35);
+  --amber:#fbbf24;
+  --green:#34d399;
+  --rose:#fb7185;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#1c1c1c;color:#f1f5f9;overflow:hidden;height:100vh;width:100vw}
+
+/* Top Bar */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(28,28,28,.85);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.06)}
+.topbar-brand{font-size:18px;font-weight:700;color:#f1f5f9;font-family:'Inter',sans-serif;letter-spacing:.5px}
+.topbar-brand .o{color:#22d3ee}
+.topbar-back{padding:8px 20px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#e2e8f0;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;letter-spacing:.3px}
+.topbar-back:hover{background:rgba(34,211,238,.15);border-color:rgba(34,211,238,.3);color:#22d3ee}
+
+/* Progress Bar */
+.progress{position:fixed;bottom:0;left:0;right:0;z-index:60;background:rgba(255,255,255,.04);height:6px}
+.progress-bar{height:100%;background:linear-gradient(90deg,#22d3ee,#a3e635);transition:width .5s ease-out;border-radius:0 5px 5px 0}
+
+/* Horizontal scroll container */
+.slider{height:100vh;width:100vw;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;display:flex;scrollbar-width:none;-ms-overflow-style:none}
+.slider::-webkit-scrollbar{display:none}
+
+/* Each slide — width fills viewport, height adapts to content */
+.slide{min-width:100vw;flex-shrink:0;scroll-snap-align:start;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 40px 40px;min-height:100vh;height:auto;overflow-y:auto}
+
+/* Background per slide — covers the full slide area */
+.slide-bg{position:absolute;inset:0;z-index:0;background:var(--bg-hover);background-size:cover;background-position:center;filter:brightness(.2) saturate(.8)}
+.slide-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(28,28,28,.6) 0%,rgba(28,28,28,.15) 40%,rgba(28,28,28,.7) 100%)}
+
+/* Content */
+.slide-content{position:relative;z-index:2;max-width:720px;width:90%;text-align:center;padding-bottom:40px}
+
+.slide-number{position:absolute;top:24px;left:28px;font-size:10px;font-weight:600;letter-spacing:2px;color:rgba(255,255,255,.2);text-transform:uppercase;z-index:3}
+.slide-counter{position:fixed;top:68px;right:20px;z-index:50;font-size:.65rem;color:rgba(255,255,255,.2);letter-spacing:1px;font-family:'Inter',sans-serif}
+
+.slide-category{display:inline-block;padding:5px 16px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:24px;border:1px solid}
+.slide h1{font-size:2.8rem;font-weight:900;letter-spacing:-1px;line-height:1.1;margin-bottom:8px}
+.slide h2{font-size:1.3rem;font-weight:600;line-height:1.4;margin-bottom:12px;color:rgba(255,255,255,.9)}
+.slide p{font-size:1.05rem;color:rgba(255,255,255,.6);line-height:1.7;max-width:600px;margin:0 auto}
+
+/* Vocab tooltip */
+.vocab-word{border-bottom:2px dotted rgba(251,191,36,.5);cursor:help;color:#fbbf24;font-weight:600;position:relative}
+.vocab-word:hover{border-bottom-color:#22d3ee}
+.vocab-word .tt{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);background:#0f172a;border:1px solid #334155;border-radius:10px;padding:10px 14px;min-width:200px;max-width:300px;font-size:13px;font-weight:400;color:#e2e8f0;line-height:1.5;text-align:left;box-shadow:0 8px 30px rgba(0,0,0,.5);z-index:100;transition:opacity .25s;pointer-events:none}
+.vocab-word .tt::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#334155}
+.vocab-word .tt strong{display:block;color:#a3e635;font-weight:700;font-size:14px;margin-bottom:3px}
+.vocab-word:hover .tt{visibility:visible;opacity:1}
+.tt button{display:block;margin-top:8px;padding:4px 8px;font-size:10px;background:#22d3ee;color:#000;border:none;border-radius:4px;cursor:pointer;width:100%}
+
+/* Questions — 30px gap */
+.q-list{text-align:left;max-width:650px;margin:30px auto 0;display:flex;flex-direction:column;gap:30px}
+.q-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:22px 26px;font-size:16px;line-height:1.8;text-align:left;transition:background .15s}
+.q-item .num{display:inline-block;width:30px;height:30px;border-radius:50%;background:rgba(34,211,238,.15);color:#22d3ee;font-size:13px;font-weight:700;text-align:center;line-height:30px;margin-right:14px;vertical-align:top;flex-shrink:0}
+
+/* Warmup badge */
+.warmup-badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:rgba(163,230,53,.12);color:#a3e635;margin-bottom:16px;border:1px solid rgba(163,230,53,.25)}
+
+/* Footer text above questions */
+.slide-footer{font-size:10px;color:rgba(255,255,255,.2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:20px
+
+/* Nav — inline, above questions */
+.nav{display:flex;gap:8px;align-items:center;justify-content:center;margin:20px 0 0;padding:8px 0}
+.nav-btn{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--text);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;padding:0;line-height:1}
+.nav-btn:hover{background:rgba(34,211,238,.2);border-color:rgba(34,211,238,.4);box-shadow:0 0 12px rgba(34,211,238,.15)}
+.nav-btn svg{width:16px;height:16px;fill:#fff}
+.nav-dots{display:flex;gap:6px;align-items:center}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:all .2s}
+.nav-dot.active{background:#22d3ee;box-shadow:0 0 10px rgba(34,211,238,.5)}
+.nav-dot:hover{background:rgba(255,255,255,.5)}
+
+@media(max-width:640px){
+  .slide{padding:60px 20px 30px}
+  .slide h1{font-size:2rem}
+  .slide h2{font-size:1.1rem}
+  .q-item{font-size:14px;padding:16px 18px}
+  .nav{margin-top:12px}
+}
+
+/* Start Overlay */
+#startOverlay{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#1c1c1c;transition:opacity .6s ease-out}
+#startOverlay.hidden{opacity:0;pointer-events:none}
+#startOverlay h1{font-size:3rem;font-weight:900;letter-spacing:-1px;margin-bottom:8px;text-align:center}
+#startOverlay h1 .o{color:#22d3ee}
+#startOverlay p{font-size:1.1rem;color:rgba(255,255,255,.55);margin-bottom:8px;text-align:center;max-width:480px;line-height:1.6}
+#startBtn{padding:18px 56px;border-radius:14px;background:linear-gradient(135deg,#22d3ee,#a3e635);border:none;color:#000;font-size:20px;font-weight:800;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;letter-spacing:2px;text-transform:uppercase;box-shadow:0 4px 24px rgba(34,211,238,.3)}
+#startBtn:hover{transform:scale(1.05);box-shadow:0 6px 32px rgba(34,211,238,.4),0 0 20px rgba(163,230,53,.2)}
+#startBtn:active{transform:scale(.97)}
+</style>
+</head>
+<body>
+
+<div id="startOverlay">
+  <h1>El<span class="o">o</span>quenta</h1>
+  <p>Travel &amp; Places — Speaking Lesson</p>
+  <p style="font-size:.85rem;color:rgba(255,255,255,.3);margin-bottom:30px">8 slides &middot; Conversation questions &middot; Vocabulary tips</p>
+  <button id="startBtn" onclick="startLesson()">Start</button>
+</div>
+
+<div class="topbar">
+  <span class="topbar-brand">El<span class="o">o</span>quenta</span>
+  <button class="topbar-back" onclick="history.back()">Back</button>
+</div>
+
+<div class="progress"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+<div class="slide-counter" id="slideCounter">1 / 8</div>
+
+<div class="slider" id="slider"></div>
+
+<script>
+var SLIDES=[
+  {bg:"https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&q=80",cat:"Speaking Lesson",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",title:"Travel & Places",text:"Explore travel experiences, dream destinations, cultural differences, transportation, and tourism.",isTitle:true},
+  {bg:"https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1920&q=80",cat:"Warm-up",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",title:"Travel memories",questions:["Have you ever traveled to another country? Where?","Do you prefer traveling alone or with others?","What is the farthest place you have ever been from home?"],isWarmup:true},
+  {bg:"https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1920&q=80",cat:"Travel Experiences",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",title:"Your travel stories",questions:["Describe the most <span class='vocab-word'>memorable<span class='tt'><strong>memorable</strong><br>Worth remembering; special and unforgettable.<br><button onclick='translateWord(this)'>Translate to L1</button></span></span> trip you have taken.","Have you ever had a travel experience that went completely wrong? What happened?","Do you prefer planned trips or spontaneous adventures? Why?","What is the most <span class='vocab-word'>breathtaking<span class='tt'><strong>breathtaking</strong><br>Extremely beautiful or impressive; stunning.<br><button onclick='translateWord(this)'>Translate to L1</button></span></span> place you have visited?"]},
+  {bg:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80",cat:"Dream Destinations",catB:"rgba(245,158,11,.15);color:#fbbf24;border-color:rgba(245,158,11,.3)",title:"Where would you go?",questions:["If you could visit any country in the world, where would you go and why?","Do you prefer beach vacations, city trips, mountain adventures, or cultural tours?","Is there a place you have always wanted to visit but never had the chance?","Would you rather visit one place for two weeks, or four places for three days each?"]},
+  {bg:"https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=1920&q=80",cat:"Cultural Differences",catB:"rgba(167,139,250,.15);color:#a78bfa;border-color:rgba(167,139,250,.3)",title:"Culture & customs",questions:["What is the most interesting cultural difference you have noticed between your country and another?","Have you experienced <span class='vocab-word'>culture shock<span class='tt'><strong>culture shock</strong><br>Confusion or discomfort when experiencing a very different culture.<br><button onclick='translateWord(this)'>Translate to L1</button></span></span>? Describe it.","Do you think tourism helps or harms local cultures? Give examples.","What customs from your country do you think visitors find most surprising?"]},
+  {bg:"https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=1920&q=80",cat:"Transportation",catB:"rgba(52,211,153,.12);color:#34d399;border-color:rgba(52,211,153,.25)",title:"Getting around",questions:["What is your preferred way to travel — plane, train, car, or something else? Why?","Do you think high-speed trains are better than domestic flights for short distances?","Has <span class='vocab-word'>ride-sharing<span class='tt'><strong>ride-sharing</strong><br>Services like Uber where drivers use their own cars to transport passengers.<br><button onclick='translateWord(this)'>Translate to L1</button></span></span> changed how people get around?","Do you think electric cars will completely replace petrol cars in your lifetime?"]},
+  {bg:"https://images.unsplash.com/photo-1528605105345-5344b6c91a43?w=1920&q=80",cat:"Migration & Home",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",title:"Moving abroad",questions:["Would you ever consider living in another country permanently? Why or why not?","What is the biggest <span class='vocab-word'>sacrifice<span class='tt'><strong>sacrifice</strong><br>Something you give up in order to have or do something more important.<br><button onclick='translateWord(this)'>Translate to L1</button></span></span> people make when moving abroad?","Do you think emigrants should fully adopt the culture of their new country, or keep their own traditions?","Is it better to live near family in your home country, or abroad with more opportunities?"]},
+  {bg:"https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&q=80",cat:"Wrap-up",catB:"rgba(34,211,238,.15);color:#22d3ee;border-color:rgba(34,211,238,.3)",title:"Well done!",text:"Practice these questions with a partner. Try to speak for at least 2 minutes on each topic.",isEnd:true}
+];
+
+var current=0;
+var slider,dots;
+
+function renderSlides(){
+  slider=document.getElementById('slider');
+  var html='';
+  SLIDES.forEach(function(s,i){
+    html+='<div class="slide" id="slide-'+i+'">';
+    html+='<div class="slide-bg" style="background-image:url('+s.bg+')"></div>';
+    html+='<span class="slide-number">'+(i+1)+' / '+SLIDES.length+'</span>';
+    html+='<div class="slide-content">';
+
+    if(s.isTitle){
+      html+='<span class="slide-category" style="background:'+s.catB+'">'+s.cat+'</span>';
+      html+='<h1>'+s.title+'</h1>';
+      html+='<p>'+s.text+'</p>';
+      html+='<button class="nav-btn nav-btn-next" style="margin-top:32px;font-size:18px;padding:14px 44px;background:linear-gradient(135deg,rgba(34,211,238,.15),rgba(163,230,53,.1));border:1px solid rgba(34,211,238,.3);color:#22d3ee;border-radius:50px;cursor:pointer;font-family:\'Inter\',sans-serif;font-weight:700;letter-spacing:1.5px;transition:all .2s;text-transform:uppercase" onclick="nextSlide()">Next &#9654;</button>';
+      html+='<p style="font-size:.75rem;color:rgba(255,255,255,.25);margin-top:16px">Use arrow keys or buttons to navigate</p>';
+    }else if(s.isEnd){
+      html+='<span class="slide-category" style="background:'+s.catB+'">'+s.cat+'</span>';
+      html+='<h1>'+s.title+'</h1>'; // Extra marginTop for centering
+      html+='<p>'+s.text+'</p>';
+    }else{
+      if(s.isWarmup){
+        html+='<span class="warmup-badge">Warm-up</span>';
+        html+='<h2>'+s.title+'</h2>';
+      }else{
+        html+='<span class="slide-category" style="background:'+s.catB+'">'+s.cat+'</span>';
+        html+='<h2>'+s.title+'</h2>';
+      }
+      html+='<div class="slide-footer">Travel &amp; Places — Speaking Lesson</div>';
+      if(s.questions){
+        var dotsHtml='';
+        var dotIndex=0;
+        SLIDES.forEach(function(d,di){
+          if(!d.isTitle&&!d.isEnd){
+            dotsHtml+='<div class="nav-dot'+(di===i?' active':'')+'" onclick="goTo('+di+')"></div>';
+            dotIndex++;
+          }
+        });
+        html+='<div class="nav"><button class="nav-btn" onclick="prevSlide()"><svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg></button><div class="nav-dots">'+dotsHtml+'</div><button class="nav-btn" onclick="nextSlide()"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg></button></div>';
+        html+='<div class="q-list">';
+        s.questions.forEach(function(q,j){
+          html+='<div class="q-item"><span class="num">'+(j+1)+'</span>'+q+'</div>';
+        });
+        html+='</div>';
+      }
+    }
+    html+='</div></div>';
+  });
+  slider.innerHTML=html;
+  updateUI();
+}
+
+function goTo(n){
+  if(n<0||n>=SLIDES.length)return;
+  current=n;
+  var slide=document.getElementById('slide-'+n);
+  if(slide) slide.scrollIntoView({behavior:'smooth',inline:'start',block:'nearest'});
+  // Compute dot index (skipping title/end slides)
+  var dotIdx=0;
+  for(var k=0;k<n;k++){if(!SLIDES[k].isTitle&&!SLIDES[k].isEnd) dotIdx++;}
+  // Update active dot in all nav bars
+  document.querySelectorAll('.nav').forEach(function(nav){
+    nav.querySelectorAll('.nav-dot').forEach(function(el,i){el.classList.toggle('active',i===dotIdx)});
+  });
+  updateUI();
+}
+
+function nextSlide(){goTo(current+1)}
+function prevSlide(){goTo(current-1)}
+
+function updateUI(){
+  document.getElementById('progressBar').style.width=((current+1)/SLIDES.length*100)+'%';
+  document.getElementById('slideCounter').textContent=(current+1)+' / '+SLIDES.length;
+}
+
+// Scroll spy
+var scrollTimer=null;
+document.getElementById('slider').addEventListener('scroll',function(){
+  if(scrollTimer)return;
+  scrollTimer=setTimeout(function(){
+    scrollTimer=null;
+    var slides=document.querySelectorAll('.slide');
+    var sliderLeft=document.getElementById('slider').scrollLeft;
+    var viewportW=window.innerWidth;
+    slides.forEach(function(slide,i){
+      var rect=slide.getBoundingClientRect();
+      var slideCenter=rect.left+rect.width/2;
+      var viewportCenter=viewportW/2;
+      if(Math.abs(slideCenter-viewportCenter)<viewportW/2){
+        if(current!==i){
+          current=i;
+          var dotIdx=0;
+          for(var k=0;k<i;k++){if(!SLIDES[k].isTitle&&!SLIDES[k].isEnd) dotIdx++;}
+          document.querySelectorAll('.nav').forEach(function(nav){
+            nav.querySelectorAll('.nav-dot').forEach(function(el,j){el.classList.toggle('active',j===dotIdx)});
+          });
+          updateUI();
+        }
+      }
+    });
+  },150);
+},{passive:true});
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSlide()}
+  if(e.key==='ArrowLeft'){e.preventDefault();prevSlide()}
+});
+
+function startLesson(){
+  document.getElementById('startOverlay').classList.add('hidden');
+  setTimeout(function(){document.getElementById('startOverlay').style.display='none'},600);
+}
+
+renderSlides();
+
+function translateWord(btn){
+  btn.innerText='Translating...';
+  setTimeout(function(){btn.innerText='L1 Translation: [Example]'},800);
+}
+</script>
+</body>
+</html>

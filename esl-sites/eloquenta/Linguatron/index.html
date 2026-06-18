@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Langui — Translation Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Blogger+Sans:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0618;--bg2:#0d0820;--bg3:#120b2a;--bg-card:#140d2e;--bg-card2:#0f0922;--bg-hover:#1a1040;--border:#2a1f55;--border-light:#3a2d6e;--text:#e8e8e8;--text-muted:#999999;--text-dim:#555555;--accent:#ff9a9e;--accent-dim:rgba(255,154,158,.08);--accent-glow:rgba(255,154,158,.35);--amber:#fbbf24;--amber-dim:rgba(251,191,36,.08);--green:#34d399;--violet:#a78bfa;--rose:#fb7185}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px}
+body{font-family:'Blogger Sans','Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(28,28,28,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.topbar-logo{font-family:'Fira Code',monospace;font-size:1.1rem;font-weight:700;color:var(--text);letter-spacing:1px;text-decoration:none;display:flex;align-items:center;gap:8px}
+.topbar-logo .logo-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.topbar-logo span{color:var(--accent)}
+.topbar-nav{display:flex;gap:4px}
+.topbar-nav a{padding:6px 14px;border-radius:6px;color:var(--text-muted);text-decoration:none;font-size:.75rem;font-weight:600;transition:all .15s}
+.topbar-nav a:hover{color:var(--text);background:var(--bg-card)}
+.topbar-nav a.active{color:var(--accent);background:var(--accent-dim)}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;position:relative;overflow:hidden}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);transform:translateY(-1px);box-shadow:0 4px 16px rgba(255,154,158,.15)}
+.btn:active{transform:translateY(0)}
+.btn-primary{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.btn-primary:hover{background:#ffb3bc;color:var(--bg);box-shadow:0 4px 20px var(--accent-glow)}
+.btn-icon{width:36px;height:36px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.btn-icon:hover{transform:scale(1.1) translateY(0)}
+.btn-sm{padding:5px 10px;font-size:.65rem;border-radius:6px}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.main{display:flex;flex-direction:column;min-height:calc(100vh - 52px)}
+.translate-area{flex:1;display:flex;flex-direction:column;max-width:1100px;margin:0 auto;width:100%;padding:24px;gap:16px}
+.lang-bar{display:flex;align-items:center;justify-content:center;gap:12px;padding:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px}
+.lang-select{position:relative}
+.lang-select select{appearance:none;padding:8px 32px 8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.8rem;font-weight:600;cursor:pointer;outline:none;font-family:inherit}
+.lang-select select:focus{border-color:var(--accent)}
+.lang-select::after{content:'▼';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:.5rem;color:var(--text-dim);pointer-events:none}
+.swap-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--bg);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:.9rem}
+.swap-btn:hover{border-color:var(--accent);color:var(--accent);transform:rotate(180deg);background:var(--accent-dim)}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;min-height:300px}
+.panel{display:flex;flex-direction:column;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .2s}
+.panel:focus-within{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent-dim)}
+.panel-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg-card2)}
+.panel-lang{font-size:.7rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px}
+.panel-actions{display:flex;gap:4px}
+.panel-body{flex:1;position:relative}
+.panel-textarea{width:100%;height:100%;min-height:200px;padding:16px;border:none;background:transparent;color:var(--text);font-size:1rem;line-height:1.7;resize:none;outline:none;font-family:inherit}
+.panel-textarea::placeholder{color:var(--text-dim)}
+.panel-output{padding:16px;font-size:1rem;line-height:1.7;color:var(--text);min-height:200px;white-space:pre-wrap;word-wrap:break-word}
+.panel-output .translated-text{color:var(--text)}
+.panel-output .placeholder{color:var(--text-dim);font-style:italic}
+.panel-footer{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-top:1px solid var(--border);background:var(--bg-card2)}
+.char-count{font-size:.65rem;color:var(--text-dim)}
+.translate-btn{padding:10px 24px;font-size:.85rem}
+.loading{display:flex;align-items:center;justify-content:center;gap:8px;padding:20px;color:var(--text-dim);font-size:.8rem}
+.loading-spinner{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{padding:12px 16px;background:rgba(251,113,133,.08);border:1px solid rgba(251,113,133,.2);border-radius:8px;color:var(--rose);font-size:.75rem;margin-top:8px}
+/* Quality Indicator */
+.quality-indicator{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:16px;overflow:hidden}
+.quality-header{display:flex;align-items:center;gap:12px}
+.quality-score{display:flex;align-items:baseline;gap:2px;font-family:'Space Grotesk',sans-serif}
+.quality-score-num{font-size:1.8rem;font-weight:900}
+.quality-score-max{font-size:.7rem;color:var(--text-dim)}
+.quality-icon{font-size:1rem;margin-right:4px}
+.quality-label{font-size:.8rem;font-weight:700;flex:1}
+.quality-toggle{margin-left:auto;font-size:.65rem}
+.quality-details{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.quality-indicator.expanded .quality-details{display:block}
+.quality-check{display:flex;gap:8px;padding:6px 0}
+.quality-check-icon{font-size:.75rem;font-weight:700;width:16px;flex-shrink:0;text-align:center}
+.quality-check-text{flex:1}
+.quality-check-label{font-size:.7rem;font-weight:600;color:var(--text)}
+.quality-check-detail{font-size:.65rem;color:var(--text-muted);margin-top:2px;line-height:1.4}
+.quality-examples{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.quality-example{background:var(--bg-card2);border:1px solid var(--border);border-radius:6px;padding:8px 10px}
+.quality-example-source{font-size:.7rem;color:var(--text-muted);margin-bottom:2px}
+.quality-example-target{font-size:.7rem;color:var(--text)}
+.quality-highlight{color:var(--amber);font-weight:700;text-decoration:underline;text-decoration-color:var(--amber);text-underline-offset:2px}
+
+/* New: Translation result with alternatives */
+.translation-result{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
+.translation-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.translation-source{font-size:.7rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px}
+.translation-text{font-size:1.05rem;color:var(--text);line-height:1.6;margin-bottom:10px}
+.translation-actions{display:flex;gap:6px}
+
+/* Alternative translations */
+.alt-translations{margin-top:16px;padding-top:12px;border-top:1px solid var(--border)}
+.alt-header{font-size:.7rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.alt-trans{display:flex;gap:10px;padding:8px 10px;border-radius:6px;border:1px solid transparent;cursor:pointer;transition:all .15s;margin-bottom:4px}
+.alt-trans:hover{background:var(--bg-hover);border-color:var(--border)}
+.alt-trans.active{background:var(--accent-dim);border-color:var(--accent)}
+.alt-label{font-size:.65rem;font-weight:700;color:var(--text-dim);min-width:80px;flex-shrink:0;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.alt-text{font-size:.85rem;color:var(--text-muted);flex:1;line-height:1.5}
+.alt-trans.active .alt-text{color:var(--text)}
+.cycle-hint{font-size:.65rem;color:var(--text-dim);font-style:italic;margin-top:6px;text-align:center}
+
+.match-score{font-size:.7rem;font-weight:600;margin-left:6px}
+
+/* Toast */
+.toast-msg{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--accent);color:var(--text);padding:10px 20px;border-radius:8px;font-size:.8rem;font-weight:600;z-index:9999;white-space:nowrap}
+@media(max-width:768px){.panels{grid-template-columns:1fr}.topbar-nav{display:none}.translate-area{padding:12px}}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.animate-in{animation:slideUp .3s ease}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="#" class="topbar-logo"><div class="logo-icon" style="background:none;padding:0">
+<svg width="28" height="28" viewBox="0 0 340 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="340" height="250" fill="#0a0618"/>
+<g transform="translate(85,40)">
+<path d="M0 0h120c27.614 0 50 22.386 50 50v100c0 27.614-22.386 50-50 50H50c-27.614 0-50-22.386-50-50V0z" fill="#ff9a9e" fill-opacity="0.15"/>
+<path d="M0 0h120c27.614 0 50 22.386 50 50v100c0 27.614-22.386 50-50 50H50c-27.614 0-50-22.386-50-50V0z" stroke="#ff9a9e" stroke-width="3" fill="none"/>
+<circle cx="85" cy="100" r="18" fill="#ff9a9e" fill-opacity="0.3"/>
+<circle cx="85" cy="100" r="8" fill="#ff9a9e"/>
+<path d="M60 120 L75 145" stroke="#ff9a9e" stroke-width="3" stroke-linecap="round"/>
+<path d="M110 120 L95 145" stroke="#ff9a9e" stroke-width="3" stroke-linecap="round"/>
+</g>
+</svg>
+</div>LANGUi</a>
+  <div class="topbar-nav">
+    <a href="#" class="active">Text Translation</a>
+    <a href="#" onclick="showSection('documents');return false;">Documents</a>
+    <a href="#" onclick="showSection('synonyms');return false;">Synonyms</a>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn btn-icon" onclick="toggleTheme()" title="Theme"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
+  </div>
+
+    <button class="theme-cycle-btn" onclick="cycleTheme()" data-theme="eloquenta">
+      <span class="dot" style="background:#22d3ee"></span>
+      <span>Eloquenta</span>
+    </button></div>
+<div class="main">
+  <div class="translate-area">
+    <div class="lang-bar">
+      <div class="lang-select">
+        <select id="sourceLang" onchange="handleLangChange()">
+          <option value="en">English</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="it">Italian</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="zh-Hans">Chinese</option>
+          <option value="ja">Japanese</option>
+          <option value="ko">Korean</option>
+          <option value="ar">Arabic</option>
+          <option value="hi">Hindi</option>
+          <option value="nl">Dutch</option>
+          <option value="pl">Polish</option>
+          <option value="tr">Turkish</option>
+          <option value="sv">Swedish</option>
+          <option value="da">Danish</option>
+          <option value="fi">Finnish</option>
+          <option value="el">Greek</option>
+          <option value="cs">Czech</option>
+          <option value="ro">Romanian</option>
+          <option value="hu">Hungarian</option>
+          <option value="bg">Bulgarian</option>
+          <option value="sk">Slovak</option>
+          <option value="sl">Slovenian</option>
+          <option value="lv">Latvian</option>
+          <option value="lt">Lithuanian</option>
+          <option value="et">Estonian</option>
+          <option value="uk">Ukrainian</option>
+          <option value="sr">Serbian</option>
+          <option value="id">Indonesian</option>
+          <option value="ms">Malay</option>
+          <option value="tl">Tagalog</option>
+          <option value="vi">Vietnamese</option>
+          <option value="th">Thai</option>
+          <option value="fa">Persian</option>
+          <option value="he">Hebrew</option>
+          <option value="ur">Urdu</option>
+          <option value="bn">Bengali</option>
+        </select>
+      </div>
+      <button class="swap-btn" onclick="swapLanguages()" title="Swap">⇄</button>
+      <div class="lang-select">
+        <select id="targetLang" onchange="handleLangChange()">
+          <option value="es">Spanish</option>
+          <option value="en">English</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="it">Italian</option>
+          <option value="pt">Portuguese</option>
+          <option value="ru">Russian</option>
+          <option value="zh-Hans">Chinese</option>
+          <option value="ja">Japanese</option>
+          <option value="ko">Korean</option>
+          <option value="ar">Arabic</option>
+          <option value="hi">Hindi</option>
+          <option value="nl">Dutch</option>
+          <option value="pl">Polish</option>
+          <option value="tr">Turkish</option>
+          <option value="sv">Swedish</option>
+          <option value="da">Danish</option>
+          <option value="fi">Finnish</option>
+          <option value="el">Greek</option>
+          <option value="cs">Czech</option>
+          <option value="ro">Romanian</option>
+          <option value="hu">Hungarian</option>
+          <option value="bg">Bulgarian</option>
+          <option value="sk">Slovak</option>
+          <option value="sl">Slovenian</option>
+          <option value="lv">Latvian</option>
+          <option value="lt">Lithuanian</option>
+          <option value="et">Estonian</option>
+          <option value="uk">Ukrainian</option>
+          <option value="sr">Serbian</option>
+          <option value="id">Indonesian</option>
+          <option value="ms">Malay</option>
+          <option value="tl">Tagalog</option>
+          <option value="vi">Vietnamese</option>
+          <option value="th">Thai</option>
+          <option value="fa">Persian</option>
+          <option value="he">Hebrew</option>
+          <option value="ur">Urdu</option>
+          <option value="bn">Bengali</option>
+        </select>
+      </div>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-lang" id="sourceLangLabel">English</span>
+          <div class="panel-actions">
+            <button class="btn btn-icon btn-sm" onclick="clearSource()" title="Clear">Clear</button>
+            <button class="btn btn-icon btn-sm" onclick="pasteFromClipboard()" title="Paste"></button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <textarea class="panel-textarea" id="sourceText" placeholder="Type or paste text to translate..." oninput="handleInput()"></textarea>
+        </div>
+        <div class="panel-footer">
+          <span class="char-count"><span id="charCount">0</span> / 5000</span>
+          <button class="btn btn-primary translate-btn" onclick="translateText()" id="translateBtn">Translate</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-lang" id="targetLangLabel">Spanish</span>
+          <div class="panel-actions">
+            <button class="btn btn-icon btn-sm" onclick="copyTranslation()" title="Copy"></button>
+            <button class="btn btn-icon btn-sm" onclick="speakTranslation()" title="Listen"></button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="panel-output" id="targetOutput"><span class="placeholder">Translation will appear here...</span></div>
+        </div>
+        <div class="panel-footer">
+          <span class="char-count" id="targetCharCount"></span>
+          <button class="btn btn-sm" onclick="swapLanguages()">⇄ Swap</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="linguatron.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+/* Music By Humans — Bold Graphic Skin */
+/* Bold illustration style: thick outlines, flat colors, playful energy */
+
+:root {
+  --skin-bg: #fefefe;
+  --skin-bg-surface: #f5f5f5;
+  --skin-bg-elevated: #ffffff;
+  --skin-bg-overlay: rgba(255, 255, 255, 0.95);
+
+  --skin-text: #1a1a1a;
+  --skin-text-dim: #666666;
+  --skin-text-bright: #000000;
+
+  --skin-primary: #ff1493;
+  --skin-primary-dim: #ff4da6;
+  --skin-primary-glow: rgba(255, 20, 147, 0.2);
+
+  --skin-accent: #facc15;
+  --skin-accent-dim: #eab308;
+  --skin-accent-glow: rgba(250, 204, 21, 0.3);
+
+  --skin-secondary: #22c55e;
+  --skin-secondary-dim: #16a34a;
+
+  --skin-font-main: 'Inter', system-ui, sans-serif;
+  --skin-font-mono: 'Fira Code', monospace;
+  --skin-font-display: 'Arial Black', 'Impact', sans-serif;
+
+  --skin-radius-sm: 0px;
+  --skin-radius-md: 0px;
+  --skin-radius-lg: 0px;
+  --skin-radius-xl: 0px;
+
+  --skin-border: 3px solid #000;
+  --skin-border-bright: 3px solid #000;
+  --skin-border-primary: 3px solid #ff1493;
+
+  --skin-chrome-bg: #000000;
+  --skin-chrome-border: 3px solid #000;
+  --skin-chrome-text: #ffffff;
+  --skin-chrome-btn-bg: #ff1493;
+  --skin-chrome-btn-hover: #ff4da6;
+
+  --skin-player-bg: #ffffff;
+  --skin-player-progress-bg: rgba(0, 0, 0, 0.1);
+  --skin-player-progress-fill: #ff1493;
+
+  --skin-shadow-sm: 3px 3px 0px rgba(0, 0, 0, 1);
+  --skin-shadow-md: 5px 5px 0px rgba(0, 0, 0, 1);
+  --skin-shadow-lg: 8px 8px 0px rgba(0, 0, 0, 0.8);
+  --skin-shadow-glow: none;
+
+  --skin-scrollbar-thumb: rgba(0, 0, 0, 0.2);
+  --skin-scrollbar-thumb-hover: rgba(0, 0, 0, 0.4);
+}
