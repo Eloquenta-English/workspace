@@ -78,6 +78,8 @@
       var failures = results.filter(function(r) { return r.status === 'rejected'; });
       if (success.length) return success;
       var msg = failures.map(function(r) { return r.reason && r.reason.message; }).filter(Boolean).join('; ');
+      var offline = offlineTranslate(text, source, target);
+      if (offline) return [offline];
       throw new Error('All translation services failed: ' + (msg || 'unknown'));
     });
   }
@@ -199,6 +201,37 @@
         if (btn) btn.textContent = '🔄';
       });
   };
+// Offline phrasebook for common English expressions when APIs fail
+  var OFFLINE = {
+    hello: {es:'hola', fr:'bonjour', de:'hallo', it:'ciao', pt:'olá', ru:'привет', ja:'こんにちは', ko:'안녕하세요', zh:'你好'},
+    'good morning': {es:'buenos días', fr:'bonjour', de:'guten Morgen', it:'buongiorno', pt:'bom dia'},
+    'good night': {es:'buenas noches', fr:'bonne nuit', de:'gute Nacht', it:'buonanotte', pt:'boa noite'},
+    'thank you': {es:'gracias', fr:'merci', de:'danke', it:'grazie', pt:'obrigado'},
+    'how are you': {es:'¿cómo estás?', fr:'comment ça va?', de:'wie geht es dir?', it:'come stai?', pt:'como está?'},
+    'goodbye': {es:'adiós', fr:'au revoir', de:'auf Wiedersehen', it:'arrivederci', pt:'adeus'},
+    yes: {es:'sí', fr:'oui', de:'ja', it:'sì', pt:'sim'},
+    no: {es:'no', fr:'non', de:'nein', it:'no', pt:'não'},
+    please: {es:'por favor', fr:'s'il vous plaît', de:'bitte', it:'per favore', pt:'por favor'},
+    'excuse me': {es:'disculpe', fr:'excusez-moi', de:'entschuldigung', it:'scusi', pt:'com licença'}
+  };
+
+  function offlineTranslate(q, s, t) {
+    if (s !== 'en') return null; // only English source supported for offline
+    var key = q.toLowerCase().replace(/[?!.]/g, '').trim();
+    var entry = OFFLINE[key];
+    if (entry && entry[t]) return {source: 'Offline phrasebook', text: entry[t]};
+    // try word-by-word fallback
+    var words = key.split(/\s+/);
+    var mapped = [];
+    words.forEach(function(w) {
+      var e = OFFLINE[w];
+      mapped.push(e && e[t] ? e[t] : w);
+    });
+    if (mapped.some(function(m) { return m !== key; })) {
+      return {source: 'Offline fallback', text: mapped.join(' ')};
+    }
+    return null;
+  }
 
   function runSanityCheck(results, original, source, target) {
     // If a very common word was translated, check against built-in mini glossary
