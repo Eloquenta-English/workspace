@@ -75,7 +75,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .lesson-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.4)}
 .lesson-card-img-container{position:relative;width:100%;height:100%;overflow:hidden}
 .lesson-card-img{width:100%;height:100%;object-fit:cover;display:block;position:absolute;top:0;left:0;z-index:1}
-.lesson-card-hue{position:absolute;inset:0;background-color:var(--accent);mix-blend-mode:multiply;z-index:2;transition:background-color .3s ease;pointer-events:none}
+/* Cover card - no hue overlay, clean image */
 .lesson-card-content{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;background:linear-gradient(transparent 30%,rgba(0,0,0,0.75));pointer-events:none}
 .lesson-card-body{position:relative;z-index:4;pointer-events:auto}
 .lesson-cat{font-family:var(--mono);font-size:.55rem;font-weight:510;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
@@ -122,7 +122,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 /* Full-bleed background image */
 .slide-bg{position:absolute;inset:0;z-index:0;overflow:hidden}
 .slide-bg img{width:100%;height:100%;object-fit:cover;animation:kenBurns 12s ease-in-out infinite alternate}
-.slide-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.55) 50%,rgba(0,0,0,0.8) 100%)}
+.slide-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,rgba(0,0,0,0.3) 60%,rgba(0,0,0,0.7) 100%);pointer-events:none}
 
 /* Slide content overlay */
 .slide-content{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:40px 60px;max-width:100%}
@@ -190,14 +190,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 
 .lesson-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
 .lesson-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;transition:all .2s;text-decoration:none;color:inherit;display:block;overflow:hidden;position:relative;aspect-ratio:4/3}
-.lesson-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.2)}
+.lesson-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.5),0 0 0 1px var(--accent);filter:brightness(1.05)}
+.lesson-card:active{transform:translateY(-1px) scale(0.98);box-shadow:0 4px 16px rgba(0,0,0,0.3);transition-duration:.1s}
 .lesson-card-img-container{position:relative;width:100%;height:100%;overflow:hidden}
-.lesson-card-img{width:100%;height:100%;object-fit:cover;display:block;position:absolute;top:0;left:0;z-index:1}
-.lesson-card-hue{position:absolute;inset:0;background-color:var(--accent);mix-blend-mode:multiply;z-index:2;transition:background-color .3s ease;pointer-events:none}
-.lesson-card-content{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;background:linear-gradient(transparent 40%, rgba(0,0,0,.8));pointer-events:none}
+.lesson-card-img{width:100%;height:100%;object-fit:cover;display:block;position:absolute;top:0;left:0;z-index:1;transition:transform .3s ease}
+.lesson-card:hover .lesson-card-img{transform:scale(1.05)}
+.lesson-card-content{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;background:linear-gradient(transparent 40%,rgba(0,0,0,.8));pointer-events:none}
 .lesson-card-body{position:relative;z-index:4;pointer-events:auto}
-.lesson-cat{font-family:'Fira Code',monospace;font-size:.55rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
-.lesson-card h3{font-family:var(--mono);font-size:.9rem;font-weight:510;color:var(--text);margin-bottom:4px}
+.lesson-cat{font-family:var(--mono);font-size:.55rem;font-weight:510;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.lesson-card h3{font-family:var(--mono);font-size:.9rem;font-weight:510;color:var(--text);margin-bottom:4px;letter-spacing:-0.2px}
 .lesson-count{font-size:.7rem;color:var(--text-dim)}
 
 /* ═══ DECK VIEW ═══ */
@@ -709,10 +710,10 @@ for(var i=0;i<lessonData.length;i++){
     
     var imgSrc = mappingLookup[t.slug] || '';
     var imgHtml = imgSrc 
-      ? '<div class="lesson-card-img-container"><img class="lesson-card-img" src="'+imgSrc+'" alt=""><div class="lesson-card-hue"></div></div>' 
-      : '<div class="lesson-card-img-container"><div class="lesson-card-img placeholder" style="background:var(--bg3);display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-family:\'Fira Code\',monospace;font-size:1rem">'+t.slug+'</div><div class="lesson-card-hue"></div></div>';
+      ? '<div class="lesson-card-img-container"><img class="lesson-card-img" src="'+imgSrc+'" alt=""></div>' 
+      : '<div class="lesson-card-img-container"><div class="lesson-card-img placeholder" style="background:var(--bg3);display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:1rem">'+t.slug+'</div></div>';
 
-    card.innerHTML = imgHtml + '<div class="lesson-card-content"><div class="lesson-card-body"><div class="lesson-cat">'+cat.category+'</div><h3>'+t.title.replace(/ \\(\\d+ questions?\\)$/,'')+'</h3><div class="lesson-count">'+t.questions.length+' questions</div></div></div>';
+          card.innerHTML = imgHtml + '<div class="lesson-card-content"><div class="lesson-card-body"><div class="lesson-cat">'+cat.category+'</div><h3>'+t.title.replace(/ \\(\\d+ questions?\\)$/,'')+'</h3><div class="lesson-count">'+t.questions.length+' questions</div></div></div>';
     grid.appendChild(card);
   }
 }
