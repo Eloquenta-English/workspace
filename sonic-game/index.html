@@ -2,56 +2,78 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0a12">
 <title>TEMU Sonic — Green Hill</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a12;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden}
-canvas{display:block;border:2px solid #1a3a5c;border-radius:4px;image-rendering:pixelated;box-shadow:0 0 40px rgba(20,80,200,.3)}
-#hud{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;gap:24px;color:#fff;font-size:14px;font-weight:600;letter-spacing:1px;text-shadow:0 1px 4px rgba(0,0,0,.8);z-index:10;pointer-events:none}
-#hud span{background:rgba(0,0,0,.5);padding:6px 16px;border-radius:20px;border:1px solid rgba(255,255,255,.1)}
-#controls{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.4);font-size:12px;letter-spacing:1px;z-index:10}
-#gameOver{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.75);z-index:20}
-#gameOver h1{font-size:48px;color:#fbbf24;text-shadow:0 0 20px rgba(251,191,36,.5);margin-bottom:8px}
-#gameOver p{color:#fff;font-size:16px;margin-bottom:24px}
-#gameOver button{padding:12px 32px;font-size:16px;font-weight:700;background:linear-gradient(135deg,#22d3ee,#a3e635);border:none;border-radius:8px;cursor:pointer;letter-spacing:1px;text-transform:uppercase}
-#gameOver button:hover{transform:scale(1.05)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a0a12;touch-action:none;overscroll-behavior:none}
+body{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Segoe UI',system-ui,sans-serif}
+canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none}
+#hud{position:absolute;top:env(safe-area-inset-top,8px);left:50%;transform:translateX(-50%);display:flex;gap:12px;color:#fff;font-size:12px;font-weight:600;letter-spacing:1px;text-shadow:0 1px 4px rgba(0,0,0,.8);z-index:10;pointer-events:none;white-space:nowrap;transition:opacity .3s}
+#hud span{background:rgba(0,0,0,.5);padding:4px 10px;border-radius:16px;border:1px solid rgba(255,255,255,.1)}
+#controls{position:absolute;bottom:env(safe-area-inset-bottom,8px);left:50%;transform:translateX(-50%);color:rgba(255,255,255,.4);font-size:10px;letter-spacing:1px;z-index:10;text-align:center;pointer-events:none}
+#gameOver{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.75);z-index:20;padding:20px;text-align:center}
+#gameOver h1{font-size:36px;color:#fbbf24;text-shadow:0 0 20px rgba(251,191,36,.5);margin-bottom:8px}
+#gameOver p{color:#fff;font-size:14px;margin-bottom:20px}
+#gameOver button{padding:14px 36px;font-size:16px;font-weight:700;background:linear-gradient(135deg,#22d3ee,#a3e635);border:none;border-radius:8px;cursor:pointer;letter-spacing:1px;text-transform:uppercase;min-width:200px;min-height:44px}
+#gameOver button:active{transform:scale(0.95)}
 /* Splash screen */
-#splash{position:absolute;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#0a1628 0%,#1a2a4a 40%,#0f1f3a 100%);transition:opacity .8s ease;cursor:pointer}
+#splash{position:absolute;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#0a1628 0%,#1a2a4a 40%,#0f1f3a 100%);transition:opacity .6s ease;cursor:pointer;overflow:hidden}
 #splash.fade-out{opacity:0;pointer-events:none}
-#splash-scene{position:relative;width:960px;height:540px;overflow:hidden;border:2px solid #1a3a5c;border-radius:4px}
-#splash-bg-canvas{position:absolute;inset:0}
-#splash-title{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:5;user-select:none}
-#splash-title h1{font-size:72px;font-weight:900;letter-spacing:4px;line-height:1;margin-bottom:4px;background:linear-gradient(135deg,#22d3ee,#a3e635,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-shadow:none;filter:drop-shadow(0 0 30px rgba(34,211,238,.4))}
-#splash-title .subtitle{font-size:22px;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:8px;text-transform:uppercase;margin-top:8px}
-#splash-title .press-start{margin-top:40px;font-size:16px;color:rgba(255,255,255,.35);letter-spacing:3px;animation:pulse 2s ease-in-out infinite}
+#splash-bg{position:absolute;inset:0;overflow:hidden}
+#splash-bg::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:radial-gradient(ellipse at 20% 20%,rgba(34,211,238,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 30%,rgba(163,230,53,0.06) 0%,transparent 50%)}
+#splash-bg::after{content:'';position:absolute;bottom:0;left:0;right:0;height:45%;background:linear-gradient(180deg,transparent 0%,#0d2818 30%,#1a4a2a 70%,#2d6a3e 100%)}
+#splash-sonic{position:absolute;left:15%;bottom:30%;width:80px;height:80px;z-index:2;animation:sonicBounce 1.2s ease-in-out infinite}
+#splash-sonic::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 40% 35%,#2563eb 0%,#1e40af 60%,#0030a0 100%);border-radius:50%;box-shadow:0 0 30px rgba(34,211,238,0.4)}
+#splash-sonic::after{content:'';position:absolute;top:15%;left:55%;width:20px;height:24px;background:#fff;border-radius:50%;box-shadow:22px 4px 0 -2px #000}
+@keyframes sonicBounce{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-15px) rotate(5deg)}}
+#splash-title{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:5;user-select:none;width:90%}
+#splash-title h1{font-size:clamp(32px,8vw,72px);font-weight:900;letter-spacing:2px;line-height:1;margin-bottom:4px;background:linear-gradient(135deg,#22d3ee,#a3e635,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 30px rgba(34,211,238,.4))}
+#splash-title .subtitle{font-size:clamp(12px,3vw,22px);font-weight:600;color:rgba(255,255,255,.5);letter-spacing:4px;text-transform:uppercase;margin-top:8px}
+#splash-title .press-start{margin-top:30px;font-size:clamp(12px,3vw,16px);color:rgba(255,255,255,.35);letter-spacing:2px;animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:.35}50%{opacity:.8}}
-#splash-rings{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);display:flex;gap:12px;z-index:5}
-.splash-ring{width:20px;height:20px;border:3px solid #fbbf24;border-radius:50%;animation:ringFloat 3s ease-in-out infinite}
+#splash-rings{position:absolute;bottom:20%;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:5}
+.splash-ring{width:16px;height:16px;border:3px solid #fbbf24;border-radius:50%;animation:ringFloat 3s ease-in-out infinite}
 .splash-ring:nth-child(2){animation-delay:.3s}
 .splash-ring:nth-child(3){animation-delay:.6s}
 .splash-ring:nth-child(4){animation-delay:.9s}
 .splash-ring:nth-child(5){animation-delay:1.2s}
 @keyframes ringFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-10px) scale(1.1)}}
+/* Mobile touch controls — sidebar layout */
+#touch-controls{position:absolute;top:0;bottom:0;left:0;display:none;z-index:15;pointer-events:none;width:70px;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:5px}
+#touch-controls-right{position:absolute;top:0;bottom:0;right:0;display:none;z-index:15;pointer-events:none;width:70px;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:5px}
+.touch-btn{width:54px;height:54px;border-radius:12px;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:22px;color:rgba(255,255,255,.55);pointer-events:auto;user-select:none;-webkit-user-select:none;transition:background .1s}
+.touch-btn:active,.touch-btn.active{background:rgba(34,211,238,.35);border-color:rgba(34,211,238,.7);color:rgba(255,255,255,.9)}
+#btn-left{background:rgba(34,211,238,.12)}
+#btn-right{background:rgba(34,211,238,.12)}
+#btn-jump{background:rgba(163,230,53,.15)}
+#btn-down{background:rgba(251,191,36,.15)}
+@media(pointer:coarse){
+  #touch-controls{display:flex}
+  #touch-controls-right{display:flex}
+  #controls{display:none}
+}
 </style>
 </head>
 <body>
 <!-- Splash Screen -->
 <div id="splash">
-  <div id="splash-scene">
-    <canvas id="splash-bg-canvas" width="960" height="540"></canvas>
-    <div id="splash-title">
-      <h1>TEMU SONIC</h1>
-      <div class="subtitle">Green Hill Zone</div>
-      <div class="press-start">Press any key or click to start</div>
-    </div>
-    <div id="splash-rings">
-      <div class="splash-ring"></div>
-      <div class="splash-ring"></div>
-      <div class="splash-ring"></div>
-      <div class="splash-ring"></div>
-      <div class="splash-ring"></div>
-    </div>
+  <div id="splash-bg"></div>
+  <div id="splash-sonic"></div>
+  <div id="splash-title">
+    <h1>TEMU SONIC</h1>
+    <div class="subtitle">Green Hill Zone</div>
+    <div class="press-start">Tap to start</div>
+  </div>
+  <div id="splash-rings">
+    <div class="splash-ring"></div>
+    <div class="splash-ring"></div>
+    <div class="splash-ring"></div>
+    <div class="splash-ring"></div>
+    <div class="splash-ring"></div>
   </div>
 </div>
 <div id="hud">
@@ -60,11 +82,20 @@ canvas{display:block;border:2px solid #1a3a5c;border-radius:4px;image-rendering:
   <span id="time">Time: 0</span>
 </div>
 <canvas id="game" width="960" height="540"></canvas>
-<div id="controls">← → Move  |  SPACE / ↑ Jump (hold higher)  |  ↓ Spin Dash (hold & release)</div>
+<div id="controls">← → Move  |  SPACE / ↑ Jump  |  ↓ Stomp in air</div>
 <div id="gameOver">
   <h1 id="overText">GAME OVER</h1>
   <p id="overSub">You collected 0 rings</p>
-  <button onclick="restart()">Try Again</button>
+  <button id="restartBtn">Try Again</button>
+</div>
+<!-- Mobile touch controls — sidebar layout -->
+<div id="touch-controls">
+  <div id="btn-left" class="touch-btn">◀</div>
+  <div id="btn-right" class="touch-btn">▶</div>
+</div>
+<div id="touch-controls-right">
+  <div id="btn-down" class="touch-btn">▼</div>
+  <div id="btn-jump" class="touch-btn">▲</div>
 </div>
 <script>
 const canvas = document.getElementById('game');
@@ -78,12 +109,22 @@ let particles = [];
 let particles2 = [];
 let screenShake = 0;
 
-// Physics constants — TUNED FOR TACTILE FEEL
-const GRAVITY = 0.42;
-const FRICTION = 0.92;
-const ACCEL = 1.2;
-const MAX_SPEED = 9;
-const AIR_CONTROL = 0.7;
+// Physics constants — SONIC 1 GENESIS VALUES (from Sonic Retro Physics Guide)
+// Units: pixels per frame. 60fps baseline.
+// const FRICTION = 0.92; — REMOVED: replaced with additive deceleration model
+const GRAVITY = 0.42;              // gravity acceleration
+const GROUND_ACCEL = 0.0625;       // ground acceleration (original — keep)
+const AIR_ACCEL = 0.1875;          // air acceleration (original — keep)
+const GROUND_DECEL = 0.25;         // ground deceleration (moderate — keeps momentum)
+const AIR_DECEL = 0.046875;        // air drag (light — preserves air momentum)
+const SLOPE_UP_FRICTION = 0.75;    // speed loss going uphill (6x — max grip on slopes)
+const SLOPE_DOWN_FRICTION = 0.125; // speed gain going downhill (unchanged)
+const ROLL_FRICTION = 0.6;         // rolling deceleration (12x — no ice-skating)
+const ROLL_DECEL = 1.0;            // brake / roll deceleration (8x stronger)
+const STOMP_FORCE = 18;            // downward force when pressing down in air
+const MAX_SPEED = 6;               // top speed (Sonic 1 = 6 px/frame)
+const TOP_ROLL_SPEED = 12;         // rolling can exceed normal top speed
+const AIR_CONTROL = 0.7;           // reduced air steering
 const JUMP_FORCE = -11.5;
 const SPIN_BOOST = 14;
 const SPRING_FORCE = -16;
@@ -96,7 +137,7 @@ let player = {
   grounded: false, facing: 1, spinning: false, spinTimer: 0,
   invincible: 0, animFrame: 0, animTimer: 0,
   coyoteTimer: 0, jumpBufferTimer: 0, wasGrounded: false,
-  jumpHeld: false, speedTrail: []
+  jumpHeld: false, speedTrail: [], stomping: false
 };
 
 // Input
@@ -109,6 +150,46 @@ document.addEventListener('keydown', e => {
   if (['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) e.preventDefault();
 });
 document.addEventListener('keyup', e => { keys[e.code] = false; });
+
+// Touch controls — mobile
+function setupTouch(id, code) {
+  const btn = document.getElementById(id);
+  if (!btn) return;
+  const press = e => { e.preventDefault(); keys[code] = true; justPressed[code] = true; btn.classList.add('active'); };
+  const release = e => { e.preventDefault(); keys[code] = false; btn.classList.remove('active'); };
+  btn.addEventListener('touchstart', press, { passive: false });
+  btn.addEventListener('touchend', release, { passive: false });
+  btn.addEventListener('touchcancel', release, { passive: false });
+  btn.addEventListener('mousedown', press);
+  btn.addEventListener('mouseup', release);
+  btn.addEventListener('mouseleave', release);
+}
+setupTouch('btn-left', 'ArrowLeft');
+setupTouch('btn-right', 'ArrowRight');
+setupTouch('btn-jump', 'Space');
+setupTouch('btn-down', 'ArrowDown');
+
+// Canvas scaling — fit to viewport (account for mobile sidebars)
+function resizeCanvas() {
+  const isMobile = window.matchMedia('(pointer:coarse)').matches;
+  const sidebarW = isMobile ? 160 : 20;  // 70px each side + gap on mobile
+  const margin = 10;
+  const availW = window.innerWidth - sidebarW - margin * 2;
+  const availH = window.innerHeight - margin * 2;
+  const scale = Math.min(availW / W, availH / H);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  // Center canvas between sidebars
+  const canvasW = W * scale;
+  const offsetLeft = isMobile ? 80 + (availW - canvasW) / 2 : (window.innerWidth - canvasW) / 2;
+  canvas.style.position = 'absolute';
+  canvas.style.left = offsetLeft + 'px';
+  canvas.style.top = '50%';
+  canvas.style.transform = 'translateY(-50%)';
+}
+window.addEventListener('resize', resizeCanvas);
+window.addEventListener('orientationchange', resizeCanvas);
+resizeCanvas();
 
 // Audio synth — no external files needed
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -171,29 +252,502 @@ function playEnemyKill(){ playTone(600, 0.05, 'square', 0.1); setTimeout(() => p
 function playGoal()     { [523,659,784,1047].forEach((f,i) => setTimeout(() => playTone(f, 0.2, 'sine', 0.12), i * 120)); }
 function playGameOver() { [400,300,200,100].forEach((f,i) => setTimeout(() => playTone(f, 0.3, 'sawtooth', 0.1), i * 150)); }
 
-// Background music — simple looping chiptune
+// Background music — DRUM & BASS with AMEN BREAKS
 let musicInterval = null;
-const musicNotes = [
-  392, 440, 494, 523, 494, 440, 392, 330,
-  349, 392, 440, 494, 440, 392, 349, 330,
-  294, 330, 349, 392, 440, 392, 349, 330,
-  294, 330, 392, 440, 494, 523, 494, 440
-];
+let drumInterval = null;
+let bassInterval = null;
+let leadInterval = null;
+
 let musicIndex = 0;
 let musicPlaying = false;
+let currentBar = 0;
+
+// Drum & Bass tempo (BPM)
+const BPM = 174;
+const SIXTEENTH = (60 / BPM / 4) * 1000;  // ~86ms per 16th note
+
+// Amen break — the classic 4-bar breakbeat pattern (16th notes per bar)
+// K=kick, S=snare, H=hihat, O=open hihat, F=fill, .=rest
+const amenBreak = [
+  // Bar 1: classic amen
+  'K.H.SOH.K.H.S.H',
+  // Bar 2: variation
+  'K.H.SOH.K.H.SOH',
+  // Bar 3: classic
+  'K.H.SOH.K.H.S.H',
+  // Bar 4: fill
+  'K.H.SOH.KSKSSKS',
+];
+
+// Normal DnB pattern (used between amen breaks)
+const dnbPattern = [
+  'K.H.S.H.K.H.S.H',
+  'K.H.S.H.K.H.SOH',
+  'K.H.S.H.K.H.S.H',
+  'K.H.SOH.K.H.S.H',
+];
+
+// Bass line — dark DnB sub drops
+const bassPattern = [
+  'B...B.B...B.B..',  // E-E-E-E
+  'B...B.B...B.B..',
+  'B...B.B...B.B..',
+  'B...B.B...B.B..',
+];
+const BASS_ROOT = 41;  // E1 in Hz
+
+// Reese synth — long detuned sawtooth pads with minor second bends at end
+// Each cell = 1 beat (quarter note). 'R' = sustained root, 'U' = bend up, 'D' = bend down
+const reesePattern = [
+  'R.......U.......',  // long E, bend up at end (2 beats)
+  'R.......D.......',  // long E, bend down at end
+  'R.......U.......',  // long E, bend up at end
+  'R.......D.......',  // long E, bend down at end
+];
+const REESE_ROOT = 82;   // E2
+const REESE_UP = 87;     // F2 (minor second up)
+const REESE_DOWN = 78;   // Eb2 (minor second down)
+
+// Green Hill Zone REVERSED melody (original by Masato Nakamura, 1991)
+// Original: E G A B A G E D... played with a bouncy major feel
+// Reversed: ...D E G A B A G E (dark, descending, atmospheric)
+// Frequencies in Hz, played as 8th notes
+// 'd' suffix = dotted (1.5x duration), 'h' = half note (2x), 'q' = dotted quarter (1.5x)
+// Every 6th note is dotted. 3 random half notes + 1 dotted quarter sprinkled in.
+const ghvMelody = [
+  // Phrase 1 (reversed original phrase 4)
+  0, 784, 698, 0, 587, '523d', 0, 440,           // G5 . C#5 . A4(dotted) . E4
+  // Phrase 2 (reversed original phrase 3)
+  '880h', 0, 784, '698d', 0, 587, 523, 0,         // A5(half) . E5(dotted) . C#5 . G4
+  // Phrase 3 (reversed original phrase 2)
+  0, 880, '824d', 0, 698, 659, 0, '523q',          // B5 . G5(dotted) . B4 . G4(dotted quarter)
+  // Phrase 4 (reversed original phrase 1 — the iconic opening)
+  1047, 0, '880h', 824, 0, '698d', 659, 0,        // C6 . A5(half) . E5(dotted) . B4
+];
+
+// Walking bassline — moves stepwise, not oompa-pedal
+// Follows the chord progression with passing tones
+const ghvBass = [
+  165, 175, 165, 147,  // E3 F3 E3 D3
+  165, 175, 165, 196,  // E3 F3 E3 G3
+  175, 196, 175, 165,  // F3 G3 F3 E3
+  147, 165, 147, 131,  // D3 E3 D3 C3
+];
+
+// Synth lead — sparse, atmospheric stabs (reversed melody hits)
+const leadPattern = [
+  '....A...D...A..',
+  '....A...D...F..',
+  '....A...D...A..',
+  '....G...D...A..',
+];
+
+// Drum sounds
+function playKick(punch) {
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  const dryGain = audioCtx.createGain();
+  const wetGain = audioCtx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(punch ? 180 : 150, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(25, audioCtx.currentTime + 0.15);
+  gain.gain.setValueAtTime(punch ? 0.5 : 0.35, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+  dryGain.gain.value = 0.7;
+  wetGain.gain.value = 0.3;
+  osc.connect(gain);
+  gain.connect(dryGain);
+  gain.connect(wetGain);
+  dryGain.connect(masterGain);
+  wetGain.connect(reverbNode);
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.2);
+}
+
+function playHiHat(open) {
+  ensureAudio();
+  const bufferSize = audioCtx.sampleRate * (open ? 0.15 : 0.04);
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, open ? 1.2 : 4);
+  }
+  const src = audioCtx.createBufferSource();
+  src.buffer = buffer;
+  const hp = audioCtx.createBiquadFilter();
+  hp.type = 'highpass';
+  hp.frequency.value = 8000;
+  const gain = audioCtx.createGain();
+  const dryGain = audioCtx.createGain();
+  const wetGain = audioCtx.createGain();
+  gain.gain.setValueAtTime(open ? 0.07 : 0.04, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (open ? 0.15 : 0.04));
+  dryGain.gain.value = 0.5;
+  wetGain.gain.value = 0.5;
+  src.connect(hp);
+  hp.connect(gain);
+  gain.connect(dryGain);
+  gain.connect(wetGain);
+  dryGain.connect(masterGain);
+  wetGain.connect(reverbNode);
+  src.start();
+}
+
+function playSnare() {
+  ensureAudio();
+  const bufferSize = audioCtx.sampleRate * 0.12;
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 1.5);
+  }
+  const src = audioCtx.createBufferSource();
+  src.buffer = buffer;
+  const bp = audioCtx.createBiquadFilter();
+  bp.type = 'bandpass';
+  bp.frequency.value = 4000;
+  const gain = audioCtx.createGain();
+  const dryGain = audioCtx.createGain();
+  const wetGain = audioCtx.createGain();
+  gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+  dryGain.gain.value = 0.6;
+  wetGain.gain.value = 0.4;
+  src.connect(bp);
+  bp.connect(gain);
+  gain.connect(dryGain);
+  gain.connect(wetGain);
+  dryGain.connect(masterGain);
+  wetGain.connect(reverbNode);
+  src.start();
+  const osc = audioCtx.createOscillator();
+  const oscGain = audioCtx.createGain();
+  const oscDry = audioCtx.createGain();
+  const oscWet = audioCtx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.04);
+  oscGain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+  oscGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.06);
+  oscDry.gain.value = 0.6;
+  oscWet.gain.value = 0.4;
+  osc.connect(oscGain);
+  oscGain.connect(oscDry);
+  oscGain.connect(oscWet);
+  oscDry.connect(masterGain);
+  oscWet.connect(reverbNode);
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.06);
+}
+
+// Deep sub bass
+function playSub(freq, dur) {
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  const dryGain = audioCtx.createGain();
+  const wetGain = audioCtx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+  dryGain.gain.value = 0.6;
+  wetGain.gain.value = 0.4;
+  osc.connect(gain);
+  gain.connect(dryGain);
+  gain.connect(wetGain);
+  dryGain.connect(masterGain);
+  wetGain.connect(reverbNode);
+  osc.start();
+  osc.stop(audioCtx.currentTime + dur);
+}
+
+// REESE SYNTH — detuned sawtooth with filter sweep and minor second bends
+function playReese(freq, dur, bend) {
+  ensureAudio();
+  const osc1 = audioCtx.createOscillator();
+  const osc2 = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  const filter = audioCtx.createBiquadFilter();
+
+  osc1.type = 'sawtooth';
+  osc2.type = 'sawtooth';
+  osc1.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  osc2.frequency.setValueAtTime(freq * 1.012, audioCtx.currentTime); // wide detune
+
+  // Minor second bend at the end
+  if (bend === 'up') {
+    osc1.frequency.setValueAtTime(freq, audioCtx.currentTime + dur * 0.7);
+    osc1.frequency.linearRampToValueAtTime(freq * 1.059, audioCtx.currentTime + dur); // +minor 2nd
+    osc2.frequency.setValueAtTime(freq * 1.012, audioCtx.currentTime + dur * 0.7);
+    osc2.frequency.linearRampToValueAtTime(freq * 1.059 * 1.012, audioCtx.currentTime + dur);
+  } else if (bend === 'down') {
+    osc1.frequency.setValueAtTime(freq, audioCtx.currentTime + dur * 0.7);
+    osc1.frequency.linearRampToValueAtTime(freq * 0.944, audioCtx.currentTime + dur); // -minor 2nd
+    osc2.frequency.setValueAtTime(freq * 1.012, audioCtx.currentTime + dur * 0.7);
+    osc2.frequency.linearRampToValueAtTime(freq * 0.944 * 1.012, audioCtx.currentTime + dur);
+  }
+
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(200, audioCtx.currentTime);
+  filter.frequency.setValueAtTime(200, audioCtx.currentTime + dur * 0.7);
+  filter.frequency.linearRampToValueAtTime(3000, audioCtx.currentTime + dur * 0.85);
+  filter.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + dur);
+  filter.Q.value = 12;
+
+  const dryGain = audioCtx.createGain();
+  const wetGain = audioCtx.createGain();
+  dryGain.gain.value = 0.6;
+  wetGain.gain.value = 0.4;
+
+  gain.gain.setValueAtTime(0, audioCtx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.06, audioCtx.currentTime + dur * 0.1);
+  gain.gain.setValueAtTime(0.06, audioCtx.currentTime + dur * 0.7);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+
+  osc1.connect(filter);
+  osc2.connect(filter);
+  filter.connect(gain);
+  gain.connect(dryGain);
+  gain.connect(wetGain);
+  dryGain.connect(masterGain);
+  wetGain.connect(reverbNode);
+  osc1.start();
+  osc2.start();
+  osc1.stop(audioCtx.currentTime + dur);
+  osc2.stop(audioCtx.currentTime + dur);
+}
+
+// Cymbal sounds with reverb
+function playCymbalCrash(intensity) {
+  ensureAudio();
+  const bufferSize = audioCtx.sampleRate * 4.5;
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 0.5);
+  }
+  const src = audioCtx.createBufferSource();
+  src.buffer = buffer;
+  const hp = audioCtx.createBiquadFilter();
+  hp.type = 'highpass';
+  hp.frequency.value = 4000;
+  const bp = audioCtx.createBiquadFilter();
+  bp.type = 'bandpass';
+  bp.frequency.value = 7000;
+  bp.Q.value = 0.3;
+  const gain = audioCtx.createGain();
+  const dryGain = audioCtx.createGain();
+  const wetGain = audioCtx.createGain();
+  gain.gain.setValueAtTime(intensity * 0.42, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 4.5);
+  dryGain.gain.value = 0.3;
+  wetGain.gain.value = 0.7;
+  src.connect(hp);
+  hp.connect(bp);
+  bp.connect(gain);
+  gain.connect(dryGain);
+  gain.connect(wetGain);
+  dryGain.connect(masterGain);
+  wetGain.connect(reverbNode);
+  src.start();
+}
+
+function playCymbalReverse(intensity) {
+  ensureAudio();
+  const bufferSize = audioCtx.sampleRate * 2.5;
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    // Reversed envelope — quiet attack, loud at end (riser)
+    const env = Math.pow(i / bufferSize, 2);
+    data[i] = (Math.random() * 2 - 1) * env;
+  }
+  const src = audioCtx.createBufferSource();
+  src.buffer = buffer;
+  const hp = audioCtx.createBiquadFilter();
+  hp.type = 'highpass';
+  hp.frequency.value = 3000;
+  const bp = audioCtx.createBiquadFilter();
+  bp.type = 'bandpass';
+  bp.frequency.value = 6000;
+  bp.Q.value = 0.3;
+  const gain = audioCtx.createGain();
+  const dryGain = audioCtx.createGain();
+  const wetGain = audioCtx.createGain();
+  gain.gain.setValueAtTime(intensity * 0.35, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2.5);
+  dryGain.gain.value = 0.3;
+  wetGain.gain.value = 0.7;
+  src.connect(hp);
+  hp.connect(bp);
+  bp.connect(gain);
+  gain.connect(dryGain);
+  gain.connect(wetGain);
+  dryGain.connect(masterGain);
+  wetGain.connect(reverbNode);
+  src.start();
+}
+
+// Riser — long slow rising pitch noise sweep for transition
+function playRiser(intensity) {
+  ensureAudio();
+  const dur = 8.0;
+  const osc = audioCtx.createOscillator();
+  const osc2 = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  const filter = audioCtx.createBiquadFilter();
+  const dryGain = audioCtx.createGain();
+  const wetGain = audioCtx.createGain();
+
+  osc.type = 'sawtooth';
+  osc2.type = 'sawtooth';
+  osc.frequency.setValueAtTime(80, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(1500, audioCtx.currentTime + dur);
+  osc2.frequency.setValueAtTime(83, audioCtx.currentTime);
+  osc2.frequency.exponentialRampToValueAtTime(1510, audioCtx.currentTime + dur);
+
+  filter.type = 'bandpass';
+  filter.frequency.setValueAtTime(300, audioCtx.currentTime);
+  filter.frequency.exponentialRampToValueAtTime(3000, audioCtx.currentTime + dur);
+  filter.Q.value = 1.5;
+
+  gain.gain.setValueAtTime(0, audioCtx.currentTime);
+  gain.gain.linearRampToValueAtTime(intensity * 0.22, audioCtx.currentTime + dur * 0.75);
+  gain.gain.setValueAtTime(intensity * 0.22, audioCtx.currentTime + dur * 0.9);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+  dryGain.gain.value = 0.3;
+  wetGain.gain.value = 0.7;
+
+  osc.connect(filter);
+  osc2.connect(filter);
+  filter.connect(gain);
+  gain.connect(dryGain);
+  gain.connect(wetGain);
+  dryGain.connect(masterGain);
+  wetGain.connect(reverbNode);
+  osc.start();
+  osc2.start();
+  osc.stop(audioCtx.currentTime + dur);
+  osc2.stop(audioCtx.currentTime + dur);
+}
+
+// Synth lead stab
+function playLead(freq, dur) {
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const osc2 = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  const filter = audioCtx.createBiquadFilter();
+  const dryGain = audioCtx.createGain();
+  const wetGain = audioCtx.createGain();
+  osc.type = 'sawtooth';
+  osc2.type = 'sawtooth';
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  osc2.frequency.setValueAtTime(freq * 1.005, audioCtx.currentTime);
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(2000, audioCtx.currentTime);
+  filter.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + dur);
+  filter.Q.value = 8;
+  dryGain.gain.value = 0.5;
+  wetGain.gain.value = 0.5;
+  gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+  osc.connect(filter);
+  osc2.connect(filter);
+  filter.connect(gain);
+  gain.connect(dryGain);
+  gain.connect(wetGain);
+  dryGain.connect(masterGain);
+  wetGain.connect(reverbNode);
+  osc.start();
+  osc2.start();
+  osc.stop(audioCtx.currentTime + dur);
+  osc2.stop(audioCtx.currentTime + dur);
+}
+
 function startMusic() {
   if (musicPlaying) return;
   musicPlaying = true;
   musicIndex = 0;
+  currentBar = 0;
+
+  // Sequencer — 16th note grid
+  let step = 0;
+
   musicInterval = setInterval(() => {
     if (game.over || game.won) { stopMusic(); return; }
-    const note = musicNotes[musicIndex % musicNotes.length];
-    playTone(note, 0.18, 'triangle', 0.04);
-    // Bass line
-    if (musicIndex % 4 === 0) playTone(note / 2, 0.25, 'sine', 0.03);
-    musicIndex++;
-  }, 280);
+
+    const bar = Math.floor(step / 16) % 8;  // 8-bar cycle
+    const pos = step % 16;
+
+    // Switch between amen break and DnB pattern every 4 bars
+    const isAmen = bar < 4;
+    const pattern = isAmen ? amenBreak : dnbPattern;
+    const row = pattern[bar % 4];
+    const hit = row[pos];
+
+    // Drums
+    if (hit === 'K') playKick(pos === 0 || pos === 8);
+    if (hit === 'S') playSnare();
+    if (hit === 'H') playHiHat(false);
+    if (hit === 'O') playHiHat(true);
+
+    // Bass (every 4th step = quarter notes)
+    if (pos % 4 === 0) {
+      const bassHit = bassPattern[bar % 4][pos];
+      if (bassHit === 'B') {
+        playSub(BASS_ROOT, 0.3);
+      }
+    }
+
+    // REESE SYNTH — long sustained pad, plays on beat 0 of each bar, 2 beats long
+    if (pos === 0) {
+      const reeseHit = reesePattern[bar % 4][0];
+      if (reeseHit === 'R' || reeseHit === 'U' || reeseHit === 'D') {
+        if (bar === 0) playReese(REESE_ROOT, 0.5, 'up');
+        else if (bar === 1) playReese(REESE_ROOT, 0.5, 'down');
+        else if (bar === 2) playReese(REESE_ROOT, 0.5, 'up');
+        else if (bar === 3) playReese(REESE_ROOT, 0.5, 'down');
+        else if (bar === 4) playReese(REESE_ROOT, 0.5, 'up');
+        else if (bar === 5) playReese(REESE_ROOT, 0.5, 'down');
+        else if (bar === 6) playReese(REESE_ROOT, 0.5, 'up');
+        else playReese(REESE_ROOT, 0.5, 'down');
+      }
+    }
+
+    // GREEN HILL ZONE REVERSED melody — halftime feel, every 5th note dropped
+    // Supports: plain number (8th), 'd' suffix (dotted 8th = 1.5x), 'h' (half = 2x), 'q' (dotted quarter = 3x)
+    if (pos % 2 === 0) {
+      const rawMelody = ghvMelody[(step / 2) % ghvMelody.length];
+      if (rawMelody !== 0) {
+        let freq, dur;
+        if (typeof rawMelody === 'string') {
+          const suffix = rawMelody.slice(-1);
+          freq = parseInt(rawMelody.slice(0, -1));
+          dur = suffix === 'h' ? 0.2 : suffix === 'q' ? 0.3 : suffix === 'd' ? 0.15 : 0.1;
+        } else {
+          freq = rawMelody;
+          dur = 0.1;
+        }
+        playTone(freq, dur, 'square', 0.12);
+      }
+      const bassIdx = (step / 2) % ghvBass.length;
+      const bassNote = ghvBass[bassIdx];
+      if (bassNote > 0) playTone(bassNote, 0.15, 'sine', 0.72);
+    }
+
+    // CYMBALS — bar 1: crash, bar 4: second crash, bar 5: 8s riser, bar 7: cymbal hits as riser ends
+    if (bar === 0 && pos === 0) playCymbalCrash(1.0);
+    if (bar === 3 && pos === 0) playCymbalCrash(0.8);
+    if (bar === 5 && pos === 0) playRiser(1.0);
+    if (bar === 7 && pos === 0) playCymbalCrash(1.2);
+
+    step = (step + 1) % (16 * 8);  // 8-bar loop
+  }, SIXTEENTH);
 }
+
 function stopMusic() {
   musicPlaying = false;
   if (musicInterval) { clearInterval(musicInterval); musicInterval = null; }
@@ -272,14 +826,17 @@ function buildLevel() {
   });
 
   const enemyDefs = [
-    [600, 410, 1], [950, 410, -1], [1300, 410, 1],
-    [1750, 410, -1], [2100, 410, 1], [2500, 410, -1],
-    [2900, 410, 1], [3300, 410, -1], [3700, 410, 1],
-    [4100, 410, -1], [4500, 410, 1], [4900, 410, -1],
-    [5300, 410, 1], [5700, 410, -1], [6100, 410, 1]
+    [600, 410, 1, 0], [950, 410, -1, 0], [1300, 410, 1, 0],
+    [1750, 410, -1, 0], [2100, 410, 1, 0], [2500, 410, -1, 0],
+    [2900, 410, 1, 0], [3300, 410, -1, 0], [3700, 410, 1, 0],
+    [4100, 410, -1, 0], [4500, 410, 1, 0], [4900, 410, -1, 0],
+    // Flying enemies (plane 1 — above ground)
+    [1050, 280, 1, 1], [2350, 260, -1, 1],
+    [3550, 280, 1, 1], [4750, 260, -1, 1],
+    [5300, 280, 1, 1], [5900, 260, -1, 1]
   ];
-  enemyDefs.forEach(([x, y, dir]) => {
-    enemies.push({ x, y, w: 32, h: 28, vx: dir * 1.5, dir, alive: true, anim: 0 });
+  enemyDefs.forEach(([x, y, dir, plane]) => {
+    enemies.push({ x, y, w: 32, h: 28, vx: dir * 1.5, dir, alive: true, anim: 0, plane });
   });
 
   const spikeDefs = [
@@ -292,11 +849,11 @@ function buildLevel() {
   });
 
   const springDefs = [
-    [500, 420], [1150, 420], [1800, 420], [2450, 420],
-    [3150, 420], [3850, 420], [4550, 420], [5250, 420], [5950, 420]
+    [500, 424], [1150, 424], [1800, 424], [2450, 424],
+    [3150, 424], [3850, 424], [4550, 424], [5250, 424], [5950, 424]
   ];
   springDefs.forEach(([x, y]) => {
-    springs.push({ x, y, w: 30, h: 16, compressed: 0 });
+    springs.push({ x, y: y - 6, w: 30, h: 10, compressed: 0 });
   });
 
   goal = { x: 6150, y: 340, w: 20, h: 100 };
@@ -377,13 +934,33 @@ function update() {
     playJump();
     spawnParticles(player.x + player.w/2, player.y + player.h, '#22d3ee', 12, 8);
   } else {
-    // Normal movement
+    // Normal movement — Sonic 1 style: accel/decel, not multiplicative friction
     if (moveX !== 0) {
-      const accel = player.grounded ? ACCEL : ACCEL * AIR_CONTROL;
+      const accel = player.grounded ? GROUND_ACCEL : AIR_ACCEL * AIR_CONTROL;
       player.vx += moveX * accel;
       player.facing = moveX;
     } else {
-      player.vx *= player.grounded ? FRICTION : 0.98;
+      // Deceleration: subtract a fixed amount each frame (not multiply)
+      if (player.grounded) {
+        if (Math.abs(player.vx) < GROUND_DECEL) {
+          player.vx = 0;
+        } else {
+          player.vx -= Math.sign(player.vx) * GROUND_DECEL;
+        }
+      } else {
+        // Air drag — very light
+        if (Math.abs(player.vx) < AIR_DECEL) {
+          player.vx = 0;
+        } else {
+          player.vx -= Math.sign(player.vx) * AIR_DECEL;
+        }
+      }
+    }
+
+    // Clamp to top speed (unless rolling/spinning which allows higher)
+    const maxV = player.spinning ? TOP_ROLL_SPEED : MAX_SPEED;
+    if (Math.abs(player.vx) > maxV) {
+      player.vx = Math.sign(player.vx) * maxV;
     }
   }
 
@@ -404,9 +981,18 @@ function update() {
     player.vy *= 0.45; // Cut jump short — big difference between tap and hold
   }
 
+  // Stomp — press Down in mid-air for a fast downward dash
+  if (!player.grounded && (keys['ArrowDown'] || keys['KeyS']) && !player.stomping) {
+    player.vy = STOMP_FORCE;
+    player.stomping = true;
+    player.vx *= 0.5; // kill some horizontal speed on stomp
+    spawnParticles(player.x + player.w/2, player.y + player.h, '#22d3ee', 8, 6);
+  }
+  if (player.grounded) player.stomping = false;
+
   // Gravity
   player.vy += GRAVITY;
-  if (player.vy > 12) player.vy = 12;
+  if (player.vy > STOMP_FORCE) player.vy = STOMP_FORCE; // cap fall speed during stomp
 
   // Clamp speed
   if (player.vx > MAX_SPEED) player.vx = MAX_SPEED;
@@ -468,18 +1054,46 @@ function update() {
   // Enemy collision
   enemies.forEach(e => {
     if (!e.alive) return;
-    e.x += e.vx;
     e.anim += 0.1;
-    let onPlatform = false;
+
+    // Check if enemy would be on platform NEXT frame — turn before walking off
+    const nextX = e.x + e.vx;
+    let onPlatformNext = false;
     platforms.forEach(p => {
-      if (e.x + e.w > p.x && e.x < p.x + p.w && Math.abs((e.y + e.h) - p.y) < 5) {
-        onPlatform = true;
+      if (nextX + e.w > p.x && nextX < p.x + p.w && Math.abs((e.y + e.h) - p.y) < 8) {
+        onPlatformNext = true;
       }
     });
-    if (!onPlatform) e.vx = -e.vx;
+
+    // Also check current position in case we need to reverse from overlap
+    let onPlatformNow = false;
+    platforms.forEach(p => {
+      if (e.x + e.w > p.x && e.x < p.x + p.w && Math.abs((e.y + e.h) - p.y) < 8) {
+        onPlatformNow = true;
+      }
+    });
+
+    // Turn around if not on platform next frame, or if now is true (still on it), don't reverse
+    if (!onPlatformNext && onPlatformNow) {
+      // About to walk off — reverse
+      e.vx = -e.vx;
+    } else if (!onPlatformNow && !onPlatformNext) {
+      // Completely off platform — reverse and nudge back onto it
+      e.vx = -e.vx;
+      e.x += e.vx;
+    } else {
+      // Move normally
+      e.x += e.vx;
+    }
 
     if (player.invincible <= 0 && rectCollide(player, e)) {
-      if (player.vy > 0 && player.y + player.h - e.y < 20) {
+      // Stomp kill — player is falling AND above the enemy AND same plane
+      const playerBottom = player.y + player.h;
+      const enemyTop = e.y;
+      const isAbove = playerBottom < enemyTop + 15;
+      const isFalling = player.vy > 0;
+      const samePlane = (e.plane === 0 && player.grounded) || (e.plane === 1) || (player.vy > 0);
+      if (isFalling && isAbove && samePlane) {
         e.alive = false;
         player.vy = -10;
         screenShake = 6;
@@ -532,7 +1146,11 @@ function update() {
 
   // Spring collision
   springs.forEach(s => {
-    if (rectCollide(player, s) && player.vy > 0) {
+    // Only trigger when player is above the spring and falling onto it
+    const playerBottom = player.y + player.h;
+    const springTop = s.y;
+    const isAbove = playerBottom <= springTop + 8;
+    if (rectCollide(player, s) && player.vy > 0 && isAbove) {
       player.vy = SPRING_FORCE;
       s.compressed = 12;
       screenShake = 4;
@@ -564,9 +1182,10 @@ function update() {
     game.won = true;
     stopMusic();
     playGoal();
+    const allRings = game.rings >= rings.length;
     document.getElementById('gameOver').style.display = 'flex';
-    document.getElementById('overText').textContent = 'LEVEL CLEAR!';
-    document.getElementById('overSub').textContent = 'Rings: ' + game.rings + ' | Time: ' + Math.floor(game.time / 60) + 's';
+    document.getElementById('overText').textContent = allRings ? 'YOUR POES!' : 'LEVEL CLEAR!';
+    document.getElementById('overSub').textContent = 'Rings: ' + game.rings + '/' + rings.length + ' | Time: ' + Math.floor(game.time / 60) + 's' + (allRings ? ' ★ PERFECT!' : '');
   }
 
   if (player.invincible > 0) player.invincible--;
@@ -757,19 +1376,48 @@ function draw() {
     }
   });
 
-  // Draw goal
+  // Draw goal — giant spinning ring
   if (goal) {
-    ctx.fillStyle = '#22d3ee';
-    ctx.fillRect(goal.x, goal.y, goal.w, goal.h);
-    ctx.fillStyle = '#a3e635';
-    ctx.fillRect(goal.x - 20, goal.y, 60, 30);
-    ctx.fillStyle = '#000';
-    ctx.font = 'bold 12px sans-serif';
-    ctx.fillText('GOAL', goal.x - 14, goal.y + 20);
+    const cx = goal.x + goal.w / 2;
+    const cy = goal.y + goal.h / 2;
+    const outerR = 45;
+    const innerR = 30;
+    const spin = game.time * 0.05;
+
+    // Outer glow
+    ctx.save();
     ctx.shadowColor = '#22d3ee';
-    ctx.shadowBlur = 15;
-    ctx.fillRect(goal.x, goal.y, goal.w, goal.h);
+    ctx.shadowBlur = 25;
+
+    // Outer ring
+    ctx.strokeStyle = '#22d3ee';
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.arc(cx, cy, outerR, spin, spin + Math.PI * 1.6);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(cx, cy, outerR, spin + Math.PI, spin + Math.PI * 2.6);
+    ctx.stroke();
+
+    // Inner ring
+    ctx.strokeStyle = '#a3e635';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(cx, cy, innerR, -spin * 1.3, -spin * 1.3 + Math.PI * 1.4);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(cx, cy, innerR, -spin * 1.3 + Math.PI, -spin * 1.3 + Math.PI * 2.4);
+    ctx.stroke();
+
+    // Center sparkle
+    ctx.fillStyle = '#fff';
+    ctx.globalAlpha = 0.5 + Math.sin(game.time * 0.1) * 0.3;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
     ctx.shadowBlur = 0;
+    ctx.restore();
   }
 
   // Draw speed trail
@@ -801,8 +1449,8 @@ function draw() {
   });
   ctx.globalAlpha = 1;
 
-  ctx.restore();
-  ctx.restore();
+  ctx.restore(); // restore camera translate
+  ctx.restore(); // restore screen shake
 }
 
 function drawHills(baseX, baseY, color, amplitude) {
@@ -819,6 +1467,175 @@ function drawHills(baseX, baseY, color, amplitude) {
   ctx.fill();
 }
 
+// Genesis palette
+const PAL = {
+  K: '#000000', // black outline
+  B: '#0050D0', // blue body (Sonic blue)
+  b: '#0030A0', // dark blue (spikes/shadow)
+  S: '#F0C8A0', // skin/peach (belly, face)
+  W: '#FFFFFF', // white (eyes, shoe stripe)
+  R: '#E00000', // red (shoes)
+  Y: '#F0E000', // yellow (shoe buckle)
+  G: '#00C000', // green (grass/stomp effect)
+  E: '#000000', // transparent/empty
+};
+
+// Draw a pixel grid sprite at (x,y) with given pixel size
+function drawSprite(data, x, y, px) {
+  for (let row = 0; row < data.length; row++) {
+    for (let col = 0; col < data[row].length; col++) {
+      const c = data[row][col];
+      if (c === ' ' || c === '.' || c === 'E') continue;
+      ctx.fillStyle = PAL[c] || '#ff00ff';
+      ctx.fillRect(x + col * px, y + row * px, px, px);
+    }
+  }
+}
+
+// Sonic idle/standing frame (20x24 grid, scaled 2x = 40x48)
+const SONIC_IDLE = [
+  '....KKKKKKKK....',
+  '...KBBBBBBBK....',
+  '..KBBBBBBBBBK...',
+  '..KBWWBBBBWWBK..',
+  '..KBKKBBBBKKBBK.',
+  '..KBBKBBBBKBBK..',
+  '...KBBBBBBBK....',
+  '..KSSSSSSSSSSK..',
+  '.KSSSSSSSSSSSSK.',
+  '.KBBSSSSSSSSBBK.',
+  '.KBBBBSSSSBBBBK.',
+  '..KBBBBBBBBBK...',
+  '..KBBKBBBBKBBK..',
+  '..KBBKBBBBKBBK..',
+  '...KBBKKKKBBK...',
+  '...KRRRRRRRRK...',
+  '....KRRRRRRK....',
+  '....KRR..RRK....',
+  '....KRR..RRK....',
+  '....KYY..YYK....',
+];
+
+// Sonic walk frame 1 (legs forward)
+const SONIC_WALK1 = [
+  '....KKKKKKKK....',
+  '...KBBBBBBBK....',
+  '..KBBBBBBBBBK...',
+  '..KBWWBBBBWWBK..',
+  '..KBKKBBBBKKBBK.',
+  '..KBBKBBBBKBBK..',
+  '...KBBBBBBBK....',
+  '..KSSSSSSSSSSK..',
+  '.KSSSSSSSSSSSSK.',
+  '.KBBSSSSSSSSBBK.',
+  '.KBBBBSSSSBBBBK.',
+  '..KBBBBBBBBBK...',
+  '...KBBKBBKBBK...',
+  '...KBBKBBKBBK...',
+  '....KBBKKBBK....',
+  '...KRRRRRRRR....',
+  '..KRRRRRRRRRK...',
+  '..KRR....RRK....',
+  '..KYY....YYK....',
+  '................',
+];
+
+// Sonic walk frame 2 (legs back)
+const SONIC_WALK2 = [
+  '....KKKKKKKK....',
+  '...KBBBBBBBK....',
+  '..KBBBBBBBBBK...',
+  '..KBWWBBBBWWBK..',
+  '..KBKKBBBBKKBBK.',
+  '..KBBKBBBBKBBK..',
+  '...KBBBBBBBK....',
+  '..KSSSSSSSSSSK..',
+  '.KSSSSSSSSSSSSK.',
+  '.KBBSSSSSSSSBBK.',
+  '.KBBBBSSSSBBBBK.',
+  '..KBBBBBBBBBK...',
+  '...KBBKBBKBBK...',
+  '...KBBKBBKBBK...',
+  '....KBBKKBBK....',
+  '....KRRRRRRRK...',
+  '....KRRRRRRRK...',
+  '....KRR..RRK....',
+  '....KYY..YYK....',
+  '................',
+];
+
+// Sonic run frame (leaning forward, legs extended)
+const SONIC_RUN = [
+  '.....KKKKKKK....',
+  '....KBBBBBBBK...',
+  '...KBBBBBBBBBK..',
+  '...KBWWBBBBWWBK.',
+  '...KBKKBBBBKKBBK',
+  '...KBBKBBBBKBBK.',
+  '....KBBBBBBBK...',
+  '...KSSSSSSSSSSK.',
+  '..KSSSSSSSSSSSSK',
+  '..KBBSSSSSSSSBBK',
+  '..KBBBBSSSSBBBBK',
+  '...KBBBBBBBBBK..',
+  '....KBBKBBKBBK..',
+  '....KBBKBBKBBK..',
+  '.....KBBKKBBK...',
+  '....KRRRRRRRK...',
+  '...KRRRRRRRRRK..',
+  '...KRR.....RRK..',
+  '...KYY.....YYK..',
+  '................',
+];
+
+// Sonic jump ball (spinning sphere with spikes)
+const SONIC_JUMP = [
+  '....KKKKKKKK....',
+  '..KBBBBBBBBBBK..',
+  '.KBBBBBBBBBBBBK.',
+  '.KbBBBBBBBBBBbK.',
+  'KBBBbBBBBBBbBBBK',
+  'KBBBBbBBBBbBBBBK',
+  'KBBBBBbBBbBBBBBK',
+  'KBBBBBBbBBbBBBBK',
+  'KBBBBBBBbBbBBBBK',
+  'KBBBBBBbBBbBBBBK',
+  'KBBBBBbBBbBBBBBK',
+  'KBBBBbBBBBbBBBBK',
+  'KBBBbBBBBBBbBBBK',
+  '.KbBBBBBBBBBBbK.',
+  '.KBBBBBBBBBBBBK.',
+  '..KBBBBBBBBBBK..',
+  '....KKKKKKKK....',
+  '................',
+  '................',
+  '................',
+];
+
+// Sonic spin dash ball (smaller, faster spin visual)
+const SONIC_SPIN = [
+  '...KKKKKKKKK....',
+  '..KBBBBBBBBBK...',
+  '.KBBBBBBBBBBBK..',
+  '.KbBBBBBBBBBBbK.',
+  'KBBBbBBBBBBbBBBK',
+  'KBBBBbBBBBbBBBBK',
+  'KBBBBBbBBbBBBBBK',
+  'KBBBBBBbBBbBBBBK',
+  'KBBBBBBBbBbBBBBK',
+  'KBBBBBBbBBbBBBBK',
+  'KBBBBBbBBbBBBBBK',
+  'KBBBBbBBBBbBBBBK',
+  'KBBBbBBBBBBbBBBK',
+  '.KbBBBBBBBBBBbK.',
+  '.KBBBBBBBBBBBK..',
+  '..KBBBBBBBBBK...',
+  '...KKKKKKKKK....',
+  '................',
+  '................',
+  '................',
+];
+
 function drawPlayer() {
   const px = player.x;
   const py = player.y;
@@ -829,84 +1646,28 @@ function drawPlayer() {
   ctx.translate(px + player.w/2, py + player.h/2);
   if (player.facing < 0) ctx.scale(-1, 1);
 
+  // Choose frame based on state
+  let frame;
   if (player.spinning) {
-    ctx.rotate(player.animFrame * 1.5);
-    ctx.fillStyle = '#1e40af';
-    ctx.beginPath();
-    ctx.arc(0, 0, 16, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#1e3a8a';
-    for (let i = 0; i < 5; i++) {
-      const a = (i / 5) * Math.PI * 2;
-      ctx.beginPath();
-      ctx.moveTo(Math.cos(a) * 12, Math.sin(a) * 12);
-      ctx.lineTo(Math.cos(a) * 20, Math.sin(a) * 20);
-      ctx.lineTo(Math.cos(a + 0.3) * 12, Math.sin(a + 0.3) * 12);
-      ctx.closePath();
-      ctx.fill();
-    }
+    frame = SONIC_SPIN;
+  } else if (!player.grounded) {
+    frame = SONIC_JUMP;
   } else {
-    // Body
-    ctx.fillStyle = '#2563eb';
-    ctx.beginPath();
-    ctx.ellipse(0, 2, 13, 16, 0, 0, Math.PI * 2);
-    ctx.fill();
-    // Belly
-    ctx.fillStyle = '#fcd34d';
-    ctx.beginPath();
-    ctx.ellipse(2, 6, 7, 9, 0, 0, Math.PI * 2);
-    ctx.fill();
-    // Head spikes
-    ctx.fillStyle = '#1e40af';
-    ctx.beginPath();
-    ctx.moveTo(-4, -12);
-    ctx.lineTo(-18, -8);
-    ctx.lineTo(-6, -6);
-    ctx.closePath();
-    ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(-4, -8);
-    ctx.lineTo(-20, -2);
-    ctx.lineTo(-6, -2);
-    ctx.closePath();
-    ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(-4, -4);
-    ctx.lineTo(-18, 4);
-    ctx.lineTo(-4, 2);
-    ctx.closePath();
-    ctx.fill();
-    // Eye
-    ctx.fillStyle = '#fff';
-    ctx.beginPath();
-    ctx.ellipse(6, -4, 6, 7, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#000';
-    ctx.beginPath();
-    ctx.arc(8, -3, 3, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#fff';
-    ctx.beginPath();
-    ctx.arc(9, -5, 1.2, 0, Math.PI * 2);
-    ctx.fill();
-    // Nose
-    ctx.fillStyle = '#000';
-    ctx.beginPath();
-    ctx.arc(13, -2, 2, 0, Math.PI * 2);
-    ctx.fill();
-    // Shoes
-    const legOffset = player.grounded ? Math.sin(player.animFrame * 1.5) * 3 : 0;
-    ctx.fillStyle = '#dc2626';
-    ctx.beginPath();
-    ctx.ellipse(2 + legOffset, 18, 7, 4, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(-4 - legOffset, 18, 7, 4, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0 + legOffset, 17, 6, 2);
-    ctx.fillRect(-6 - legOffset, 17, 6, 2);
+    const speed = Math.abs(player.vx);
+    if (speed > 3.5) {
+      frame = SONIC_RUN;
+    } else if (speed > 0.5) {
+      // Walk cycle: alternate between walk1 and walk2
+      frame = (Math.floor(player.animTimer / 4) % 2 === 0) ? SONIC_WALK1 : SONIC_WALK2;
+    } else {
+      frame = SONIC_IDLE;
+    }
   }
+
+  // Draw sprite (20 cols x 20 rows, 2px per tile = 40x40)
+  const offsetX = -10; // center the 20-col sprite
+  const offsetY = -10;
+  drawSprite(frame, offsetX, offsetY, 2);
 
   ctx.restore();
 }
@@ -949,141 +1710,7 @@ requestAnimationFrame(gameLoop);
 
 // Splash screen
 const splash = document.getElementById('splash');
-const splashCanvas = document.getElementById('splash-bg-canvas');
-const splashCtx = splashCanvas.getContext('2d');
-let splashTime = 0;
 let splashDone = false;
-
-function drawSplashBg(t) {
-  const W = 960, H = 540;
-  // Sky
-  const grad = splashCtx.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, '#0a1628');
-  grad.addColorStop(0.5, '#1a2a4a');
-  grad.addColorStop(1, '#0f1f3a');
-  splashCtx.fillStyle = grad;
-  splashCtx.fillRect(0, 0, W, H);
-
-  // Stars
-  splashCtx.fillStyle = 'rgba(255,255,255,0.4)';
-  for (let i = 0; i < 40; i++) {
-    const sx = (i * 137.5 + t * 0.02 * (i % 3 + 1)) % W;
-    const sy = (i * 97.3) % (H * 0.5);
-    const sz = 1 + Math.sin(t * 0.05 + i) * 0.5;
-    splashCtx.beginPath();
-    splashCtx.arc(sx, sy, sz, 0, Math.PI * 2);
-    splashCtx.fill();
-  }
-
-  // Hills
-  function drawHill(baseY, color, amp, speed) {
-    splashCtx.fillStyle = color;
-    splashCtx.beginPath();
-    splashCtx.moveTo(0, H);
-    for (let x = 0; x <= W; x += 4) {
-      const wx = x + t * speed;
-      const y = baseY + Math.sin(wx * 0.003) * amp * 0.5 + Math.sin(wx * 0.007) * amp * 0.3;
-      splashCtx.lineTo(x, y);
-    }
-    splashCtx.lineTo(W, H);
-    splashCtx.closePath();
-    splashCtx.fill();
-  }
-  drawHill(350, '#0d2818', 80, 0.03);
-  drawHill(400, '#0f3320', 60, 0.05);
-  drawHill(430, '#143d28', 40, 0.07);
-
-  // Ground
-  splashCtx.fillStyle = '#2d8a4e';
-  splashCtx.fillRect(0, 440, W, 100);
-  splashCtx.fillStyle = '#3cb371';
-  splashCtx.fillRect(0, 440, W, 8);
-
-  // Sonic character (simplified, mid-run pose)
-  const sonicX = 120 + Math.sin(t * 0.03) * 30;
-  const sonicY = 390 + Math.abs(Math.sin(t * 0.08)) * -15;
-  splashCtx.save();
-  splashCtx.translate(sonicX, sonicY);
-  // Body
-  splashCtx.fillStyle = '#2563eb';
-  splashCtx.beginPath();
-  splashCtx.ellipse(0, 2, 13, 16, 0, 0, Math.PI * 2);
-  splashCtx.fill();
-  // Belly
-  splashCtx.fillStyle = '#fcd34d';
-  splashCtx.beginPath();
-  splashCtx.ellipse(2, 6, 7, 9, 0, 0, Math.PI * 2);
-  splashCtx.fill();
-  // Head spikes
-  splashCtx.fillStyle = '#1e40af';
-  for (let i = 0; i < 3; i++) {
-    splashCtx.beginPath();
-    splashCtx.moveTo(-4, -12 + i * 4);
-    splashCtx.lineTo(-18 + i * 2, -8 + i * 6);
-    splashCtx.lineTo(-6, -6 + i * 6);
-    splashCtx.closePath();
-    splashCtx.fill();
-  }
-  // Eye
-  splashCtx.fillStyle = '#fff';
-  splashCtx.beginPath();
-  splashCtx.ellipse(6, -4, 6, 7, 0, 0, Math.PI * 2);
-  splashCtx.fill();
-  splashCtx.fillStyle = '#000';
-  splashCtx.beginPath();
-  splashCtx.arc(8, -3, 3, 0, Math.PI * 2);
-  splashCtx.fill();
-  // Shoes
-  const legOff = Math.sin(t * 0.15) * 4;
-  splashCtx.fillStyle = '#dc2626';
-  splashCtx.beginPath();
-  splashCtx.ellipse(2 + legOff, 18, 7, 4, 0, 0, Math.PI * 2);
-  splashCtx.fill();
-  splashCtx.beginPath();
-  splashCtx.ellipse(-4 - legOff, 18, 7, 4, 0, 0, Math.PI * 2);
-  splashCtx.fill();
-  // Speed lines
-  splashCtx.strokeStyle = 'rgba(34,211,238,0.3)';
-  splashCtx.lineWidth = 2;
-  for (let i = 0; i < 5; i++) {
-    const lx = -20 - i * 15 + Math.sin(t * 0.1 + i) * 5;
-    const ly = 10 + i * 5;
-    splashCtx.beginPath();
-    splashCtx.moveTo(lx, ly);
-    splashCtx.lineTo(lx - 20 - i * 5, ly);
-    splashCtx.stroke();
-  }
-  splashCtx.restore();
-
-  // Floating rings
-  for (let i = 0; i < 8; i++) {
-    const rx = 200 + i * 90 + Math.sin(t * 0.04 + i * 0.7) * 20;
-    const ry = 300 + Math.sin(t * 0.06 + i * 1.1) * 30;
-    const rs = 0.7 + Math.sin(t * 0.08 + i) * 0.3;
-    splashCtx.save();
-    splashCtx.translate(rx, ry);
-    splashCtx.scale(rs, 1);
-    splashCtx.strokeStyle = '#fbbf24';
-    splashCtx.lineWidth = 3;
-    splashCtx.beginPath();
-    splashCtx.arc(0, 0, 12, 0, Math.PI * 2);
-    splashCtx.stroke();
-    splashCtx.strokeStyle = '#fde68a';
-    splashCtx.lineWidth = 1.5;
-    splashCtx.beginPath();
-    splashCtx.arc(0, 0, 9, 0, Math.PI * 2);
-    splashCtx.stroke();
-    splashCtx.restore();
-  }
-}
-
-function splashLoop() {
-  if (splashDone) return;
-  splashTime++;
-  drawSplashBg(splashTime);
-  requestAnimationFrame(splashLoop);
-}
-splashLoop();
 
 function dismissSplash() {
   if (splashDone) return;
@@ -1091,7 +1718,7 @@ function dismissSplash() {
   splash.classList.add('fade-out');
   ensureAudio();
   startMusic();
-  setTimeout(() => { splash.style.display = 'none'; }, 800);
+  setTimeout(() => { splash.style.display = 'none'; }, 600);
 }
 splash.addEventListener('click', dismissSplash);
 document.addEventListener('keydown', dismissSplash);
@@ -1105,13 +1732,24 @@ const startAudio = function() {
 };
 document.addEventListener('click', startAudio);
 document.addEventListener('keydown', startAudio);
+
+// Restart button and Enter key
+document.getElementById('restartBtn').addEventListener('click', function() {
+  document.getElementById('gameOver').style.display = 'none';
+  stopMusic();
+  restart();
+  startMusic();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.code === 'Enter' && game.over) {
+    document.getElementById('gameOver').style.display = 'none';
+    stopMusic();
+    restart();
+    startMusic();
+  }
+});
 </script>
 
-<!-- Donate Section — inconspicuous, bottom of page -->
-<div id="donate-bar" style="text-align:center;padding:12px 0 8px;font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.5px;border-top:1px solid rgba(255,255,255,0.06);margin-top:auto">
-  <span style="margin-right:10px">Support this project</span>
-  <a href="https://paypal.me/williamgraythomason" target="_blank" rel="noopener" style="display:inline-block;background:#0070ba;color:#fff;padding:4px 12px;border-radius:4px;text-decoration:none;font-weight:600;font-size:11px;margin:0 4px">PayPal</a>
-  <a href="https://wise.com/payme/williamgraythomason" target="_blank" rel="noopener" style="display:inline-block;background:#9fe870;color:#163300;padding:4px 12px;border-radius:4px;text-decoration:none;font-weight:600;font-size:11px;margin:0 4px">Wise</a>
-</div>
+
 </body>
 </html>
