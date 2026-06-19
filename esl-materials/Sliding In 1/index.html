@@ -276,7 +276,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   <div class="section-header">
     <div class="section-num">01</div>
     <h2>Lesson <span class="accent">Library</span></h2>
-    <p>107 topics across 12 categories. Click any topic to launch the slide deck.</p>
+    <p>27 lessons across 3 categories. Click any topic to launch the slide deck.</p>
   </div>
   <div class="lesson-grid" id="lessonGrid"></div>
 </div>
@@ -391,7 +391,32 @@ function initLibrary(){
   if(!grid) return;
   grid.innerHTML = '';
   var mappingLookup = {};
-  try { mappingData.forEach(function(item){ mappingLookup[item.id] = item.url; }); } catch(e) {}
+  // Use local cover images first (reliable, no network needed)
+  try {
+    if(typeof coverImageMap !== 'undefined'){
+      Object.keys(coverImageMap).forEach(function(slug){
+        mappingLookup[slug] = coverImageMap[slug];
+      });
+    }
+  } catch(e) {}
+  // Then overlay online images if available (higher quality but needs network)
+  try {
+    if(mappingData && mappingData.length > 0){
+      mappingData.forEach(function(item){
+        if(item.id && item.url) mappingLookup[item.id] = item.url;
+      });
+    }
+  } catch(e) {}
+  // Also overlay localImageMap from sliding-in-image-map.js
+  try {
+    if(typeof localImageMap !== 'undefined'){
+      Object.keys(localImageMap).forEach(function(slug){
+        if(localImageMap[slug] && localImageMap[slug]['0']){
+          mappingLookup[slug] = localImageMap[slug]['0'];
+        }
+      });
+    }
+  } catch(e) {}
   
   for(var i=0;i<window.lessonData.length;i++){
     var cat=window.lessonData[i];

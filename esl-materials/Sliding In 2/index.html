@@ -276,7 +276,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   <div class="section-header">
     <div class="section-num">01</div>
     <h2>Lesson <span class="accent">Library</span></h2>
-    <p>107 topics across 12 categories. Click any topic to launch the slide deck.</p>
+    <p>27 lessons across 5 categories. Click any topic to launch the slide deck.</p>
   </div>
   <div class="lesson-grid" id="lessonGrid"></div>
 </div>
@@ -391,26 +391,51 @@ function initLibrary(){
   if(!grid) return;
   grid.innerHTML = '';
   var mappingLookup = {};
-  try { mappingData.forEach(function(item){ mappingLookup[item.id] = item.url; }); } catch(e) {}
-  
+  // Use local cover images first (reliable, no network needed)
+  try {
+    if(typeof coverImageMap !== 'undefined'){
+      Object.keys(coverImageMap).forEach(function(slug){
+        mappingLookup[slug] = coverImageMap[slug];
+      });
+    }
+  } catch(e) {}
+  // Then overlay online images if available (higher quality but needs network)
+  try {
+    if(mappingData && mappingData.length > 0){
+      mappingData.forEach(function(item){
+        if(item.id && item.url) mappingLookup[item.id] = item.url;
+      });
+    }
+  } catch(e) {}
+  // Also overlay localImageMap from sliding-in-image-map.js
+  try {
+    if(typeof localImageMap !== 'undefined'){
+      Object.keys(localImageMap).forEach(function(slug){
+        if(localImageMap[slug] && localImageMap[slug]['0']){
+          mappingLookup[slug] = localImageMap[slug]['0'];
+        }
+      });
+    }
+  } catch(e) {}
+
   for(var i=0;i<window.lessonData.length;i++){
     var cat=window.lessonData[i];
     for(var j=0;j<cat.topics.length;j++){
-      var t=cat.topics[j];
       var card=document.createElement('a');
       card.href='#';
       card.className='lesson-card';
       card.onclick=function(c,t){return function(e){e.preventDefault();openDeck(c,t);};}(cat.category,t);
-      
+
       var imgSrc = mappingLookup[t.slug] || '';
-      var imgHtml = imgSrc 
-        ? '<div class="lesson-card-img-container"><img class="lesson-card-img" src="'+imgSrc+'" alt="" onerror="this.parentElement.innerHTML=\'<div class=lesson-card-img placeholder style=background:var(--bg3);display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:.7rem>'+t.slug+'</div>\'"></div>'
+      var imgHtml = imgSrc
+        ? '<div class="lesson-card-img-container"><img class="lesson-card-img" src="'+imgSrc+'" alt="" onerror="this.parentElement.innerHTML=\'<div class=lesson-card-img placeholder style=background:var(--bg3);display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:.7rem>\'+t.slug+\'</div>\'"></div>'
         : '<div class="lesson-card-img-container"><div class="lesson-card-img placeholder" style="background:var(--bg3);display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:.7rem">'+t.slug+'</div></div>';
 
       card.innerHTML = imgHtml + '<div class="lesson-card-content"><div class="lesson-card-body"><div class="lesson-cat">'+cat.category+'</div><h3>'+t.title.replace(/ \\(\\d+ questions?\\)$/,'')+'</h3><div class="lesson-count">'+t.questions.length+' questions</div></div></div>';
       grid.appendChild(card);
     }
   }
+}
 }
 
 // Auto-init when data loads
