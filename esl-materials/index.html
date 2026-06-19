@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Sliding In — ESL Question Cards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;510;590;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08090a;--bg2:#0f1011;--bg3:#191a1b;--bg-card:rgba(255,255,255,0.02);--bg-card2:#141516;
+  --border:rgba(255,255,255,0.08);--border-subtle:rgba(255,255,255,0.05);--border-hover:rgba(255,255,255,0.12);
+  --text:#f7f8f8;--text-secondary:#d0d6e0;--text-muted:#8a8f98;--text-dim:#62666d;
+  --accent:#5e6ad2;--accent-hover:#7170ff;--accent-glow:rgba(94,106,210,0.25);--accent-bg:rgba(94,106,210,0.08);
+  --green:#10b981;--green-bg:rgba(16,185,129,0.08);
+  --font:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;transition:background .3s ease,color .3s ease;font-feature-settings:'cv01','ss03'}
+::selection{background:var(--accent);color:#fff}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ NAV ═══ */
+.nav{position:sticky;top:0;z-index:50;background:rgba(8,9,10,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border-subtle);padding:0 32px;height:52px;display:flex;align-items:center;justify-content:space-between;transition:background .3s ease}
+.nav-logo{font-family:var(--mono);font-size:.85rem;font-weight:500;color:var(--text);letter-spacing:0.5px;text-decoration:none}
+.nav-logo span{color:var(--accent)}
+
+/* ═══ HERO ═══ */
+.hero{padding:80px 32px 60px;text-align:center;max-width:720px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:9999px;background:var(--accent-bg);border:1px solid var(--border-subtle);font-size:.65rem;font-weight:590;color:var(--accent);margin-bottom:20px;letter-spacing:1px;text-transform:uppercase;animation:fadeIn .6s ease}
+.hero h1{font-size:2.8rem;font-weight:510;line-height:1.05;letter-spacing:-1.5px;margin-bottom:12px;animation:slideUp .6s ease}
+.hero h1 .accent{color:var(--accent)}
+.hero p{font-size:1.05rem;color:var(--text-muted);line-height:1.7;max-width:520px;margin:0 auto;animation:slideUp .6s ease .1s both}
+
+/* ═══ SITES GRID ═══ */
+.section{padding:60px 32px;max-width:1200px;margin:0 auto}
+.section-header{margin-bottom:40px}
+.section-header h2{font-size:1.5rem;font-weight:510;letter-spacing:-0.5px;margin-bottom:6px}
+.section-header p{color:var(--text-muted);font-size:.9rem}
+.section-num{font-family:var(--mono);font-size:.6rem;font-weight:510;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px}
+
+.sites-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.site-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;transition:all .2s cubic-bezier(.4,0,.2,1);text-decoration:none;color:inherit;display:block;overflow:hidden;position:relative;cursor:pointer}
+.site-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.5),0 0 0 1px var(--accent);filter:brightness(1.05)}
+.site-card:active{transform:translateY(-1px) scale(0.98);box-shadow:0 4px 16px rgba(0,0,0,0.3);transition-duration:.1s}
+.site-card-img{width:100%;height:180px;object-fit:cover;display:block;transition:transform .3s ease}
+.site-card:hover .site-card-img{transform:scale(1.05)}
+.site-card-body{padding:20px}
+.site-cat{font-family:var(--mono);font-size:.55rem;font-weight:510;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.site-card h3{font-size:1.1rem;font-weight:510;color:var(--text);margin-bottom:4px;letter-spacing:-0.2px}
+.site-card p{font-size:.85rem;color:var(--text-muted);line-height:1.5;margin-bottom:8px}
+.site-count{font-size:.7rem;color:var(--text-dim)}
+
+/* ═══ HOW IT WORKS ═══ */
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.how-step{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;padding:24px;transition:all .2s}
+.how-step:hover{border-color:var(--border);background:rgba(255,255,255,0.03)}
+.how-step-num{font-family:var(--mono);font-size:1.5rem;font-weight:500;color:var(--accent);opacity:.3;margin-bottom:8px}
+.how-step h3{font-size:.95rem;font-weight:510;letter-spacing:-0.2px;margin-bottom:6px}
+.how-step p{font-size:.85rem;color:var(--text-muted);line-height:1.6}
+
+/* ═══ FOOTER ═══ */
+.footer{padding:24px 32px;text-align:center;font-size:.7rem;color:var(--text-dim);border-top:1px solid var(--border-subtle)}
+
+@media(max-width:768px){
+  .nav{padding:0 16px}
+  .hero h1{font-size:2.2rem}
+  .section,.hero{padding-left:16px;padding-right:16px}
+  .sites-grid{grid-template-columns:1fr}
+  .how-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <a href="#" class="nav-logo">&#9670; <span>SLIDING</span> IN</a>
+</div>
+
+<div class="hero">
+  <div class="hero-badge">&#9679; Interactive English Lessons</div>
+  <h1>Sliding <span class="accent">In</span></h1>
+  <p>Art-directed slide decks with real conversation questions. Each lesson is a visual experience designed to inspire open, confident speaking. No generic worksheets. Just well-crafted prompts that get people talking.</p>
+</div>
+
+<div class="section" id="sites">
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <h2>Lesson <span class="accent">Sites</span></h2>
+    <p>4 complete question card sets. Each site is a standalone resource you can open directly or share via link.</p>
+  </div>
+  <div class="sites-grid">
+    <a class="site-card" href="Sliding In 1/index.html">
+      <img class="site-card-img" src="Sliding In Images/age_0.jpg" alt="Personal Life & Identity" onerror="this.style.display='none'">
+      <div class="site-card-body">
+        <div class="site-cat">Personal Life &amp; Identity</div>
+        <h3>Sliding In 1</h3>
+        <p>107 topics across 12 categories — age, appearance, childhood, dreams, family, happiness, personality, and more.</p>
+        <div class="site-count">12 categories &bull; 107 topics</div>
+      </div>
+    </a>
+    <a class="site-card" href="Sliding In 2/index.html">
+      <img class="site-card-img" src="Sliding In Images/education_0.jpg" alt="Education & Learning" onerror="this.style.display='none'">
+      <div class="site-card-body">
+        <div class="site-cat">Education &amp; Learning</div>
+        <h3>Sliding In 2</h3>
+        <p>Books, learning, intelligence, culture, science, technology, and the big questions about knowledge.</p>
+        <div class="site-count">12 categories &bull; 100+ topics</div>
+      </div>
+    </a>
+    <a class="site-card" href="Sliding In 3/index.html">
+      <img class="site-card-img" src="Sliding In Images/privacy_0.jpg" alt="Society & Culture" onerror="this.style.display='none'">
+      <div class="site-card-body">
+        <div class="site-cat">Society &amp; Culture</div>
+        <h3>Sliding In 3</h3>
+        <p>Privacy, politics, religion, social issues, law, prejudice, community, and the forces that shape society.</p>
+        <div class="site-count">12 categories &bull; 100+ topics</div>
+      </div>
+    </a>
+    <a class="site-card" href="Sliding In 4/index.html">
+      <img class="site-card-img" src="Sliding In Images/airportsflying_0.jpg" alt="Entertainment & Leisure" onerror="this.style.display='none'">
+      <div class="site-card-body">
+        <div class="site-cat">Entertainment &amp; Leisure</div>
+        <h3>Sliding In 4</h3>
+        <p>Travel, airports, food, music, movies, sports, hobbies, and the things we do for fun.</p>
+        <div class="site-count">10 categories &bull; 90+ topics</div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<div class="section" id="how-it-works">
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <h2>How It <span class="accent">Works</span></h2>
+    <p>Simple. Visual. Effective.</p>
+  </div>
+  <div class="how-grid">
+    <div class="how-step">
+      <div class="how-step-num">01</div>
+      <h3>Choose a Site</h3>
+      <p>Each link opens a standalone lesson site. Bookmark or share the URL directly — no setup needed.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-step-num">02</div>
+      <h3>Slide Through</h3>
+      <p>Each question is a visual slide. Use arrow keys or buttons to navigate. Press shuffle for a fresh order.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-step-num">03</div>
+      <h3>Talk</h3>
+      <p>The questions spark genuine conversation. No right answers. Just open, confident speaking.</p>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>&copy; 2026 William Thomason English. Sliding In is a private teaching resource. Not for redistribution.</p>
+</div>
+
+<!-- Donate Section — inconspicuous, bottom of page -->
+<div id="donate-bar" style="text-align:center;padding:12px 0 8px;font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.5px;border-top:1px solid rgba(255,255,255,0.06);margin-top:auto">
+  <span style="margin-right:10px">Support this project</span>
+  <a href="https://paypal.me/williamgraythomason" target="_blank" rel="noopener" style="display:inline-block;background:#0070ba;color:#fff;padding:4px 12px;border-radius:4px;text-decoration:none;font-weight:600;font-size:11px;margin:0 4px">PayPal</a>
+  <a href="https://wise.com/payme/williamgraythomason" target="_blank" rel="noopener" style="display:inline-block;background:#9fe870;color:#163300;padding:4px 12px;border-radius:4px;text-decoration:none;font-weight:600;font-size:11px;margin:0 4px">Wise</a>
+</div>
+</body>
+</html>

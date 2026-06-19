@@ -25,7 +25,7 @@ canvas{display:block;border:2px solid #1a3a5c;border-radius:4px;image-rendering:
   <span id="time">Time: 0</span>
 </div>
 <canvas id="game" width="960" height="540"></canvas>
-<div id="controls">← → Move  |  SPACE Jump  |  ↓ Spin Dash</div>
+<div id="controls">← → Move  |  SPACE / ↑ Jump  |  ↓ Spin Dash (hold & release)</div>
 <div id="gameOver">
   <h1 id="overText">GAME OVER</h1>
   <p id="overSub">You collected 0 rings</p>
@@ -67,12 +67,102 @@ let player = {
 // Input
 const keys = {};
 const justPressed = {};
+const prevKeys = {};
 document.addEventListener('keydown', e => {
   if (!keys[e.code]) justPressed[e.code] = true;
   keys[e.code] = true;
-  e.preventDefault();
+  if (['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) e.preventDefault();
 });
 document.addEventListener('keyup', e => { keys[e.code] = false; });
+
+// Audio synth — no external files needed
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+let reverbNode = null;
+let masterGain = null;
+
+function ensureAudio() {
+  if (!audioCtx) {
+    audioCtx = new AudioCtx();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.3;
+    masterGain.connect(audioCtx.destination);
+    // Create reverb impulse response
+    const rate = audioCtx.sampleRate;
+    const length = rate * 1.5; // 1.5 second reverb
+    const impulse = audioCtx.createBuffer(2, length, rate);
+    for (let ch = 0; ch < 2; ch++) {
+      const data = impulse.getChannelData(ch);
+      for (let i = 0; i < length; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2.5);
+      }
+    }
+    reverbNode = audioCtx.createConvolver();
+    reverbNode.buffer = impulse;
+    const reverbGain = audioCtx.createGain();
+    reverbGain.gain.value = 0.25;
+    reverbNode.connect(reverbGain);
+    reverbGain.connect(masterGain);
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playTone(freq, duration, type, vol) {
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'square';
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  gain.gain.setValueAtTime(vol || 0.15, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  // Dry signal
+  const dryGain = audioCtx.createGain();
+  dryGain.gain.value = 0.7;
+  osc.connect(gain);
+  gain.connect(dryGain);
+  dryGain.connect(masterGain);
+  // Wet signal (reverb)
+  gain.connect(reverbNode);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function playJump()    { playTone(520, 0.12, 'square', 0.12); setTimeout(() => playTone(780, 0.08, 'square', 0.08), 50); }
+function playSpinDash() { playTone(220, 0.15, 'sawtooth', 0.15); }
+function playRing()     { playTone(1200, 0.08, 'sine', 0.1); setTimeout(() => playTone(1500, 0.06, 'sine', 0.08), 60); }
+function playSpring()   { playTone(440, 0.1, 'triangle', 0.12); setTimeout(() => playTone(880, 0.08, 'triangle', 0.1), 70); }
+function playHit()      { playTone(120, 0.2, 'sawtooth', 0.15); }
+function playEnemyKill(){ playTone(600, 0.05, 'square', 0.1); setTimeout(() => playTone(900, 0.05, 'square', 0.08), 50); setTimeout(() => playTone(1200, 0.05, 'square', 0.06), 100); }
+function playGoal()     { [523,659,784,1047].forEach((f,i) => setTimeout(() => playTone(f, 0.2, 'sine', 0.12), i * 120)); }
+function playGameOver() { [400,300,200,100].forEach((f,i) => setTimeout(() => playTone(f, 0.3, 'sawtooth', 0.1), i * 150)); }
+
+// Background music — simple looping chiptune
+let musicInterval = null;
+const musicNotes = [
+  392, 440, 494, 523, 494, 440, 392, 330,
+  349, 392, 440, 494, 440, 392, 349, 330,
+  294, 330, 349, 392, 440, 392, 349, 330,
+  294, 330, 392, 440, 494, 523, 494, 440
+];
+let musicIndex = 0;
+let musicPlaying = false;
+function startMusic() {
+  if (musicPlaying) return;
+  musicPlaying = true;
+  musicIndex = 0;
+  musicInterval = setInterval(() => {
+    if (game.over || game.won) { stopMusic(); return; }
+    const note = musicNotes[musicIndex % musicNotes.length];
+    playTone(note, 0.18, 'triangle', 0.04);
+    // Bass line
+    if (musicIndex % 4 === 0) playTone(note / 2, 0.25, 'sine', 0.03);
+    musicIndex++;
+  }, 280);
+}
+function stopMusic() {
+  musicPlaying = false;
+  if (musicInterval) { clearInterval(musicInterval); musicInterval = null; }
+}
 
 // Level data
 let platforms = [];
@@ -210,16 +300,16 @@ function update() {
 
   game.time++;
 
-  // Input with just-pressed detection for buffering
+  // Input
   let moveX = 0;
   if (keys['ArrowLeft'] || keys['KeyA']) moveX = -1;
   if (keys['ArrowRight'] || keys['KeyD']) moveX = 1;
 
-  const wantJump = justPressed['Space'] || justPressed['ArrowUp'] || justPressed['KeyW'];
-  const wantSpin = keys['ArrowDown'] || keys['KeyS'];
+  const jumpPressed = justPressed['Space'] || justPressed['ArrowUp'] || justPressed['KeyW'];
+  const spinHeld = keys['ArrowDown'] || keys['KeyS'];
 
   // Jump buffer — remember jump press for a few frames
-  if (wantJump) player.jumpBufferTimer = JUMP_BUFFER;
+  if (jumpPressed) player.jumpBufferTimer = JUMP_BUFFER;
   if (player.jumpBufferTimer > 0) player.jumpBufferTimer--;
 
   // Coyote time — allow jumping briefly after leaving a ledge
@@ -229,24 +319,30 @@ function update() {
     if (player.coyoteTimer > 0) player.coyoteTimer--;
   }
 
-  // Spin dash
-  if (wantSpin) {
-    if (keys['Space'] && !player.spinning) {
+  // Spin dash — press Down to charge, release Down to launch
+  if (spinHeld && player.grounded) {
+    if (!player.spinning) {
+      // Start charging
       player.spinning = true;
-      player.spinTimer = 30;
-      player.vx = player.facing * SPIN_BOOST;
-      player.vy = -2;
-      spawnParticles(player.x + player.w/2, player.y + player.h, '#22d3ee', 8, 6);
+      player.spinTimer = 0;
+      player.vx *= 0.9;
     }
-    if (player.spinning) {
-      player.vx *= 0.99;
-      player.vy *= 0.95;
-    } else {
-      player.vx *= 0.95;
-    }
-  } else {
+    // While holding Down, slow down and build charge
+    player.vx *= 0.92;
+    player.spinTimer++;
+    if (player.spinTimer === 1) playSpinDash();
+  } else if (player.spinning) {
+    // Released Down — launch!
+    const boost = SPIN_BOOST + Math.min(player.spinTimer * 0.5, 8);
+    player.vx = player.facing * boost;
+    player.vy = -3;
+    player.grounded = false;
     player.spinning = false;
     player.spinTimer = 0;
+    playJump();
+    spawnParticles(player.x + player.w/2, player.y + player.h, '#22d3ee', 12, 8);
+  } else {
+    // Normal movement
     if (moveX !== 0) {
       const accel = player.grounded ? ACCEL : ACCEL * AIR_CONTROL;
       player.vx += moveX * accel;
@@ -256,12 +352,15 @@ function update() {
     }
   }
 
-  // Jump with coyote time + buffer
-  if (player.jumpBufferTimer > 0 && player.coyoteTimer > 0 && !player.spinning) {
+  // Jump — press Space/Up/W (works anytime, cancels spin dash charge)
+  if (player.jumpBufferTimer > 0 && player.coyoteTimer > 0) {
     player.vy = JUMP_FORCE;
     player.grounded = false;
     player.coyoteTimer = 0;
     player.jumpBufferTimer = 0;
+    player.spinning = false;
+    player.spinTimer = 0;
+    playJump();
     spawnParticles(player.x + player.w/2, player.y + player.h, '#a3e635', 6, 4);
   }
 
@@ -325,6 +424,7 @@ function update() {
       if (Math.sqrt(dx*dx + dy*dy) < r.r + 16) {
         r.collected = true;
         game.rings++;
+        playRing();
         spawnRingParticles(r.x, r.y);
       }
     }
@@ -348,15 +448,19 @@ function update() {
         e.alive = false;
         player.vy = -10;
         screenShake = 6;
+        playEnemyKill();
         spawnParticles(e.x + e.w/2, e.y + e.h/2, '#f80', 16, 8);
       } else if (!player.spinning) {
         player.invincible = 90;
         player.vy = -9;
         player.vx = -player.facing * 7;
         screenShake = 8;
+        playHit();
         game.lives--;
         if (game.lives <= 0) {
           game.over = true;
+          stopMusic();
+          playGameOver();
           document.getElementById('gameOver').style.display = 'flex';
           document.getElementById('overText').textContent = 'GAME OVER';
           document.getElementById('overSub').textContent = 'You collected ' + game.rings + ' rings';
@@ -365,6 +469,7 @@ function update() {
         e.alive = false;
         player.vy = -8;
         screenShake = 6;
+        playEnemyKill();
         spawnParticles(e.x + e.w/2, e.y + e.h/2, '#fbbf24', 20, 10);
       }
     }
@@ -377,9 +482,12 @@ function update() {
       player.vy = -12;
       player.vx = -player.facing * 9;
       screenShake = 10;
+      playHit();
       game.lives--;
       if (game.lives <= 0) {
         game.over = true;
+        stopMusic();
+        playGameOver();
         document.getElementById('gameOver').style.display = 'flex';
         document.getElementById('overText').textContent = 'GAME OVER';
         document.getElementById('overSub').textContent = 'You collected ' + game.rings + ' rings';
@@ -393,6 +501,7 @@ function update() {
       player.vy = SPRING_FORCE;
       s.compressed = 12;
       screenShake = 4;
+      playSpring();
       spawnParticles(s.x + s.w/2, s.y, '#34d399', 10, 6);
     }
     s.compressed *= 0.82;
@@ -402,8 +511,11 @@ function update() {
   if (player.y > 600) {
     game.lives--;
     screenShake = 12;
+    playHit();
     if (game.lives <= 0) {
       game.over = true;
+      stopMusic();
+      playGameOver();
       document.getElementById('gameOver').style.display = 'flex';
       document.getElementById('overText').textContent = 'GAME OVER';
       document.getElementById('overSub').textContent = 'You collected ' + game.rings + ' rings';
@@ -415,6 +527,8 @@ function update() {
   // Goal
   if (goal && player.x + player.w > goal.x && player.x < goal.x + goal.w) {
     game.won = true;
+    stopMusic();
+    playGoal();
     document.getElementById('gameOver').style.display = 'flex';
     document.getElementById('overText').textContent = 'LEVEL CLEAR!';
     document.getElementById('overSub').textContent = 'Rings: ' + game.rings + ' | Time: ' + Math.floor(game.time / 60) + 's';
@@ -422,11 +536,11 @@ function update() {
 
   if (player.invincible > 0) player.invincible--;
 
-  // Animation — faster frame rate for responsiveness
+  // Animation
   player.animTimer++;
   if (player.animTimer > 3) { player.animTimer = 0; player.animFrame = (player.animFrame + 1) % 4; }
 
-  // Camera follow with tighter lerp
+  // Camera follow
   const targetCamX = player.x - W / 3;
   camera.x += (targetCamX - camera.x) * 0.15;
   if (camera.x < 0) camera.x = 0;
@@ -650,7 +764,7 @@ function draw() {
     ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
     ctx.fill();
   });
-  ctx.globalAlpha = 1();
+  ctx.globalAlpha = 1;
 
   ctx.restore();
   ctx.restore();
@@ -765,14 +879,17 @@ function drawPlayer() {
 let lastTime = 0;
 let accumulator = 0;
 const FIXED_DT = 1000 / 60;
+const TIME_SCALE = 0.5; // Half speed — tune this to feel right
 
 function gameLoop(timestamp) {
   if (lastTime === 0) lastTime = timestamp;
-  const delta = timestamp - lastTime;
+  const delta = (timestamp - lastTime) * TIME_SCALE;
   lastTime = timestamp;
   accumulator += delta;
 
-  // Fixed timestep updates for consistent physics
+  // Cap accumulator to prevent spiral of death
+  if (accumulator > FIXED_DT * 5) accumulator = FIXED_DT * 5;
+
   while (accumulator >= FIXED_DT) {
     update();
     accumulator -= FIXED_DT;
@@ -794,6 +911,23 @@ function restart() {
 
 buildLevel();
 requestAnimationFrame(gameLoop);
+
+// Start music on first user interaction (browser autoplay policy)
+const startAudio = function() {
+  ensureAudio();
+  startMusic();
+  document.removeEventListener('click', startAudio);
+  document.removeEventListener('keydown', startAudio);
+};
+document.addEventListener('click', startAudio);
+document.addEventListener('keydown', startAudio);
 </script>
+
+<!-- Donate Section — inconspicuous, bottom of page -->
+<div id="donate-bar" style="text-align:center;padding:12px 0 8px;font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.5px;border-top:1px solid rgba(255,255,255,0.06);margin-top:auto">
+  <span style="margin-right:10px">Support this project</span>
+  <a href="https://paypal.me/williamgraythomason" target="_blank" rel="noopener" style="display:inline-block;background:#0070ba;color:#fff;padding:4px 12px;border-radius:4px;text-decoration:none;font-weight:600;font-size:11px;margin:0 4px">PayPal</a>
+  <a href="https://wise.com/payme/williamgraythomason" target="_blank" rel="noopener" style="display:inline-block;background:#9fe870;color:#163300;padding:4px 12px;border-radius:4px;text-decoration:none;font-weight:600;font-size:11px;margin:0 4px">Wise</a>
+</div>
 </body>
 </html>
