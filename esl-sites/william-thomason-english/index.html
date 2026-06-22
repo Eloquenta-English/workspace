@@ -2,6 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; media-src 'self' blob:; object-src 'none'; frame-ancestors 'none'">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>William Thomason English — English... adapted to your needs</title>
 <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Blogger+Sans:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -660,7 +661,8 @@ body {
 @media(max-width:520px) {
   .hero h1 { font-size: 1.8rem; }
   .nav-links { display: none; }
-  .hero-cta-outline { display: block; margin: 12px 0 0; }
+  .hero-cta { display: block; text-align: center; margin-bottom: 12px; }
+  .hero-cta-outline { display: block; text-align: center; margin: 0; }
   .about-stats { grid-template-columns: 1fr 1fr; }
 }
 
@@ -755,27 +757,12 @@ body {
 <div class="hero fade-in">
   <div class="hero-badge"><span class="dot"></span> Online English Lessons</div>
   <h1>English... <span class="accent">adapted</span> to <span class="cta-accent">your</span> needs</h1>
-  <div class="hero-tagline"><span>Personalised courses delivered by an intuitive tutor.</span></div>
-  <p>Corporate English training built by a developer, for professionals. Dark-mode-first design. No fluff, no blobs, no corporate jargon. Just efficient, tailored lessons that get you confident from the trial lesson onward.</p>
+  <div class="hero-tagline"><span>English lessons for professionals.</span></div>
   <div>
     <a href="#cta" class="hero-cta" onclick="openTrialModal(event)">Try a Free Lesson</a>
     <a href="#pricing" class="hero-cta-outline">See Pricing</a>
-    <a href="Sliding%20In.html" class="hero-cta" style="margin-left:12px;background:var(--accent);color:var(--bg);">Launch Sliding In</a>
   </div>
   <div class="hero-trust">Online English lessons for professionals</div>
-</div>
-
-<!-- Sliding In App -->
-<div class="section fade-in" id="sliding-in">
-  <div class="section-header">
-    <div class="section-num">★</div>
-    <h2>Sliding <span class="accent">In</span></h2>
-    <p>Interactive slide decks with 107 conversation topics across 12 categories. Each lesson is a visual experience designed to inspire open, confident speaking. Click any topic to launch the deck.</p>
-  </div>
-  <div style="text-align:center;margin-top:30px;">
-    <a href="Sliding%20In.html" class="hero-cta" style="font-size:1.1rem;padding:16px 40px;background:var(--accent);color:var(--bg);">Open Sliding In</a>
-    <a href="image-manager.html" class="hero-cta-outline" style="font-size:1.1rem;padding:16px 40px;margin-left:12px;">Manage Images</a>
-  </div>
 </div>
 
 <!-- Trust bar -->
@@ -783,45 +770,19 @@ body {
 
 <!-- About -->
 <div class="section fade-in" id="about">
-  <div class="section-header">
-    <div class="section-num">01</div>
-    <h2>About William</h2>
-    <p>The person behind the platform — and why it exists.</p>
-  </div>
   <div class="about-grid">
     <div class="about-text">
+      <p>The person behind the platform — and why it exists.</p>
+      <br>
       <p>William Thomason has spent years teaching <strong>corporate English to professionals at major brands</strong> — from engineers and developers to executives and their families. He knows exactly how to tailor-make efficient packages that have you feeling more confident about success from the trial lesson onward.</p>
       <div class="about-highlight">
         "I built this site myself because I was tired of the shortcomings of large platforms — their slow progress, one-course-for-everyone mentality, bright pages that are harsh on the eyes, and teachers who struggle to design effective courses."
       </div>
-      <p>William is <strong>fluent in German</strong> — not from a classroom, but from years of living and working there while travelling across Europe. It was in Germany that he first started teaching English, cutting his teeth on real conversations with real people who needed the language for their careers. "Living in Germany gave me the foundation. I learned how it feels to be the one struggling with a new language — and that shapes everything I do as a teacher."</p>
-      <p>He also spent a great deal of time in <strong>Spain</strong>, and can get by in Spanish. "You do not need to be perfect. You need to be understood. That is the mindset I bring to every lesson."</p>
-      <p>William is passionate about <strong>IT</strong> and loves making content and apps. He developed this platform from scratch to address the real problems professionals face: generic curricula, eye-straining interfaces, and a lack of teachers who understand technical workplaces.</p>
-      <p>He is currently busy with his <strong>B1 Business Spanish course</strong> — sharpening his own skills so he can better serve his students. "If I am going to push my learners to keep growing, I had better be doing the same myself."</p>
-      <p>Every feature on this site — from the dark-mode-first design to the AI-powered translation — was built with one goal: <strong>get you communicating confidently in the shortest time possible.</strong></p>
     </div>
     <div class="about-photo-wrap">
       <div class="about-photo-frame">
         <img src="photo-william.png" alt="William Thomason" class="about-photo">
         <div class="about-photo-caption">William Thomason</div>
-      </div>
-      <div class="about-stats">
-        <div class="about-stat">
-          <div class="about-stat-num">500+</div>
-          <div class="about-stat-label">Professionals Taught</div>
-        </div>
-        <div class="about-stat">
-          <div class="about-stat-num">10+</div>
-          <div class="about-stat-label">Years Experience</div>
-        </div>
-        <div class="about-stat">
-          <div class="about-stat-num">IT</div>
-          <div class="about-stat-label">Specialist Focus</div>
-        </div>
-        <div class="about-stat">
-          <div class="about-stat-num">1:1</div>
-          <div class="about-stat-label">Personalised Lessons</div>
-        </div>
       </div>
     </div>
   </div>
@@ -954,6 +915,9 @@ body {
       </div>
     </div>
   </div>
+  <p style="text-align:center;margin-top:32px;font-size:.95rem;color:var(--accent);line-height:1.7;">
+    Every feature on this site — from the dark-mode-first design to the AI-powered translation — was built with one goal: <strong>get you communicating confidently in the shortest time possible.</strong>
+  </p>
 </div>
 
 <!-- Pricing -->
