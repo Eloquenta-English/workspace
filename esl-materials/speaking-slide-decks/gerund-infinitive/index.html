@@ -40,9 +40,15 @@ html, body {
   pointer-events: none;
   transition: opacity .35s ease;
   display: flex;
-  align-items: center;
-  padding: 2vh 5vw;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 3vh 5vw 10vh;
+  overflow-y: auto;
 }
+
+/* Invisible scrollbar for all slides */
+.slide::-webkit-scrollbar { width: 0; background: transparent; }
+.slide { scrollbar-width: none; -ms-overflow-style: none; }
 
 .slide.active {
   opacity: 1;
@@ -64,12 +70,14 @@ html, body {
   position: relative;
   z-index: 1;
   max-width: 80vw;
+  width: 100%;
   background: rgba(6,10,20,.72);
   border: 1px solid rgba(34,211,238,.4);
   box-shadow: var(--glow-cyan);
   border-radius: 16px;
   padding: 2.5em 3em;
   backdrop-filter: blur(8px);
+  margin: auto 0;
 }
 
 .content.wide { max-width: 88vw; }
@@ -292,6 +300,38 @@ tr:nth-child(even) td { background: rgba(34,211,238,.04); }
   border: 1px solid rgba(248,113,113,.2);
   color: var(--text-dim);
   margin-top: .3em;
+}
+
+/* Hidden answers — revealed by JS */
+.exercise .answer.hidden-answer {
+  display: none;
+}
+
+.reveal-btn {
+  display: inline-block;
+  margin-top: 1em;
+  background: linear-gradient(135deg, rgba(34,211,238,.15), rgba(167,139,250,.15));
+  border: 1px solid rgba(34,211,238,.5);
+  color: var(--cyan);
+  font-family: 'Inter', sans-serif;
+  font-size: .95rem;
+  padding: 10px 24px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all .2s;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.reveal-btn:hover {
+  background: rgba(34,211,238,.25);
+  box-shadow: 0 0 15px rgba(34,211,238,.3);
+}
+
+.reveal-btn.revealed {
+  background: rgba(52,211,153,.15);
+  border-color: rgba(52,211,153,.5);
+  color: var(--green);
 }
 
 .start-prompt {
@@ -594,10 +634,11 @@ tr:nth-child(even) td { background: rgba(34,211,238,.04); }
         <li>C) listening</li>
         <li>D) listened</li>
       </ul>
-      <div class="answer correct-answer">✅ C) listening — Correct! "Enjoy" is always followed by gerund.</div>
-      <div class="answer wrong-explain">❌ A) "listen" is base form — needs "to" or "-ing" after "enjoy".</div>
-      <div class="answer wrong-explain">❌ B) "to listen" — "enjoy" takes gerund only, never infinitive.</div>
-      <div class="answer wrong-explain">❌ D) "listened" is past tense — wrong form after "enjoy".</div>
+      <div class="answer correct-answer hidden-answer">✅ C) listening — Correct! "Enjoy" is always followed by gerund.</div>
+      <div class="answer wrong-explain hidden-answer">❌ A) "listen" is base form — needs "to" or "-ing" after "enjoy".</div>
+      <div class="answer wrong-explain hidden-answer">❌ B) "to listen" — "enjoy" takes gerund only, never infinitive.</div>
+      <div class="answer wrong-explain hidden-answer">❌ D) "listened" is past tense — wrong form after "enjoy".</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
     <div class="exercise">
       <p class="question">Q2: "She decided _____ (buy) a new guitar."</p>
@@ -607,10 +648,11 @@ tr:nth-child(even) td { background: rgba(34,211,238,.04); }
         <li>C) buy</li>
         <li>D) bought</li>
       </ul>
-      <div class="answer correct-answer">✅ B) to buy — Correct! "Decide" is always followed by infinitive.</div>
-      <div class="answer wrong-explain">❌ A) "buying" — "decide" takes infinitive only, never gerund.</div>
-      <div class="answer wrong-explain">❌ C) "buy" is missing "to" — infinitive needs "to".</div>
-      <div class="answer wrong-explain">❌ D) "bought" is past tense — wrong form after "decide".</div>
+      <div class="answer correct-answer hidden-answer">✅ B) to buy — Correct! "Decide" is always followed by infinitive.</div>
+      <div class="answer wrong-explain hidden-answer">❌ A) "buying" — "decide" takes infinitive only, never gerund.</div>
+      <div class="answer wrong-explain hidden-answer">❌ C) "buy" is missing "to" — infinitive needs "to".</div>
+      <div class="answer wrong-explain hidden-answer">❌ D) "bought" is past tense — wrong form after "decide".</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
     <div class="exercise">
       <p class="question">Q3: "We stopped _____ (rest) for an hour." (We paused in order to rest)</p>
@@ -620,10 +662,11 @@ tr:nth-child(even) td { background: rgba(34,211,238,.04); }
         <li>C) rest</li>
         <li>D) rested</li>
       </ul>
-      <div class="answer correct-answer">✅ B) to rest — Correct! "Stop + to + verb" = purpose (we stopped in order to rest).</div>
-      <div class="answer wrong-explain">❌ A) "resting" means the resting itself stopped (he quit resting).</div>
-      <div class="answer wrong-explain">❌ C) "rest" is missing "to" or "-ing".</div>
-      <div class="answer wrong-explain">❌ D) "rested" is past tense — wrong form.</div>
+      <div class="answer correct-answer hidden-answer">✅ B) to rest — Correct! "Stop + to + verb" = purpose (we stopped in order to rest).</div>
+      <div class="answer wrong-explain hidden-answer">❌ A) "resting" means the resting itself stopped (he quit resting).</div>
+      <div class="answer wrong-explain hidden-answer">❌ C) "rest" is missing "to" or "-ing".</div>
+      <div class="answer wrong-explain hidden-answer">❌ D) "rested" is past tense — wrong form.</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
     <div class="exercise">
       <p class="question">Q4: "He suggested _____ (go) to the concert."</p>
@@ -633,10 +676,11 @@ tr:nth-child(even) td { background: rgba(34,211,238,.04); }
         <li>C) go</li>
         <li>D) went</li>
       </ul>
-      <div class="answer correct-answer">✅ B) going — Correct! "Suggest" is always followed by gerund.</div>
-      <div class="answer wrong-explain">❌ A) "to go" — "suggest" takes gerund only, never infinitive.</div>
-      <div class="answer wrong-explain">❌ C) "go" is missing "to" or "-ing".</div>
-      <div class="answer wrong-explain">❌ D) "went" is past tense — wrong form.</div>
+      <div class="answer correct-answer hidden-answer">✅ B) going — Correct! "Suggest" is always followed by gerund.</div>
+      <div class="answer wrong-explain hidden-answer">❌ A) "to go" — "suggest" takes gerund only, never infinitive.</div>
+      <div class="answer wrong-explain hidden-answer">❌ C) "go" is missing "to" or "-ing".</div>
+      <div class="answer wrong-explain hidden-answer">❌ D) "went" is past tense — wrong form.</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
     <div class="exercise">
       <p class="question">Q5: "I'm looking forward to _____ (see) you at the festival."</p>
@@ -646,10 +690,11 @@ tr:nth-child(even) td { background: rgba(34,211,238,.04); }
         <li>C) seeing</li>
         <li>D) saw</li>
       </ul>
-      <div class="answer correct-answer">✅ C) seeing — Correct! "To" in "look forward to" is a preposition, so it takes gerund.</div>
-      <div class="answer wrong-explain">❌ A) "see" — after preposition "to", need gerund.</div>
-      <div class="answer wrong-explain">❌ B) "to see" — the "to" in "look forward to" is NOT the infinitive marker. It's a preposition!</div>
-      <div class="answer wrong-explain">❌ D) "saw" is past tense — wrong form.</div>
+      <div class="answer correct-answer hidden-answer">✅ C) seeing — Correct! "To" in "look forward to" is a preposition, so it takes gerund.</div>
+      <div class="answer wrong-explain hidden-answer">❌ A) "see" — after preposition "to", need gerund.</div>
+      <div class="answer wrong-explain hidden-answer">❌ B) "to see" — the "to" in "look forward to" is NOT the infinitive marker. It's a preposition!</div>
+      <div class="answer wrong-explain hidden-answer">❌ D) "saw" is past tense — wrong form.</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
     <div class="exercise">
       <p class="question">Q6: "They want _____ (climb) the mountain before sunrise."</p>
@@ -659,10 +704,11 @@ tr:nth-child(even) td { background: rgba(34,211,238,.04); }
         <li>C) climb</li>
         <li>D) climbed</li>
       </ul>
-      <div class="answer correct-answer">✅ B) to climb — Correct! "Want" is always followed by infinitive.</div>
-      <div class="answer wrong-explain">❌ A) "climbing" — "want" takes infinitive only, never gerund.</div>
-      <div class="answer wrong-explain">❌ C) "climb" is missing "to" — infinitive needs "to".</div>
-      <div class="answer wrong-explain">❌ D) "climbed" is past tense — wrong form.</div>
+      <div class="answer correct-answer hidden-answer">✅ B) to climb — Correct! "Want" is always followed by infinitive.</div>
+      <div class="answer wrong-explain hidden-answer">❌ A) "climbing" — "want" takes infinitive only, never gerund.</div>
+      <div class="answer wrong-explain hidden-answer">❌ C) "climb" is missing "to" — infinitive needs "to".</div>
+      <div class="answer wrong-explain hidden-answer">❌ D) "climbed" is past tense — wrong form.</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
   </div>
 </section>
@@ -677,8 +723,9 @@ tr:nth-child(even) td { background: rgba(34,211,238,.04); }
         <li>A) locking</li>
         <li>B) to lock</li>
       </ul>
-      <div class="answer correct-answer">✅ A) locking — Correct! "Remember + gerund" = memory of a past action.</div>
-      <div class="answer wrong-explain">❌ B) "to lock" means "I didn't forget to lock it" (future obligation), not a memory.</div>
+      <div class="answer correct-answer hidden-answer">✅ A) locking — Correct! "Remember + gerund" = memory of a past action.</div>
+      <div class="answer wrong-explain hidden-answer">❌ B) "to lock" means "I didn't forget to lock it" (future obligation), not a memory.</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
     <div class="exercise">
       <p class="question">Q2: "Please remember _____ (lock) the door when you leave." (Don't forget!)</p>
@@ -686,8 +733,9 @@ tr:nth-child(even) td { background: rgba(34,211,238,.04); }
         <li>A) locking</li>
         <li>B) to lock</li>
       </ul>
-      <div class="answer correct-answer">✅ B) to lock — Correct! "Remember + infinitive" = don't forget to do it (future obligation).</div>
-      <div class="answer wrong-explain">❌ A) "locking" would mean you have a memory of locking it (past action), not a reminder.</div>
+      <div class="answer correct-answer hidden-answer">✅ B) to lock — Correct! "Remember + infinitive" = don't forget to do it (future obligation).</div>
+      <div class="answer wrong-explain hidden-answer">❌ A) "locking" would mean you have a memory of locking it (past action), not a reminder.</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
     <div class="exercise">
       <p class="question">Q3: "He stopped _____ (smoke) because of his health." (He quit)</p>
@@ -695,8 +743,9 @@ tr:nth-child(even) td { background: rgba(34,211,238,.04); }
         <li>A) smoking</li>
         <li>B) to smoke</li>
       </ul>
-      <div class="answer correct-answer">✅ A) smoking — Correct! "Stop + gerund" = the habit/action stopped.</div>
-      <div class="answer wrong-explain">❌ B) "to smoke" means he paused in order to smoke (purpose), which contradicts "because of his health".</div>
+      <div class="answer correct-answer hidden-answer">✅ A) smoking — Correct! "Stop + gerund" = the habit/action stopped.</div>
+      <div class="answer wrong-explain hidden-answer">❌ B) "to smoke" means he paused in order to smoke (purpose), which contradicts "because of his health".</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
     <div class="exercise">
       <p class="question">Q4: "She stopped _____ (drink) water because she was thirsty." (She paused to get water)</p>
@@ -704,8 +753,9 @@ tr:nth-child(even) td { background: rgba(34,211,238,.04); }
         <li>A) drinking</li>
         <li>B) to drink</li>
       </ul>
-      <div class="answer correct-answer">✅ B) to drink — Correct! "Stop + infinitive" = purpose (she stopped in order to drink).</div>
-      <div class="answer wrong-explain">❌ A) "drinking" means she quit drinking water, which doesn't make sense with "because she was thirsty".</div>
+      <div class="answer correct-answer hidden-answer">✅ B) to drink — Correct! "Stop + infinitive" = purpose (she stopped in order to drink).</div>
+      <div class="answer wrong-explain hidden-answer">❌ A) "drinking" means she quit drinking water, which doesn't make sense with "because she was thirsty".</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
   </div>
 </section>
@@ -883,19 +933,74 @@ function playSwish(direction) {
 }
 
 prevBtn.addEventListener('click', () => {
-  if (current > 0) { current--; playSwish('back'); } update();
+  if (current > 0) { current--; playSwish('back'); } // Reveal answers functionality
+function revealAnswers(btn) {
+  const exercise = btn.closest('.exercise');
+  if (!exercise) return;
+  const answers = exercise.querySelectorAll('.answer.hidden-answer');
+  answers.forEach(a => a.classList.remove('hidden-answer'));
+  btn.textContent = '✓ Answers Revealed';
+  btn.classList.add('revealed');
+  btn.disabled = true;
+}
+
+update();
 });
 nextBtn.addEventListener('click', () => {
-  if (current < slides.length - 1) { current++; playSwish('forward'); } update();
+  if (current < slides.length - 1) { current++; playSwish('forward'); } // Reveal answers functionality
+function revealAnswers(btn) {
+  const exercise = btn.closest('.exercise');
+  if (!exercise) return;
+  const answers = exercise.querySelectorAll('.answer.hidden-answer');
+  answers.forEach(a => a.classList.remove('hidden-answer'));
+  btn.textContent = '✓ Answers Revealed';
+  btn.classList.add('revealed');
+  btn.disabled = true;
+}
+
+update();
 });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowRight' || e.key === ' ') {
-    if (current < slides.length - 1) { current++; playSwish('forward'); } update();
+    if (current < slides.length - 1) { current++; playSwish('forward'); } // Reveal answers functionality
+function revealAnswers(btn) {
+  const exercise = btn.closest('.exercise');
+  if (!exercise) return;
+  const answers = exercise.querySelectorAll('.answer.hidden-answer');
+  answers.forEach(a => a.classList.remove('hidden-answer'));
+  btn.textContent = '✓ Answers Revealed';
+  btn.classList.add('revealed');
+  btn.disabled = true;
+}
+
+update();
   }
   if (e.key === 'ArrowLeft') {
-    if (current > 0) { current--; playSwish('back'); } update();
+    if (current > 0) { current--; playSwish('back'); } // Reveal answers functionality
+function revealAnswers(btn) {
+  const exercise = btn.closest('.exercise');
+  if (!exercise) return;
+  const answers = exercise.querySelectorAll('.answer.hidden-answer');
+  answers.forEach(a => a.classList.remove('hidden-answer'));
+  btn.textContent = '✓ Answers Revealed';
+  btn.classList.add('revealed');
+  btn.disabled = true;
+}
+
+update();
   }
 });
+
+// Reveal answers functionality
+function revealAnswers(btn) {
+  const exercise = btn.closest('.exercise');
+  if (!exercise) return;
+  const answers = exercise.querySelectorAll('.answer.hidden-answer');
+  answers.forEach(a => a.classList.remove('hidden-answer'));
+  btn.textContent = '✓ Answers Revealed';
+  btn.classList.add('revealed');
+  btn.disabled = true;
+}
 
 update();
 </script>
