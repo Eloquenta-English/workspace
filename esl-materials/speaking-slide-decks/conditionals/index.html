@@ -40,9 +40,15 @@ html, body {
   pointer-events: none;
   transition: opacity .35s ease;
   display: flex;
-  align-items: center;
-  padding: 2vh 5vw;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 3vh 5vw 10vh;
+  overflow-y: auto;
 }
+
+/* Invisible scrollbar for all slides */
+.slide::-webkit-scrollbar { width: 0; background: transparent; }
+.slide { scrollbar-width: none; -ms-overflow-style: none; }
 
 .slide.active {
   opacity: 1;
@@ -64,12 +70,14 @@ html, body {
   position: relative;
   z-index: 1;
   max-width: 80vw;
+  width: 100%;
   background: rgba(6,10,20,.72);
   border: 1px solid rgba(34,211,238,.4);
   box-shadow: var(--glow-cyan);
   border-radius: 16px;
   padding: 2.5em 3em;
   backdrop-filter: blur(8px);
+  margin: auto 0;
 }
 
 .content.wide { max-width: 88vw; }
@@ -344,6 +352,38 @@ tr:nth-child(even) td {
   margin-top: .3em;
 }
 
+/* Hidden answers — revealed by JS */
+.exercise .answer.hidden-answer {
+  display: none;
+}
+
+.reveal-btn {
+  display: inline-block;
+  margin-top: 1em;
+  background: linear-gradient(135deg, rgba(34,211,238,.15), rgba(167,139,250,.15));
+  border: 1px solid rgba(34,211,238,.5);
+  color: var(--cyan);
+  font-family: 'Inter', sans-serif;
+  font-size: .95rem;
+  padding: 10px 24px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all .2s;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.reveal-btn:hover {
+  background: rgba(34,211,238,.25);
+  box-shadow: 0 0 15px rgba(34,211,238,.3);
+}
+
+.reveal-btn.revealed {
+  background: rgba(52,211,153,.15);
+  border-color: rgba(52,211,153,.5);
+  color: var(--green);
+}
+
 /* Highlight in examples */
 .if-part { color: var(--cyan); font-weight: 600; }
 .result-part { color: var(--gold); font-weight: 600; }
@@ -507,10 +547,11 @@ tr:nth-child(even) td {
         <li>C) goes / has</li>
         <li>D) will go / has</li>
       </ul>
-      <div class="answer correct-answer">✅ B) goes / will have — Correct! Present simple in IF-clause, will + base in main clause.</div>
-      <div class="answer wrong-explain">❌ A) "will go" after "if" is wrong — never use "will" in the IF-clause.</div>
-      <div class="answer wrong-explain">❌ C) "has" is present, but we need "will have" to show the future result.</div>
-      <div class="answer wrong-explain">❌ D) Two mistakes: "will go" after "if" is wrong, AND "has" doesn't show future result.</div>
+      <div class="answer correct-answer hidden-answer">✅ B) goes / will have — Correct! Present simple in IF-clause, will + base in main clause.</div>
+      <div class="answer wrong-explain hidden-answer">❌ A) "will go" after "if" is wrong — never use "will" in the IF-clause.</div>
+      <div class="answer wrong-explain hidden-answer">❌ C) "has" is present, but we need "will have" to show the future result.</div>
+      <div class="answer wrong-explain hidden-answer">❌ D) Two mistakes: "will go" after "if" is wrong, AND "has" doesn't show future result.</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
     <div class="exercise">
       <p class="question">Q2: "We _____ hiking if it _____ raining."</p>
@@ -520,10 +561,11 @@ tr:nth-child(even) td {
         <li>C) will go / will stop</li>
         <li>D) go / stops</li>
       </ul>
-      <div class="answer correct-answer">✅ B) will go / stops — Correct! Main clause first (no comma), present simple after "if".</div>
-      <div class="answer wrong-explain">❌ A) "will stop" after "if" is wrong — never use "will" in the IF-clause.</div>
-      <div class="answer wrong-explain">❌ C) Two "will" clauses — the second one (after "if") is wrong.</div>
-      <div class="answer wrong-explain">❌ D) Missing "will" in the main clause — this sounds like a habit, not a future plan.</div>
+      <div class="answer correct-answer hidden-answer">✅ B) will go / stops — Correct! Main clause first (no comma), present simple after "if".</div>
+      <div class="answer wrong-explain hidden-answer">❌ A) "will stop" after "if" is wrong — never use "will" in the IF-clause.</div>
+      <div class="answer wrong-explain hidden-answer">❌ C) Two "will" clauses — the second one (after "if") is wrong.</div>
+      <div class="answer wrong-explain hidden-answer">❌ D) Missing "will" in the main clause — this sounds like a habit, not a future plan.</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
     <div class="exercise">
       <p class="question">Q3: "If he _____ guitar lessons, he _____ better."</p>
@@ -533,10 +575,11 @@ tr:nth-child(even) td {
         <li>C) takes / gets</li>
         <li>D) took / will get</li>
       </ul>
-      <div class="answer correct-answer">✅ A) takes / will get — Correct! Present simple + will + base verb.</div>
-      <div class="answer wrong-explain">❌ B) "will take" after "if" is wrong.</div>
-      <div class="answer wrong-explain">❌ C) "gets" makes it a general fact (0th conditional), not a future possibility.</div>
-      <div class="answer wrong-explain">❌ D) "took" is past tense — that would be 2nd conditional, not 1st.</div>
+      <div class="answer correct-answer hidden-answer">✅ A) takes / will get — Correct! Present simple + will + base verb.</div>
+      <div class="answer wrong-explain hidden-answer">❌ B) "will take" after "if" is wrong.</div>
+      <div class="answer wrong-explain hidden-answer">❌ C) "gets" makes it a general fact (0th conditional), not a future possibility.</div>
+      <div class="answer wrong-explain hidden-answer">❌ D) "took" is past tense — that would be 2nd conditional, not 1st.</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
   </div>
 </section>
@@ -627,10 +670,11 @@ tr:nth-child(even) td {
         <li>C) was / will tour</li>
         <li>D) were / will tour</li>
       </ul>
-      <div class="answer correct-answer">✅ B) were / would tour — Correct! Past tense (were) + would + base verb for unreal present.</div>
-      <div class="answer wrong-explain">❌ A) Present tense (am) + will = 1st conditional, but "a famous musician" suggests this is hypothetical/unreal.</div>
-      <div class="answer wrong-explain">❌ C) "was" is informal (should be "were"), AND "will" doesn't match the hypothetical meaning — need "would".</div>
-      <div class="answer wrong-explain">❌ D) "were" is correct, but "will" doesn't match the unreal meaning — need "would".</div>
+      <div class="answer correct-answer hidden-answer">✅ B) were / would tour — Correct! Past tense (were) + would + base verb for unreal present.</div>
+      <div class="answer wrong-explain hidden-answer">❌ A) Present tense (am) + will = 1st conditional, but "a famous musician" suggests this is hypothetical/unreal.</div>
+      <div class="answer wrong-explain hidden-answer">❌ C) "was" is informal (should be "were"), AND "will" doesn't match the hypothetical meaning — need "would".</div>
+      <div class="answer wrong-explain hidden-answer">❌ D) "were" is correct, but "will" doesn't match the unreal meaning — need "would".</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
     <div class="exercise">
       <p class="question">Q2: "If he _____ the mountains more often, he _____ happier."</p>
@@ -640,10 +684,11 @@ tr:nth-child(even) td {
         <li>C) climbed / would have been</li>
         <li>D) will climb / will be</li>
       </ul>
-      <div class="answer correct-answer">✅ B) climbed / would be — Correct! Past simple + would + base for unreal present.</div>
-      <div class="answer wrong-explain">❌ A) Present tense = 1st conditional (real possibility), but context suggests he doesn't climb much (unreal).</div>
-      <div class="answer wrong-explain">❌ C) "would have been" is 3rd conditional (past), but this is about present/general feeling.</div>
-      <div class="answer wrong-explain">❌ D) "will" in the IF-clause is always wrong.</div>
+      <div class="answer correct-answer hidden-answer">✅ B) climbed / would be — Correct! Past simple + would + base for unreal present.</div>
+      <div class="answer wrong-explain hidden-answer">❌ A) Present tense = 1st conditional (real possibility), but context suggests he doesn't climb much (unreal).</div>
+      <div class="answer wrong-explain hidden-answer">❌ C) "would have been" is 3rd conditional (past), but this is about present/general feeling.</div>
+      <div class="answer wrong-explain hidden-answer">❌ D) "will" in the IF-clause is always wrong.</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
     <div class="exercise">
       <p class="question">Q3: "If we _____ more, we _____ better musicians."</p>
@@ -653,10 +698,11 @@ tr:nth-child(even) td {
         <li>C) practiced / became</li>
         <li>D) will practice / become</li>
       </ul>
-      <div class="answer correct-answer">✅ B) practiced / would become — Correct! Past simple + would + base for unreal present.</div>
-      <div class="answer wrong-explain">❌ A) Present tense = 0th conditional (general fact), not hypothetical.</div>
-      <div class="answer wrong-explain">❌ C) "became" is past, not "would + verb" — this breaks the 2nd conditional structure.</div>
-      <div class="answer wrong-explain">❌ D) "will" in the IF-clause is always wrong.</div>
+      <div class="answer correct-answer hidden-answer">✅ B) practiced / would become — Correct! Past simple + would + base for unreal present.</div>
+      <div class="answer wrong-explain hidden-answer">❌ A) Present tense = 0th conditional (general fact), not hypothetical.</div>
+      <div class="answer wrong-explain hidden-answer">❌ C) "became" is past, not "would + verb" — this breaks the 2nd conditional structure.</div>
+      <div class="answer wrong-explain hidden-answer">❌ D) "will" in the IF-clause is always wrong.</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
   </div>
 </section>
@@ -744,10 +790,11 @@ tr:nth-child(even) td {
         <li>C) had known / would buy</li>
         <li>D) have known / would have bought</li>
       </ul>
-      <div class="answer correct-answer">✅ B) had known / would have bought — Correct! Past perfect + would have + pp for unreal past.</div>
-      <div class="answer wrong-explain">❌ A) "knew / would buy" is 2nd conditional (present unreal), but the context suggests past regret.</div>
-      <div class="answer wrong-explain">❌ C) "had known" is correct, but "would buy" is 2nd conditional result — doesn't match the past context.</div>
-      <div class="answer wrong-explain">❌ D) "have known" is present perfect, not past perfect.</div>
+      <div class="answer correct-answer hidden-answer">✅ B) had known / would have bought — Correct! Past perfect + would have + pp for unreal past.</div>
+      <div class="answer wrong-explain hidden-answer">❌ A) "knew / would buy" is 2nd conditional (present unreal), but the context suggests past regret.</div>
+      <div class="answer wrong-explain hidden-answer">❌ C) "had known" is correct, but "would buy" is 2nd conditional result — doesn't match the past context.</div>
+      <div class="answer wrong-explain hidden-answer">❌ D) "have known" is present perfect, not past perfect.</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
     <div class="exercise">
       <p class="question">Q2: "If they _____ the trail map, they _____ lost."</p>
@@ -757,10 +804,11 @@ tr:nth-child(even) td {
         <li>C) had brought / wouldn't get</li>
         <li>D) have brought / wouldn't have gotten</li>
       </ul>
-      <div class="answer correct-answer">✅ B) had brought / wouldn't have gotten — Correct! Past perfect + would have + pp.</div>
-      <div class="answer wrong-explain">❌ A) 2nd conditional form, but context is past (they got lost).</div>
-      <div class="answer wrong-explain">❌ C) "wouldn't get" is present/future, doesn't match past context.</div>
-      <div class="answer wrong-explain">❌ D) "have brought" is present perfect, not past perfect.</div>
+      <div class="answer correct-answer hidden-answer">✅ B) had brought / wouldn't have gotten — Correct! Past perfect + would have + pp.</div>
+      <div class="answer wrong-explain hidden-answer">❌ A) 2nd conditional form, but context is past (they got lost).</div>
+      <div class="answer wrong-explain hidden-answer">❌ C) "wouldn't get" is present/future, doesn't match past context.</div>
+      <div class="answer wrong-explain hidden-answer">❌ D) "have brought" is present perfect, not past perfect.</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
     <div class="exercise">
       <p class="question">Q3: "If she _____ the guitar competition, she _____ first place."</p>
@@ -770,10 +818,11 @@ tr:nth-child(even) td {
         <li>C) had entered / will have won</li>
         <li>D) enters / will win</li>
       </ul>
-      <div class="answer correct-answer">✅ B) had entered / would have won — Correct! Past perfect + would have + pp.</div>
-      <div class="answer wrong-explain">❌ A) 2nd conditional, but context is a past competition.</div>
-      <div class="answer wrong-explain">❌ C) "will have won" doesn't exist in standard conditional structures.</div>
-      <div class="answer wrong-explain">❌ D) 1st conditional (future), but context is past competition.</div>
+      <div class="answer correct-answer hidden-answer">✅ B) had entered / would have won — Correct! Past perfect + would have + pp.</div>
+      <div class="answer wrong-explain hidden-answer">❌ A) 2nd conditional, but context is a past competition.</div>
+      <div class="answer wrong-explain hidden-answer">❌ C) "will have won" doesn't exist in standard conditional structures.</div>
+      <div class="answer wrong-explain hidden-answer">❌ D) 1st conditional (future), but context is past competition.</div>
+      <button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button>
     </div>
     <h3 style="margin-top:1.2em;">Final Summary</h3>
     <table>
@@ -900,6 +949,30 @@ function playSwish(direction) {
   oscGain.connect(audioCtx.destination);
   osc.start(now);
   osc.stop(now + 0.15);
+}
+
+// Reveal answers functionality
+function revealAnswers(btn) {
+  const exercise = btn.closest('.exercise');
+  if (!exercise) return;
+  const answers = exercise.querySelectorAll('.answer.hidden-answer');
+  answers.forEach(a => a.classList.remove('hidden-answer'));
+  btn.textContent = '✓ Answers Revealed';
+  btn.classList.add('revealed');
+  btn.disabled = true;
+}
+
+// Auto-reveal when navigating away from exercise slide (so answers show when returning)
+function autoRevealCurrentSlide() {
+  const slide = slides[current];
+  if (!slide) return;
+  const exercises = slide.querySelectorAll('.exercise');
+  exercises.forEach(ex => {
+    const btn = ex.querySelector('.reveal-btn');
+    if (btn && !btn.classList.contains('revealed')) {
+      // Don't auto-reveal — let student click
+    }
+  });
 }
 
 prevBtn.addEventListener('click', () => {
