@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
  <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; media-src 'self' blob:; object-src 'none'; frame-ancestors 'none'">
  <meta name="viewport" content="width=device-width,initial-scale=1.0">
  <title> Travel English — Speaking Slide Deck</title>
  <style>
@@ -16,23 +17,31 @@
  align-items:center; justify-content:center; opacity:0;
  transform:translateY(24px) scale(.98);
  transition:opacity .5s ease, transform .5s ease;
- pointer-events:none; padding:5vh 6vw; overflow-y:auto;
+ pointer-events:none; padding:4vh 5vw; overflow:hidden;
+ gap:12px;
+ box-sizing:border-box;
+ z-index:0;
+ }
+ .slide > * {
+ max-width:90vw;
+ box-sizing:border-box;
  }
  .slide.active { opacity:1; transform:translateY(0) scale(1); pointer-events:auto; z-index:2; }
+ .slide:not(.active) * { visibility:hidden !important; }
 
  /* GLOWING TEXT BOX */
  .glow-box {
- background: rgba(10, 16, 32, 0.85);
- border: 1.5px solid rgba(251, 191, 36, 0.4);
- border-radius: 18px;
- padding: 2em 2.6em;
- box-shadow:
- 0 0 30px rgba(251, 191, 36, 0.12),
- 0 0 60px rgba(34, 211, 238, 0.08),
- 0 20px 60px rgba(0, 0, 0, 0.5);
- max-width: 720px; width: 100%;
- margin: 1em 0;
- backdrop-filter: blur(8px);
+   background: rgba(10, 16, 32, 0.92);
+   border: 2px solid rgba(251, 191, 36, 0.6);
+   border-radius: 18px;
+   padding: 2em 2.6em;
+   box-shadow:
+     0 0 30px rgba(251, 191, 36, 0.15),
+     0 0 60px rgba(34, 211, 238, 0.1),
+     0 20px 60px rgba(0, 0, 0, 0.5);
+   max-width: 720px; width: 100%;
+   margin: 1em 0;
+   backdrop-filter: blur(8px);
  }
  .glow-box.cyan {
  border-color: rgba(34, 211, 238, 0.5);
@@ -109,14 +118,14 @@
  display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin:1em 0;
  }
  .ex-btn {
- background:rgba(34,211,238,.12); border:1.5px solid rgba(34,211,238,.4);
- color:#22d3ee; padding:.7em 1.4em; border-radius:12px;
- cursor:pointer; font-size:clamp(.9rem,1.4vw,1.1rem); font-weight:500;
- transition:all .2s; font-family:'Inter',sans-serif;
+   background:rgba(34,211,238,.2); border:2px solid rgba(34,211,238,.6);
+   color:#fff; padding:.7em 1.4em; border-radius:12px;
+   cursor:pointer; font-size:clamp(.9rem,1.4vw,1.1rem); font-weight:600;
+   transition:all .2s; font-family:'Inter',sans-serif;
  }
- .ex-btn:hover { background:rgba(34,211,238,.25); box-shadow:0 0 20px rgba(34,211,238,.3); }
- .ex-btn.revealed { background:rgba(163,230,53,.15); border-color:rgba(163,230,53,.5); color:#a3e635; }
- .ex-btn.wrong { background:rgba(251,113,133,.15); border-color:rgba(251,113,133,.5); color:#fb7185; }
+ .ex-btn:hover { background:rgba(34,211,238,.35); box-shadow:0 0 20px rgba(34,211,238,.3); }
+ .ex-btn.revealed { background:rgba(163,230,53,.25); border-color:rgba(163,230,53,.7); color:#fff; }
+ .ex-btn.wrong { background:rgba(251,113,133,.25); border-color:rgba(251,113,133,.7); color:#fff; }
 
  .answer-reveal {
  background:rgba(163,230,53,.1); border:1px solid rgba(163,230,53,.3);
@@ -174,12 +183,13 @@
 </div>
 
 <!-- SLIDE 1: Title -->
-<div class="slide" data-slide="0" style="background-image:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=80');background-size:cover;background-position:center">
- <div class="title-box"><h1> Travel English</h1></div>
- <div class="glow-box" style="text-align:center">
- <p style="font-size:1.2rem;color:#e2e8f0;font-weight:500">Essential Phrases for Your Trip to England</p>
- <p style="color:#94a3b8;margin-top:.8em;font-size:1rem">Click, speak, and learn — even without internet!</p>
- </div>
+<div class="slide active" data-slide="0" style="background-image:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=80');background-size:cover;background-position:center;justify-content:flex-start;padding-top:calc(5vh + 200px)">
+  <div class="title-box" style="border-color:rgba(34,211,238,.6);box-shadow:0 0 30px rgba(34,211,238,.25),0 0 60px rgba(34,211,238,.15)">
+    <h1 style="margin-bottom:.1em">Travel English</h1>
+  </div>
+  <div class="glow-box" style="text-align:center">
+    <p style="font-size:1.1rem;color:#e2e8f0;font-weight:500">Essential Phrases for Your Trip</p>
+  </div>
 </div>
 
 <!-- SLIDE 2: At the Airport -->
@@ -267,8 +277,8 @@
 </div>
 
 <!-- SLIDE 6: Asking Directions -->
-<div class="slide" data-slide="5" style="background-image:url('https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1600&q=80');background-size:cover;background-position:center">
- <div class="title-box"><h2> Asking Directions</h2></div>
+<div class="slide" data-slide="5" style="background-image:url('https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?w=1600&q=80');background-size:cover;background-position:center">
+  <div class="title-box"><h2>Asking Directions</h2></div>
  <div class="glow-box cyan">
  <p class="phrase-it">"Scusi, come si arriva alla stazione?"</p>
  <p class="phrase-en">"Excuse me, how do I get to the station?"</p>
@@ -310,24 +320,24 @@
 
 <!-- SLIDE 8: Vocabulary Match -->
 <div class="slide" data-slide="7" style="background-image:url('https://images.unsplash.com/photo-1559034432-ee2972257952?w=1600&q=80');background-size:cover;background-position:center">
- <div class="title-box"><h2> Vocabulary Match</h2></div>
- <p style="color:#94a3b8;margin-bottom:1em;font-size:1rem">Tap the English word that matches the Italian meaning:</p>
- <div class="glow-box">
- <div class="exercise">
- <button class="ex-btn" onclick="checkAnswer(this,'correct')">Receipt</button>
- <button class="ex-btn" onclick="checkAnswer(this,'wrong')">Entrance</button>
- <button class="ex-btn" onclick="checkAnswer(this,'wrong')">Museum</button>
- </div>
- <p style="text-align:center;color:#fbbf24;font-size:1.1rem;margin-top:.5em"> "Lo scontrino"</p>
- </div>
- <div class="glow-box">
- <div class="exercise">
- <button class="ex-btn" onclick="checkAnswer(this,'wrong')">Beach</button>
- <button class="ex-btn" onclick="checkAnswer(this,'correct')">Luggage</button>
- <button class="ex-btn" onclick="checkAnswer(this,'wrong')">Ticket</button>
- </div>
- <p style="text-align:center;color:#fbbf24;font-size:1.1rem;margin-top:.5em"> "Il bagaglio"</p>
- </div>
+  <div class="title-box"><h2>Vocabulary Match</h2></div>
+  <p style="color:#94a3b8;margin-bottom:1em;font-size:1rem">Tap the English word that matches the Italian meaning:</p>
+  <div class="glow-box">
+    <div class="exercise">
+      <button class="ex-btn" onclick="checkAnswer(this,'correct')">Receipt</button>
+      <button class="ex-btn" onclick="checkAnswer(this,'wrong')">Entrance</button>
+      <button class="ex-btn" onclick="checkAnswer(this,'wrong')">Museum</button>
+    </div>
+    <p style="text-align:center;color:#fbbf24;font-size:1.1rem;margin-top:.5em">"Lo scontrino"</p>
+  </div>
+  <div class="glow-box">
+    <div class="exercise">
+      <button class="ex-btn" onclick="checkAnswer(this,'wrong')">Beach</button>
+      <button class="ex-btn" onclick="checkAnswer(this,'correct')">Luggage</button>
+      <button class="ex-btn" onclick="checkAnswer(this,'wrong')">Ticket</button>
+    </div>
+    <p style="text-align:center;color:#fbbf24;font-size:1.1rem;margin-top:.5em">"Il bagaglio"</p>
+  </div>
 </div>
 
 <!-- SLIDE 9: Fill in the Blank -->
@@ -396,24 +406,26 @@
 
 <!-- SLIDE 12: Vocabulary Match 2 -->
 <div class="slide" data-slide="11" style="background-image:url('https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=1600&q=80');background-size:cover;background-position:center">
- <div class="title-box"><h2> Vocabulary Match 2</h2></div>
- <p style="color:#94a3b8;margin-bottom:1em;font-size:1rem">Tap the correct English translation:</p>
- <div class="glow-box">
- <div class="exercise">
- <button class="ex-btn" onclick="checkAnswer(this,'wrong')">Kitchen</button>
- <button class="ex-btn" onclick="checkAnswer(this,'correct')">Bathroom</button>
- <button class="ex-btn" onclick="checkAnswer(this,'wrong')">Bedroom</button>
- </div>
- <p style="text-align:center;color:#fbbf24;font-size:1.1rem;margin-top:.5em"> "Il bagno"</p>
- </div>
- <div class="glow-box">
- <div class="exercise">
- <button class="ex-btn" onclick="checkAnswer(this,'correct')">Pharmacy</button>
- <button class="ex-btn" onclick="checkAnswer(this,'wrong')">Bank</button>
- <button class="ex-btn" onclick="checkAnswer(this,'wrong')">Post office</button>
- </div>
- <p style="text-align:center;color:#fbbf24;font-size:1.1rem;margin-top:.5em"> "La farmacia"</p>
- </div>
+  <div class="title-box"><h2>Vocabulary Match 2</h2></div>
+  <div class="glow-box" style="text-align:center">
+    <p style="color:#94a3b8;font-size:1rem">Tap the correct English translation:</p>
+  </div>
+  <div class="glow-box">
+    <div class="exercise">
+      <button class="ex-btn" onclick="checkAnswer(this,'wrong')">Kitchen</button>
+      <button class="ex-btn" onclick="checkAnswer(this,'correct')">Bathroom</button>
+      <button class="ex-btn" onclick="checkAnswer(this,'wrong')">Bedroom</button>
+    </div>
+    <p style="text-align:center;color:#fbbf24;font-size:1.1rem;margin-top:.5em">"Il bagno"</p>
+  </div>
+  <div class="glow-box">
+    <div class="exercise">
+      <button class="ex-btn" onclick="checkAnswer(this,'correct')">Pharmacy</button>
+      <button class="ex-btn" onclick="checkAnswer(this,'wrong')">Bank</button>
+      <button class="ex-btn" onclick="checkAnswer(this,'wrong')">Post office</button>
+    </div>
+    <p style="text-align:center;color:#fbbf24;font-size:1.1rem;margin-top:.5em">"La farmacia"</p>
+  </div>
 </div>
 
 <!-- SLIDE 13: Travel Tips -->
@@ -422,7 +434,7 @@
  <div class="glow-box">
  <h3> Before You Go</h3>
  <p class="label">• Download offline Google Translate (Italian ↔ English)</p>
- <p class="label">• Save an emergency contact number in your phone</p>
+ <p class="label">• Save an emergency contact: support in Italian</p>
  <p class="label">• Take a photo of your passport (store in cloud)</p>
  </div>
  <div class="glow-box cyan">
@@ -454,9 +466,13 @@
 
 <!-- SLIDE 15: Congratulations -->
 <div class="slide" data-slide="14" style="background-image:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=80');background-size:cover;background-position:center">
+ <h1> Complimenti!</h1>
  <div class="glow-box" style="text-align:center">
  <p style="font-size:1.2rem;color:#e2e8f0;margin-bottom:.8em">You're ready for your trip to England!</p>
  <p style="color:#94a3b8;font-size:1rem">Practice these phrases daily for 10 minutes and you'll feel confident.</p>
+ <div style="margin-top:1.5em;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+ </div>
+       <p style="color:#64748b;font-size:.85rem;margin-top:1.5em">WTE English</p>
  </div>
 </div>
 
