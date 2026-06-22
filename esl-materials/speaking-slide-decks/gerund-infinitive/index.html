@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerund vs Infinitive</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #060a14;
+  --cyan: #22d3ee;
+  --purple: #a78bfa;
+  --gold: #fbbf24;
+  --green: #34d399;
+  --red: #f87171;
+  --text: #e2e8f0;
+  --text-dim: #b0bec5;
+  --glow-cyan: 0 0 25px rgba(34,211,238,.25), 0 0 60px rgba(34,211,238,.1);
+  --glow-purple: 0 0 25px rgba(167,139,250,.25), 0 0 60px rgba(167,139,250,.1);
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(.95rem, 1.4vw, 1.2rem);
+  line-height: 1.75;
+}
+
+.slide {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+  display: flex;
+  align-items: center;
+  padding: 2vh 5vw;
+}
+
+.slide.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    rgba(6,10,20,.78) 0%,
+    rgba(6,10,20,.45) 45%,
+    rgba(6,10,20,.18) 100%);
+  z-index: 0;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  max-width: 80vw;
+  background: rgba(6,10,20,.72);
+  border: 1px solid rgba(34,211,238,.4);
+  box-shadow: var(--glow-cyan);
+  border-radius: 16px;
+  padding: 2.5em 3em;
+  backdrop-filter: blur(8px);
+}
+
+.content.wide { max-width: 88vw; }
+.content.narrow { max-width: 68vw; }
+
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  z-index: 200;
+  transition: width .35s ease;
+}
+
+.nav {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 1.2em;
+  z-index: 200;
+  background: rgba(6,10,20,.85);
+  border: 1px solid rgba(34,211,238,.3);
+  border-radius: 40px;
+  padding: 10px 24px;
+  backdrop-filter: blur(6px);
+}
+
+.nav button {
+  background: none;
+  border: 1px solid rgba(34,211,238,.5);
+  color: var(--cyan);
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  padding: 8px 18px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all .2s;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.nav button:hover {
+  background: rgba(34,211,238,.15);
+  box-shadow: 0 0 15px rgba(34,211,238,.3);
+}
+
+.nav .slide-counter {
+  font-family: 'Inter', monospace;
+  color: var(--text-dim);
+  font-size: .85rem;
+  min-width: 60px;
+  text-align: center;
+}
+
+h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2rem, 4.5vw, 3.8rem);
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(34,211,238,.4));
+  margin-bottom: .5em;
+  line-height: 1.15;
+}
+
+h2 {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: .7em;
+  text-shadow: 0 0 12px rgba(34,211,238,.3);
+}
+
+h3 {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  color: var(--purple);
+  margin: 1em 0 .5em;
+}
+
+p, li { margin-bottom: .5em; }
+
+.subtitle {
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  color: var(--text-dim);
+  margin-top: -.3em;
+}
+
+.tag {
+  display: inline-block;
+  font-size: .78rem;
+  padding: 2px 10px;
+  border-radius: 12px;
+  margin-right: 6px;
+  font-weight: 600;
+}
+
+.tag-cyan { background: rgba(34,211,238,.15); color: var(--cyan); border: 1px solid rgba(34,211,238,.4); }
+.tag-purple { background: rgba(167,139,250,.15); color: var(--purple); border: 1px solid rgba(167,139,250,.4); }
+.tag-gold { background: rgba(251,191,36,.15); color: var(--gold); border: 1px solid rgba(251,191,36,.4); }
+.tag-green { background: rgba(52,211,153,.15); color: var(--green); border: 1px solid rgba(52,211,153,.4); }
+.tag-red { background: rgba(248,113,113,.15); color: var(--red); border: 1px solid rgba(248,113,113,.4); }
+
+.glow-box {
+  background: linear-gradient(135deg, rgba(34,211,238,.08), rgba(167,139,250,.08));
+  border: 1px solid rgba(34,211,238,.4);
+  box-shadow: 0 0 20px rgba(34,211,238,.15);
+  border-radius: 12px;
+  padding: 1em 1.4em;
+  margin: .8em 0;
+}
+
+.glow-box.purple {
+  border-color: rgba(167,139,250,.4);
+  box-shadow: 0 0 20px rgba(167,139,250,.15);
+  background: linear-gradient(135deg, rgba(167,139,250,.08), rgba(34,211,238,.05));
+}
+
+.ger { color: var(--cyan); font-weight: 600; }
+.inf { color: var(--gold); font-weight: 600; }
+.green { color: var(--green); font-weight: 600; }
+.red { color: var(--red); font-weight: 600; }
+.cyan { color: var(--cyan); font-weight: 600; }
+.purple { color: var(--purple); font-weight: 600; }
+.gold { color: var(--gold); font-weight: 600; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+  font-size: clamp(.85rem, 1.2vw, 1rem);
+}
+
+th {
+  background: rgba(34,211,238,.12);
+  color: var(--cyan);
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+  padding: 10px 14px;
+  text-align: left;
+  border: 1px solid rgba(34,211,238,.3);
+  text-transform: uppercase;
+  font-size: .85rem;
+  letter-spacing: .03em;
+}
+
+td {
+  padding: 9px 14px;
+  border: 1px solid rgba(34,211,238,.15);
+  vertical-align: top;
+}
+
+tr:nth-child(even) td { background: rgba(34,211,238,.04); }
+
+.mistake {
+  background: rgba(248,113,113,.08);
+  border: 1px solid rgba(248,113,113,.35);
+  border-radius: 10px;
+  padding: .8em 1.2em;
+  margin: .7em 0;
+}
+
+.mistake .wrong { color: var(--red); font-weight: 600; text-decoration: line-through; text-decoration-color: rgba(248,113,113,.6); }
+.mistake .correct { color: var(--green); font-weight: 600; }
+.mistake .explanation { color: var(--text-dim); font-size: .92rem; margin-top: .4em; padding-left: .5em; border-left: 2px solid rgba(248,113,113,.3); }
+
+.exercise {
+  background: linear-gradient(135deg, rgba(251,191,36,.06), rgba(34,211,238,.06));
+  border: 1px solid rgba(251,191,36,.35);
+  border-radius: 12px;
+  padding: 1em 1.4em;
+  margin: .8em 0;
+}
+
+.exercise .question { font-weight: 600; color: var(--gold); margin-bottom: .5em; }
+
+.exercise .options {
+  list-style: none;
+  padding: 0;
+  margin: .5em 0;
+}
+
+.exercise .options li {
+  padding: 4px 0 4px 1.2em;
+  position: relative;
+}
+
+.exercise .options li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--text-dim);
+}
+
+.exercise .answer {
+  margin-top: .6em;
+  padding: .5em .8em;
+  border-radius: 8px;
+  font-size: .93rem;
+}
+
+.exercise .answer.correct-answer {
+  background: rgba(52,211,153,.1);
+  border: 1px solid rgba(52,211,153,.3);
+  color: var(--green);
+}
+
+.exercise .answer.wrong-explain {
+  background: rgba(248,113,113,.06);
+  border: 1px solid rgba(248,113,113,.2);
+  color: var(--text-dim);
+  margin-top: .3em;
+}
+
+.start-prompt {
+  color: var(--text-dim);
+  font-size: .9rem;
+  margin-top: 1em;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: .6; }
+  50% { opacity: 1; }
+}
+
+.meaning-change {
+  background: rgba(167,139,250,.08);
+  border: 1px solid rgba(167,139,250,.35);
+  border-radius: 12px;
+  padding: 1em 1.4em;
+  margin: .8em 0;
+}
+
+.meaning-change .label-ger { color: var(--cyan); font-weight: 700; }
+.meaning-change .label-inf { color: var(--gold); font-weight: 700; }
+
+@media (max-width: 768px) {
+  .content { max-width: 92vw; padding: 1.5em 1.8em; }
+  .content.wide { max-width: 95vw; }
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.3rem; }
+  .nav { bottom: 12px; padding: 8px 16px; gap: .6em; }
+  .nav button { padding: 6px 12px; font-size: .85rem; }
+  table { font-size: .8rem; }
+  th, td { padding: 6px 8px; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- SLIDE 1: Title -->
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80')">
+  <div class="content narrow" style="text-align:center;">
+    <h1>GERUND vs INFINITIVE</h1>
+    <p class="subtitle">"-ing" or "to + verb"? — The Complete Guide</p>
+    <p class="start-prompt">Press → or Space to start</p>
+  </div>
+</section>
+
+<!-- SLIDE 2: What Are They? -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-15157056963-95cad62945b6?w=1600&q=80')">
+  <div class="content">
+    <h2>What Are They?</h2>
+    <div class="glow-box">
+      <p><span class="ger">Gerund:</span> verb + <strong>-ing</strong> (swimming, playing, hiking) — acts like a <strong>noun</strong></p>
+      <p><span class="inf">Infinitive:</span> <strong>to</strong> + verb (to swim, to play, to hike) — can act like noun, adjective, or adverb</p>
+    </div>
+    <p>Both can be the subject or object of a sentence:</p>
+    <div class="glow-box purple">
+      <p><span class="ger">Swimming</span> is fun. = <span class="inf">To swim</span> is fun. ✅ (both OK, gerund more common)</p>
+      <p><span class="ger">Playing</span> guitar takes practice. = <span class="inf">To play</span> guitar takes practice. ✅</p>
+    </div>
+    <p style="color:var(--text-dim);">The big question: which one to use after each verb? Let's find out →</p>
+  </div>
+</section>
+
+<!-- SLIDE 3: The Big Rule -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80')">
+  <div class="content wide">
+    <h2>The Big Rule</h2>
+    <table>
+      <thead>
+        <tr><th>Category</th><th>Pattern</th><th>Examples</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="ger">Gerund only</span></td><td>verb + -ing</td><td>enjoy, finish, stop, mind, suggest, avoid</td></tr>
+        <tr><td><span class="inf">Infinitive only</span></td><td>verb + to + base</td><td>want, need, decide, hope, plan, promise</td></tr>
+        <tr><td><span class="green">Both (same meaning)</span></td><td>gerund = infinitive</td><td>start, begin, continue, like, love, hate</td></tr>
+        <tr><td><span class="purple">Both (meaning changes!)</span></td><td>different!</td><td>stop, remember, forget, try, regret, go on</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:1em; color:var(--text-dim);">Let's look at each category in detail →</p>
+  </div>
+</section>
+
+<!-- SLIDE 4: Gerund Only -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1600&q=80')">
+  <div class="content">
+    <h2>Verbs Followed by GERUND Only</h2>
+    <p>These verbs are <strong>always</strong> followed by <span class="ger">-ing</span>. Never infinitive!</p>
+    <div class="glow-box">
+      <p><strong>Common verbs:</strong></p>
+      <p>enjoy, finish, stop, quit, mind, miss, suggest, admit, deny, avoid, consider, imagine, keep, practice, risk, give up, put off, look forward to, be worth, can't stand, can't help, it's no use, there's no point in</p>
+    </div>
+    <h3>Examples</h3>
+    <div class="glow-box purple">
+      <p>🎸 "I <span class="ger">enjoy playing</span> guitar." ✅ (NOT "enjoy to play")</p>
+      <p>🎶 "She <span class="ger">finished practicing</span> at 6pm."</p>
+      <p>🏔️ "We <span class="ger">look forward to hiking</span> in the Alps."</p>
+      <p>🚫 "He <span class="ger">gave up smoking</span> last year."</p>
+    </div>
+    <p style="color:var(--text-dim);">⚠️ "Look forward to" — the "to" here is a <strong>preposition</strong>, so it takes gerund!</p>
+  </div>
+</section>
+
+<!-- SLIDE 5: Infinitive Only -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=80')">
+  <div class="content">
+    <h2>Verbs Followed by INFINITIVE Only</h2>
+    <p>These verbs are <strong>always</strong> followed by <span class="inf">to + base verb</span>. Never gerund!</p>
+    <div class="glow-box">
+      <p><strong>Common verbs:</strong></p>
+      <p>want, need, decide, hope, plan, promise, afford, agree, arrange, attempt, claim, demand, expect, fail, hesitate, learn, manage, offer, prepare, pretend, refuse, seem, threaten, wait, wish, would like, would love, would hate, would prefer</p>
+    </div>
+    <h3>Examples</h3>
+    <div class="glow-box purple">
+      <p>🎹 "I <span class="inf">want to learn</span> the piano." ✅ (NOT "want learning")</p>
+      <p>🎤 "She <span class="inf">decided to join</span> a band."</p>
+      <p>🏔️ "We <span class="inf">plan to hike</span> the Dolomites this summer."</p>
+      <p>⏰ "He <span class="inf">promised to practice</span> every day."</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 6: Both — No Meaning Change -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1551632811-561732d1e306?w=1600&q=80')">
+  <div class="content">
+    <h2>Both — No Meaning Change</h2>
+    <p>With these verbs, <span class="ger">gerund</span> and <span class="inf">infinitive</span> mean the <strong>same thing</strong>. You can use either!</p>
+    <div class="glow-box">
+      <p><strong>Verbs:</strong> start, begin, continue, like, love, hate, prefer, can't bear, can't stand, intend, bother, cease, dread, commence</p>
+    </div>
+    <h3>Examples</h3>
+    <div class="glow-box purple">
+      <p>🌧️ "It <span class="ger">started raining</span>" = "It <span class="inf">started to rain</span>" ✅</p>
+      <p>🏔️ "I <span class="ger">like hiking</span>" = "I <span class="inf">like to hike</span>" ✅</p>
+      <p>🎸 "She <span class="ger">loves playing</span>" = "She <span class="inf">loves to play</span>" ✅</p>
+    </div>
+    <h3>Small difference with "prefer"</h3>
+    <p style="color:var(--text-dim);">"I <span class="ger">prefer hiking</span>" (general preference) vs "I <span class="inf">prefer to hike</span> <em>now</em>" (specific situation)</p>
+  </div>
+</section>
+
+<!-- SLIDE 7: Both — MEANING CHANGE! ⚠️ -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=1600&q=80')">
+  <div class="content wide">
+    <h2>Both — MEANING CHANGE! ⚠️</h2>
+    <p>Same verb, <strong>different meaning</strong> depending on gerund or infinitive:</p>
+    
+    <div class="meaning-change">
+      <p><strong>STOP</strong></p>
+      <p><span class="label-ger">Gerund:</span> "He <span class="ger">stopped smoking</span>" = he quit the habit</p>
+      <p><span class="label-inf">Infinitive:</span> "He <span class="inf">stopped to smoke</span>" = he paused in order to smoke (purpose)</p>
+    </div>
+    
+    <div class="meaning-change">
+      <p><strong>REMEMBER</strong></p>
+      <p><span class="label-ger">Gerund:</span> "I <span class="ger">remember locking</span> the door" = I have a memory of doing it (past)</p>
+      <p><span class="label-inf">Infinitive:</span> "I <span class="inf">remember to lock</span> the door" = I didn't forget (future obligation)</p>
+    </div>
+    
+    <div class="meaning-change">
+      <p><strong>FORGET</strong></p>
+      <p><span class="label-ger">Gerund:</span> "I <span class="ger">forget meeting</span> him" = I don't have a memory of it</p>
+      <p><span class="label-inf">Infinitive:</span> "I <span class="inf">forgot to meet</span> him" = I didn't remember to do it (didn't do it)</p>
+    </div>
+    
+    <div class="meaning-change">
+      <p><strong>TRY</strong></p>
+      <p><span class="label-ger">Gerund:</span> "I <span class="ger">tried playing</span> the guitar" = I experimented with it</p>
+      <p><span class="label-inf">Infinitive:</span> "I <span class="inf">tried to play</span> the guitar" = I made an effort (maybe it was hard)</p>
+    </div>
+    
+    <div class="meaning-change">
+      <p><strong>REGRET</strong></p>
+      <p><span class="label-ger">Gerund:</span> "I <span class="ger">regret telling</span> her" = I'm sorry about a past action</p>
+      <p><span class="label-inf">Infinitive:</span> "I <span class="inf">regret to tell</span> you" = I'm sorry, but I must inform you (formal)</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 8: Gerund as Subject -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80')">
+  <div class="content">
+    <h2>Gerund as Subject</h2>
+    <p>Gerunds often work as the <strong>subject</strong> of a sentence.</p>
+    <div class="glow-box">
+      <p><span class="ger">Gerund as subject</span> = more common and natural (everyday English)</p>
+      <p><span class="inf">Infinitive as subject</span> = more formal/literary (essays, books)</p>
+    </div>
+    <h3>Examples</h3>
+    <div class="glow-box purple">
+      <p>🏔️ "<span class="ger">Hiking</span> in the Alps is my favorite hobby." (natural)</p>
+      <p>🏔️ "<span class="inf">To hike</span> in the Alps is my favorite hobby." (formal)</p>
+      <p style="margin-top:.6em;">🎸 "<span class="ger">Playing</span> an instrument takes years of practice." (natural)</p>
+      <p>🎸 "<span class="inf">To play</span> an instrument takes years of practice." (formal)</p>
+    </div>
+    <p style="color:var(--text-dim); margin-top:.6em;">💡 <strong>Tip:</strong> In everyday English, use gerund as subject. In essays/formal writing, infinitive is OK.</p>
+  </div>
+</section>
+
+<!-- SLIDE 9: After Prepositions -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1600&q=80')">
+  <div class="content">
+    <h2>After Prepositions — ALWAYS Gerund!</h2>
+    <p>After a <strong>preposition</strong>, <span class="ger">ALWAYS use gerund (-ing)</span>. Never infinitive!</p>
+    <div class="glow-box">
+      <p><strong>Common prepositions + gerund:</strong></p>
+      <p>interested <span class="ger">in learning</span>, good <span class="ger">at playing</span>, excited <span class="ger">about hiking</span>, insisted <span class="ger">on practicing</span>, tired <span class="ger">of waiting</span>, afraid <span class="ger">of flying</span>, proud <span class="ger">of winning</span>, responsible <span class="ger">for organizing</span>, used <span class="ger">to waking</span> up early</p>
+    </div>
+    <h3>Examples</h3>
+    <div class="glow-box purple">
+      <p>🎵 "I'm interested <span class="ger">in learning</span> music production." ✅</p>
+      <p>🎸 "She's good <span class="ger">at playing</span> the guitar."</p>
+      <p>🏔️ "We're excited <span class="ger">about hiking</span> this weekend."</p>
+      <p>⏰ "He insisted <span class="ger">on practicing</span> every day."</p>
+    </div>
+    <h3>Exception</h3>
+    <p style="color:var(--text-dim);">"but" and "except" can take infinitive: "I had no choice <span class="inf">but to wait</span>." / "She does nothing <span class="inf">except complain</span>."</p>
+  </div>
+</section>
+
+<!-- SLIDE 10: Common Mistakes -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=1600&q=80')">
+  <div class="content wide">
+    <h2>Common Mistakes</h2>
+    <div class="mistake">
+      <p><span class="wrong">❌ "I enjoy to play guitar."</span></p>
+      <p><span class="correct">✅ "I enjoy playing guitar."</span></p>
+      <p class="explanation">💡 "Enjoy" is <strong>always</strong> followed by gerund. Never infinitive. No exceptions!</p>
+    </div>
+    <div class="mistake">
+      <p><span class="wrong">❌ "She wants going to the concert."</span></p>
+      <p><span class="correct">✅ "She wants to go to the concert."</span></p>
+      <p class="explanation">💡 "Want" is <strong>always</strong> followed by infinitive. Never gerund.</p>
+    </div>
+    <div class="mistake">
+      <p><span class="wrong">❌ "I'm looking forward to see you."</span></p>
+      <p><span class="correct">✅ "I'm looking forward to seeing you."</span></p>
+      <p class="explanation">💡 The "to" in "look forward to" is a <strong>preposition</strong>, not the infinitive marker. After prepositions, use gerund (-ing)!</p>
+    </div>
+    <div class="mistake">
+      <p><span class="wrong">❌ "He suggested to go hiking."</span></p>
+      <p><span class="correct">✅ "He suggested going hiking."</span></p>
+      <p class="explanation">💡 "Suggest" is <strong>always</strong> followed by gerund. Never infinitive.</p>
+    </div>
+    <div class="mistake">
+      <p><span class="wrong">❌ "I stopped to rest for an hour." (if you mean the resting stopped)</span></p>
+      <p><span class="correct">✅ "I stopped resting for an hour."</span></p>
+      <p class="explanation">💡 "Stop + to + verb" = "stop in order to..." (purpose). "Stop + gerund" = the action itself stopped. Be careful with meaning!</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 11: Quick Reference — Gerund Verbs -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=80')">
+  <div class="content">
+    <h2>Quick Reference — Gerund Verbs</h2>
+    <h3>Memory Trick: "I really miss finishing songs"</h3>
+    <div class="glow-box">
+      <p><strong>I</strong>magine, <strong>R</strong>isk, <strong>E</strong>njoy, <strong>A</strong>void, <strong>L</strong>ook forward to, <strong>L</strong>ove/like/hate (also OK with infinitive), <strong>Y</strong> (no...), <strong>M</strong>ind, <strong>I</strong>s worth, <strong>S</strong>uggest, <strong>S</strong>top, <strong>T</strong>olerate, <strong>O</strong> (no...), <strong>P</strong>ractice, <strong>U</strong>tter (no...), <strong>T</strong>ry (meaning change!), <strong>G</strong>ive up, <strong>K</strong>eep</p>
+    </div>
+    <h3>Full list of common gerund verbs:</h3>
+    <div class="glow-box purple">
+      <p>enjoy, finish, stop, quit, mind, miss, suggest, admit, deny, avoid, consider, imagine, keep (= continue), practice, risk, give up, put off, look forward to, be worth, can't stand, can't help, it's no use, there's no point in, keep on</p>
+    </div>
+    <h3>Verbs with prepositions (always gerund)</h3>
+    <p style="color:var(--text-dim);">succeed <span class="ger">in</span>, insist <span class="ger">on</span>, apologize <span class="ger">for</span>, look forward <span class="ger">to</span>, object <span class="ger">to</span>, be used <span class="ger">to</span>, devote oneself <span class="ger">to</span>, lead <span class="ger">to</span>, result <span class="ger">in</span></p>
+  </div>
+</section>
+
+<!-- SLIDE 12: Quick Reference — Infinitive Verbs -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1551632811-561732d1e306?w=1600&q=80')">
+  <div class="content">
+    <h2>Quick Reference — Infinitive Verbs</h2>
+    <h3>Memory Trick: "ACE WARP"</h3>
+    <div class="glow-box">
+      <p><strong>A</strong>fford, <strong>C</strong>laim, <strong>E</strong>xpect, <strong>W</strong>ant, <strong>A</strong>gree, <strong>R</strong>efuse, <strong>P</strong>lan</p>
+    </div>
+    <h3>Full list of common infinitive verbs:</h3>
+    <div class="glow-box purple">
+      <p>want, need, decide, hope, plan, promise, afford, agree, arrange, attempt, claim, demand, expect, fail, hesitate, learn, manage, offer, prepare, pretend, refuse, seem, threaten, wait, wish, would like, would love, would hate, would prefer, aim, bother, care, choose, consent, decline, determine, deserve, endeavor, guarantee, long, oblige, pray, profess, prove, resolve, strive, tend, undertake, volunteer, vow</p>
+    </div>
+    <h3>Verbs + object + infinitive</h3>
+    <p style="color:var(--text-dim);">advise, allow, ask, cause, encourage, expect, force, invite, order, permit, persuade, remind, tell, teach, warn, want, would like</p>
+    <p style="color:var(--text-dim); margin-top:.4em;">Example: "She <span class="inf">asked me to help</span>." / "He <span class="inf">told her to practice</span>."</p>
+  </div>
+</section>
+
+<!-- SLIDE 13: Exercise — Gerund or Infinitive? -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80')">
+  <div class="content wide">
+    <h2>Exercise: Gerund or Infinitive?</h2>
+    <div class="exercise">
+      <p class="question">Q1: "I enjoy _____ (listen) to music while I study."</p>
+      <ul class="options">
+        <li>A) listen</li>
+        <li>B) to listen</li>
+        <li>C) listening</li>
+        <li>D) listened</li>
+      </ul>
+      <div class="answer correct-answer">✅ C) listening — Correct! "Enjoy" is always followed by gerund.</div>
+      <div class="answer wrong-explain">❌ A) "listen" is base form — needs "to" or "-ing" after "enjoy".</div>
+      <div class="answer wrong-explain">❌ B) "to listen" — "enjoy" takes gerund only, never infinitive.</div>
+      <div class="answer wrong-explain">❌ D) "listened" is past tense — wrong form after "enjoy".</div>
+    </div>
+    <div class="exercise">
+      <p class="question">Q2: "She decided _____ (buy) a new guitar."</p>
+      <ul class="options">
+        <li>A) buying</li>
+        <li>B) to buy</li>
+        <li>C) buy</li>
+        <li>D) bought</li>
+      </ul>
+      <div class="answer correct-answer">✅ B) to buy — Correct! "Decide" is always followed by infinitive.</div>
+      <div class="answer wrong-explain">❌ A) "buying" — "decide" takes infinitive only, never gerund.</div>
+      <div class="answer wrong-explain">❌ C) "buy" is missing "to" — infinitive needs "to".</div>
+      <div class="answer wrong-explain">❌ D) "bought" is past tense — wrong form after "decide".</div>
+    </div>
+    <div class="exercise">
+      <p class="question">Q3: "We stopped _____ (rest) for an hour." (We paused in order to rest)</p>
+      <ul class="options">
+        <li>A) resting</li>
+        <li>B) to rest</li>
+        <li>C) rest</li>
+        <li>D) rested</li>
+      </ul>
+      <div class="answer correct-answer">✅ B) to rest — Correct! "Stop + to + verb" = purpose (we stopped in order to rest).</div>
+      <div class="answer wrong-explain">❌ A) "resting" means the resting itself stopped (he quit resting).</div>
+      <div class="answer wrong-explain">❌ C) "rest" is missing "to" or "-ing".</div>
+      <div class="answer wrong-explain">❌ D) "rested" is past tense — wrong form.</div>
+    </div>
+    <div class="exercise">
+      <p class="question">Q4: "He suggested _____ (go) to the concert."</p>
+      <ul class="options">
+        <li>A) to go</li>
+        <li>B) going</li>
+        <li>C) go</li>
+        <li>D) went</li>
+      </ul>
+      <div class="answer correct-answer">✅ B) going — Correct! "Suggest" is always followed by gerund.</div>
+      <div class="answer wrong-explain">❌ A) "to go" — "suggest" takes gerund only, never infinitive.</div>
+      <div class="answer wrong-explain">❌ C) "go" is missing "to" or "-ing".</div>
+      <div class="answer wrong-explain">❌ D) "went" is past tense — wrong form.</div>
+    </div>
+    <div class="exercise">
+      <p class="question">Q5: "I'm looking forward to _____ (see) you at the festival."</p>
+      <ul class="options">
+        <li>A) see</li>
+        <li>B) to see</li>
+        <li>C) seeing</li>
+        <li>D) saw</li>
+      </ul>
+      <div class="answer correct-answer">✅ C) seeing — Correct! "To" in "look forward to" is a preposition, so it takes gerund.</div>
+      <div class="answer wrong-explain">❌ A) "see" — after preposition "to", need gerund.</div>
+      <div class="answer wrong-explain">❌ B) "to see" — the "to" in "look forward to" is NOT the infinitive marker. It's a preposition!</div>
+      <div class="answer wrong-explain">❌ D) "saw" is past tense — wrong form.</div>
+    </div>
+    <div class="exercise">
+      <p class="question">Q6: "They want _____ (climb) the mountain before sunrise."</p>
+      <ul class="options">
+        <li>A) climbing</li>
+        <li>B) to climb</li>
+        <li>C) climb</li>
+        <li>D) climbed</li>
+      </ul>
+      <div class="answer correct-answer">✅ B) to climb — Correct! "Want" is always followed by infinitive.</div>
+      <div class="answer wrong-explain">❌ A) "climbing" — "want" takes infinitive only, never gerund.</div>
+      <div class="answer wrong-explain">❌ C) "climb" is missing "to" — infinitive needs "to".</div>
+      <div class="answer wrong-explain">❌ D) "climbed" is past tense — wrong form.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 14: Exercise — Meaning Change -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=1600&q=80')">
+  <div class="content wide">
+    <h2>Exercise — Meaning Change</h2>
+    <div class="exercise">
+      <p class="question">Q1: "I remember _____ (lock) the door before I left." (I have a memory of doing it)</p>
+      <ul class="options">
+        <li>A) locking</li>
+        <li>B) to lock</li>
+      </ul>
+      <div class="answer correct-answer">✅ A) locking — Correct! "Remember + gerund" = memory of a past action.</div>
+      <div class="answer wrong-explain">❌ B) "to lock" means "I didn't forget to lock it" (future obligation), not a memory.</div>
+    </div>
+    <div class="exercise">
+      <p class="question">Q2: "Please remember _____ (lock) the door when you leave." (Don't forget!)</p>
+      <ul class="options">
+        <li>A) locking</li>
+        <li>B) to lock</li>
+      </ul>
+      <div class="answer correct-answer">✅ B) to lock — Correct! "Remember + infinitive" = don't forget to do it (future obligation).</div>
+      <div class="answer wrong-explain">❌ A) "locking" would mean you have a memory of locking it (past action), not a reminder.</div>
+    </div>
+    <div class="exercise">
+      <p class="question">Q3: "He stopped _____ (smoke) because of his health." (He quit)</p>
+      <ul class="options">
+        <li>A) smoking</li>
+        <li>B) to smoke</li>
+      </ul>
+      <div class="answer correct-answer">✅ A) smoking — Correct! "Stop + gerund" = the habit/action stopped.</div>
+      <div class="answer wrong-explain">❌ B) "to smoke" means he paused in order to smoke (purpose), which contradicts "because of his health".</div>
+    </div>
+    <div class="exercise">
+      <p class="question">Q4: "She stopped _____ (drink) water because she was thirsty." (She paused to get water)</p>
+      <ul class="options">
+        <li>A) drinking</li>
+        <li>B) to drink</li>
+      </ul>
+      <div class="answer correct-answer">✅ B) to drink — Correct! "Stop + infinitive" = purpose (she stopped in order to drink).</div>
+      <div class="answer wrong-explain">❌ A) "drinking" means she quit drinking water, which doesn't make sense with "because she was thirsty".</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 15: Special Cases & Tips -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1600&q=80')">
+  <div class="content">
+    <h2>Special Cases & Tips</h2>
+    <div class="meaning-change">
+      <p><strong>GO ON</strong></p>
+      <p><span class="label-ger">Gerund:</span> "She went on <span class="ger">playing</span> for hours." = she continued playing</p>
+      <p><span class="label-inf">Infinitive:</span> "She went on <span class="inf">to play</span> another song." = she then played (next action)</p>
+    </div>
+    <div class="meaning-change">
+      <p><strong>BE USED TO vs USED TO</strong></p>
+      <p>"I'm used to <span class="ger">waking</span> up early." = it's normal for me now (preposition "to" → gerund)</p>
+      <p>"I used to <span class="inf">wake</span> up early." = I did in the past but not anymore (infinitive)</p>
+    </div>
+    <div class="meaning-change">
+      <p><strong>HAVE TROUBLE / DIFFICULTY</strong></p>
+      <p>"I have trouble <span class="ger">sleeping</span>." / "She had difficulty <span class="ger">finding</span> the note." (implied preposition "in" → gerund)</p>
+    </div>
+    <div class="meaning-change">
+      <p><strong>WOULD RATHER / HAD BETTER</strong></p>
+      <p>"I'd rather <span class="inf">go</span> hiking than stay home." (bare infinitive — no "to")</p>
+      <p>"You'd better <span class="inf">practice</span> more." (bare infinitive — no "to")</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 16: Final Summary -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-15157056963-95cad62945b6?w=1600&q=80')">
+  <div class="content wide">
+    <h2>Final Summary</h2>
+    <h3>Quick Decision Tree</h3>
+    <div class="glow-box">
+      <p><strong>1.</strong> After a <strong>preposition</strong>? → <span class="ger">GERUND</span></p>
+      <p><strong>2.</strong> After <strong>enjoy/finish/stop/mind/suggest/avoid/consider/keep/practice/give up/look forward to</strong>? → <span class="ger">GERUND</span></p>
+      <p><strong>3.</strong> After <strong>want/need/decide/hope/plan/promise/afford/learn/manage/offer/refuse/seem</strong>? → <span class="inf">INFINITIVE</span></p>
+      <p><strong>4.</strong> After <strong>start/begin/continue/like/love/hate/prefer</strong>? → <span class="green">BOTH</span> (same meaning)</p>
+      <p><strong>5.</strong> After <strong>stop/remember/forget/try/regret/go on</strong>? → <span class="purple">BOTH</span> (meaning changes!)</p>
+    </div>
+    <h3>Golden Rules</h3>
+    <div class="glow-box purple">
+      <p>🎯 <span class="ger">Gerund</span> = focuses on the <strong>experience / action itself</strong></p>
+      <p>🎯 <span class="inf">Infinitive</span> = focuses on the <strong>purpose / intention / future</strong></p>
+      <p>🎯 When in doubt, read it aloud — your ear often knows!</p>
+    </div>
+    <h3>Mnemonic</h3>
+    <p style="text-align:center; font-size:1.1rem; color:var(--gold); font-weight:600;">"Enjoy finishing, want to decide, start both, stop changes."</p>
+    <table style="margin-top:1.2em;">
+      <thead>
+        <tr><th></th><th>Gerund (-ing)</th><th>Infinitive (to + base)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Focus</strong></td><td>The experience</td><td>The purpose</td></tr>
+        <tr><td><strong>Feeling</strong></td><td>Real/happening</td><td>Potential/future</td></tr>
+        <tr><td><strong>Common verbs</strong></td><td>enjoy, finish, avoid, suggest, keep, mind</td><td>want, decide, plan, hope, learn, promise</td></tr>
+        <tr><td><strong>After prep.</strong></td><td>✅ Always</td><td>❌ Never</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Navigation -->
+<div class="nav">
+  <button id="prevBtn" aria-label="Previous slide">◀ Prev</button>
+  <span class="slide-counter" id="slideCounter">1 / 16</span>
+  <button id="nextBtn" aria-label="Next slide">Next ▶</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+let current = 0;
+
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const slideCounter = document.getElementById('slideCounter');
+const progressBar = document.getElementById('progressBar');
+
+function update() {
+  slides.forEach((s, i) => s.classList.toggle('active', i === current));
+  slideCounter.textContent = `${current + 1} / ${slides.length}`;
+  progressBar.style.width = `${((current + 1) / slides.length) * 100}%`;
+}
+
+let audioCtx = null;
+let reverbNode = null;
+
+function ensureAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const rate = audioCtx.sampleRate;
+    const length = rate * 1.2;
+    const impulse = audioCtx.createBuffer(2, length, rate);
+    for (let ch = 0; ch < 2; ch++) {
+      const data = impulse.getChannelData(ch);
+      for (let i = 0; i < length; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2.5);
+      }
+    }
+    reverbNode = audioCtx.createConvolver();
+    reverbNode.buffer = impulse;
+    const reverbGain = audioCtx.createGain();
+    reverbGain.gain.value = 0.4;
+    reverbNode.connect(reverbGain);
+    reverbGain.connect(audioCtx.destination);
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playSwish(direction) {
+  ensureAudio();
+  const now = audioCtx.currentTime;
+
+  const bufferSize = Math.floor(audioCtx.sampleRate * 0.18);
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    const env = Math.sin((i / bufferSize) * Math.PI);
+    data[i] = (Math.random() * 2 - 1) * env;
+  }
+
+  const src = audioCtx.createBufferSource();
+  src.buffer = buffer;
+
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.Q.value = 8;
+  if (direction === 'forward') {
+    filter.frequency.setValueAtTime(800, now);
+    filter.frequency.exponentialRampToValueAtTime(4000, now + 0.15);
+  } else {
+    filter.frequency.setValueAtTime(4000, now);
+    filter.frequency.exponentialRampToValueAtTime(800, now + 0.15);
+  }
+
+  const gain = audioCtx.createGain();
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(0.12, now + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+  const dryGain = audioCtx.createGain();
+  dryGain.gain.value = 0.6;
+  const wetGain = audioCtx.createGain();
+  wetGain.gain.value = 0.4;
+
+  src.connect(filter);
+  filter.connect(gain);
+  gain.connect(dryGain);
+  gain.connect(wetGain);
+  dryGain.connect(audioCtx.destination);
+  wetGain.connect(reverbNode);
+
+  src.start(now);
+  src.stop(now + 0.2);
+
+  const osc = audioCtx.createOscillator();
+  osc.type = 'sine';
+  const oscGain = audioCtx.createGain();
+  if (direction === 'forward') {
+    osc.frequency.setValueAtTime(600, now);
+    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+  } else {
+    osc.frequency.setValueAtTime(1200, now);
+    osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+  }
+  oscGain.gain.setValueAtTime(0, now);
+  oscGain.gain.linearRampToValueAtTime(0.04, now + 0.02);
+  oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+  osc.connect(oscGain);
+  oscGain.connect(audioCtx.destination);
+  osc.start(now);
+  osc.stop(now + 0.15);
+}
+
+prevBtn.addEventListener('click', () => {
+  if (current > 0) { current--; playSwish('back'); } update();
+});
+nextBtn.addEventListener('click', () => {
+  if (current < slides.length - 1) { current++; playSwish('forward'); } update();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    if (current < slides.length - 1) { current++; playSwish('forward'); } update();
+  }
+  if (e.key === 'ArrowLeft') {
+    if (current > 0) { current--; playSwish('back'); } update();
+  }
+});
+
+update();
+</script>
+</body>
+</html>

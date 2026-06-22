@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conditionals — If Clauses</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #060a14;
+  --cyan: #22d3ee;
+  --purple: #a78bfa;
+  --gold: #fbbf24;
+  --green: #34d399;
+  --red: #f87171;
+  --text: #e2e8f0;
+  --text-dim: #b0bec5;
+  --glow-cyan: 0 0 25px rgba(34,211,238,.25), 0 0 60px rgba(34,211,238,.1);
+  --glow-purple: 0 0 25px rgba(167,139,250,.25), 0 0 60px rgba(167,139,250,.1);
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(.95rem, 1.4vw, 1.2rem);
+  line-height: 1.75;
+}
+
+.slide {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+  display: flex;
+  align-items: center;
+  padding: 2vh 5vw;
+}
+
+.slide.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    rgba(6,10,20,.78) 0%,
+    rgba(6,10,20,.45) 45%,
+    rgba(6,10,20,.18) 100%);
+  z-index: 0;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  max-width: 80vw;
+  background: rgba(6,10,20,.72);
+  border: 1px solid rgba(34,211,238,.4);
+  box-shadow: var(--glow-cyan);
+  border-radius: 16px;
+  padding: 2.5em 3em;
+  backdrop-filter: blur(8px);
+}
+
+.content.wide { max-width: 88vw; }
+.content.narrow { max-width: 68vw; }
+
+/* Progress bar */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  z-index: 200;
+  transition: width .35s ease;
+}
+
+/* Navigation */
+.nav {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 1.2em;
+  z-index: 200;
+  background: rgba(6,10,20,.85);
+  border: 1px solid rgba(34,211,238,.3);
+  border-radius: 40px;
+  padding: 10px 24px;
+  backdrop-filter: blur(6px);
+}
+
+.nav button {
+  background: none;
+  border: 1px solid rgba(34,211,238,.5);
+  color: var(--cyan);
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  padding: 8px 18px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all .2s;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.nav button:hover {
+  background: rgba(34,211,238,.15);
+  box-shadow: 0 0 15px rgba(34,211,238,.3);
+}
+
+.nav .slide-counter {
+  font-family: 'Inter', monospace;
+  color: var(--text-dim);
+  font-size: .85rem;
+  min-width: 60px;
+  text-align: center;
+}
+
+/* Typography */
+h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2rem, 4.5vw, 3.8rem);
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 0 20px rgba(34,211,238,.4));
+  margin-bottom: .5em;
+  line-height: 1.15;
+}
+
+h2 {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: .7em;
+  text-shadow: 0 0 12px rgba(34,211,238,.3);
+}
+
+h3 {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  color: var(--purple);
+  margin: 1em 0 .5em;
+}
+
+p, li {
+  margin-bottom: .5em;
+}
+
+.subtitle {
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  color: var(--text-dim);
+  margin-top: -.3em;
+}
+
+/* Tags */
+.tag {
+  display: inline-block;
+  font-size: .78rem;
+  padding: 2px 10px;
+  border-radius: 12px;
+  margin-right: 6px;
+  font-weight: 600;
+}
+
+.tag-cyan { background: rgba(34,211,238,.15); color: var(--cyan); border: 1px solid rgba(34,211,238,.4); }
+.tag-purple { background: rgba(167,139,250,.15); color: var(--purple); border: 1px solid rgba(167,139,250,.4); }
+.tag-gold { background: rgba(251,191,36,.15); color: var(--gold); border: 1px solid rgba(251,191,36,.4); }
+.tag-green { background: rgba(52,211,153,.15); color: var(--green); border: 1px solid rgba(52,211,153,.4); }
+.tag-red { background: rgba(248,113,113,.15); color: var(--red); border: 1px solid rgba(248,113,113,.4); }
+
+/* Glow boxes */
+.glow-box {
+  background: linear-gradient(135deg, rgba(34,211,238,.08), rgba(167,139,250,.08));
+  border: 1px solid rgba(34,211,238,.4);
+  box-shadow: 0 0 20px rgba(34,211,238,.15);
+  border-radius: 12px;
+  padding: 1em 1.4em;
+  margin: .8em 0;
+}
+
+.glow-box.purple {
+  border-color: rgba(167,139,250,.4);
+  box-shadow: 0 0 20px rgba(167,139,250,.15);
+  background: linear-gradient(135deg, rgba(167,139,250,.08), rgba(34,211,238,.05));
+}
+
+.gold {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.cyan {
+  color: var(--cyan);
+  font-weight: 600;
+}
+
+.green {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.red {
+  color: var(--red);
+  font-weight: 600;
+}
+
+.purple {
+  color: var(--purple);
+  font-weight: 600;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+  font-size: clamp(.85rem, 1.2vw, 1rem);
+}
+
+th {
+  background: rgba(34,211,238,.12);
+  color: var(--cyan);
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+  padding: 10px 14px;
+  text-align: left;
+  border: 1px solid rgba(34,211,238,.3);
+  text-transform: uppercase;
+  font-size: .85rem;
+  letter-spacing: .03em;
+}
+
+td {
+  padding: 9px 14px;
+  border: 1px solid rgba(34,211,238,.15);
+  vertical-align: top;
+}
+
+tr:nth-child(even) td {
+  background: rgba(34,211,238,.04);
+}
+
+/* Mistake / correction blocks */
+.mistake {
+  background: rgba(248,113,113,.08);
+  border: 1px solid rgba(248,113,113,.35);
+  border-radius: 10px;
+  padding: .8em 1.2em;
+  margin: .7em 0;
+}
+
+.mistake .wrong {
+  color: var(--red);
+  font-weight: 600;
+  text-decoration: line-through;
+  text-decoration-color: rgba(248,113,113,.6);
+}
+
+.mistake .correct {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.mistake .explanation {
+  color: var(--text-dim);
+  font-size: .92rem;
+  margin-top: .4em;
+  padding-left: .5em;
+  border-left: 2px solid rgba(248,113,113,.3);
+}
+
+/* Exercise blocks */
+.exercise {
+  background: linear-gradient(135deg, rgba(251,191,36,.06), rgba(34,211,238,.06));
+  border: 1px solid rgba(251,191,36,.35);
+  border-radius: 12px;
+  padding: 1em 1.4em;
+  margin: .8em 0;
+}
+
+.exercise .question {
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: .5em;
+}
+
+.exercise .options {
+  list-style: none;
+  padding: 0;
+  margin: .5em 0;
+}
+
+.exercise .options li {
+  padding: 4px 0 4px 1.2em;
+  position: relative;
+}
+
+.exercise .options li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--text-dim);
+}
+
+.exercise .answer {
+  margin-top: .6em;
+  padding: .5em .8em;
+  border-radius: 8px;
+  font-size: .93rem;
+}
+
+.exercise .answer.correct-answer {
+  background: rgba(52,211,153,.1);
+  border: 1px solid rgba(52,211,153,.3);
+  color: var(--green);
+}
+
+.exercise .answer.wrong-explain {
+  background: rgba(248,113,113,.06);
+  border: 1px solid rgba(248,113,113,.2);
+  color: var(--text-dim);
+  margin-top: .3em;
+}
+
+/* Highlight in examples */
+.if-part { color: var(--cyan); font-weight: 600; }
+.result-part { color: var(--gold); font-weight: 600; }
+.wrong-part { color: var(--red); text-decoration: line-through; text-decoration-color: rgba(248,113,113,.6); }
+.fix-part { color: var(--green); font-weight: 600; }
+
+/* Start prompt */
+.start-prompt {
+  color: var(--text-dim);
+  font-size: .9rem;
+  margin-top: 1em;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: .6; }
+  50% { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .content { max-width: 92vw; padding: 1.5em 1.8em; }
+  .content.wide { max-width: 95vw; }
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.3rem; }
+  .nav { bottom: 12px; padding: 8px 16px; gap: .6em; }
+  .nav button { padding: 6px 12px; font-size: .85rem; }
+  table { font-size: .8rem; }
+  th, td { padding: 6px 8px; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- SLIDE 1: Title -->
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80')">
+  <div class="content narrow" style="text-align:center;">
+    <h1>CONDITIONALS</h1>
+    <p class="subtitle">First, Second & Third Conditional — If Clauses</p>
+    <p class="start-prompt">Press → or Space to start</p>
+  </div>
+</section>
+
+<!-- SLIDE 2: What is a Conditional? -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-15157056963-95cad62945b6?w=1600&q=80')">
+  <div class="content">
+    <h2>What is a Conditional?</h2>
+    <p>A <span class="cyan">conditional sentence</span> describes a <strong>condition</strong> (if something happens) and a <span class="gold">result</span> (then something else happens).</p>
+    <div class="glow-box">
+      <p><strong>Two parts:</strong></p>
+      <p><span class="cyan">IF-clause</span> = the condition (the "if" part)</p>
+      <p><span class="gold">MAIN clause</span> = the result (the "then" part)</p>
+      <p style="margin-top:.8em;">Example: <span class="if-part">If it rains</span>, <span class="result-part">I will stay home</span>.</p>
+    </div>
+    <p>There are 4 types. We will learn the 3 most important ones!</p>
+  </div>
+</section>
+
+<!-- SLIDE 3: Overview -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80')">
+  <div class="content wide">
+    <h2>The 4 Types — Overview</h2>
+    <table>
+      <thead>
+        <tr><th>Type</th><th>IF-clause</th><th>MAIN clause</th><th>Use</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="green">0th</span></td><td>present</td><td>present</td><td>Always true (facts)</td></tr>
+        <tr><td><span class="cyan">1st</span></td><td>present</td><td>will + base</td><td>Real/possible future</td></tr>
+        <tr><td><span class="purple">2nd</span></td><td>past simple</td><td>would + base</td><td>Unreal present/future</td></tr>
+        <tr><td><span class="gold">3rd</span></td><td>past perfect</td><td>would have + pp</td><td>Unreal past</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:1em; color:var(--text-dim);">Let's look at each one in detail →</p>
+  </div>
+</section>
+
+<!-- SLIDE 4: 1st Conditional Form -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1600&q=80')">
+  <div class="content">
+    <h2>1st Conditional — Form</h2>
+    <div class="glow-box">
+      <p><strong>Structure:</strong></p>
+      <p><span class="cyan">If + present simple</span>, <span class="gold">will + base verb</span></p>
+      <p style="margin-top:.6em;">OR</p>
+      <p><span class="gold">Will + base verb</span> + <span class="cyan">if + present simple</span></p>
+    </div>
+    <h3>Comma Rule</h3>
+    <p>✅ <span class="if-part">If it rains</span>, <span class="result-part">I will stay home</span>. <span class="tag tag-cyan">comma</span></p>
+    <p>✅ <span class="result-part">I will stay home</span> <span class="if-part">if it rains</span>. <span class="tag tag-green">no comma</span></p>
+    <h3>Other words instead of "will"</h3>
+    <p>You can also use: <span class="cyan">can</span>, <span class="purple">may</span>, <span class="gold">might</span>, <span class="green">should</span>, <span class="red">must</span></p>
+    <p style="color:var(--text-dim);">Example: "If you practice, you <span class="gold">might</span> improve quickly."</p>
+  </div>
+</section>
+
+<!-- SLIDE 5: 1st Conditional Use -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=80')">
+  <div class="content">
+    <h2>1st Conditional — When Do We Use It?</h2>
+    <p>For <span class="cyan">real or possible situations</span> in the future — things that might actually happen.</p>
+    <div class="glow-box">
+      <p><strong>Uses:</strong></p>
+      <p>• <span class="gold">Promises</span>: "If you come to my concert, I <span class="cyan">will give</span> you a free T-shirt."</p>
+      <p>• <span class="green">Warnings</span>: "If you don't wear sunscreen, you <span class="red">will get</span> burned."</p>
+      <p>• <span class="purple">Offers</span>: "If you need help, I <span class="cyan">can carry</span> your guitar."</p>
+    </div>
+    <h3>Key idea</h3>
+    <p>The condition is <strong>possible</strong>. It's not a dream — it could really happen.</p>
+    <p style="color:var(--text-dim); margin-top:.6em;">"If the concert starts at 8, we <span class="gold">will arrive</span> early." → The concert really starts at 8. This is real.</p>
+  </div>
+</section>
+
+<!-- SLIDE 6: 1st Conditional Examples -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1551632811-561732d1e306?w=1600&q=80')">
+  <div class="content">
+    <h2>1st Conditional — Examples</h2>
+    <div class="glow-box">
+      <p>🎵 <span class="if-part">If I save enough money</span>, <span class="result-part">I will buy tickets to the Salzburg Festival</span>.</p>
+      <p>🏔️ <span class="if-part">If we hike the Eagle's Walk</span>, <span class="result-part">we will see amazing views</span>.</p>
+      <p>🎸 <span class="if-part">If she practices daily</span>, <span class="result-part">she will become a great musician</span>.</p>
+      <p>🌧️ <span class="if-part">If it stops raining</span>, <span class="result-part">we will go hiking tomorrow</span>.</p>
+    </div>
+    <p style="color:var(--text-dim);">Notice: IF-clause = <span class="cyan">present tense</span>, MAIN clause = <span class="gold">will + base verb</span></p>
+  </div>
+</section>
+
+<!-- SLIDE 7: 1st Conditional Common Mistakes -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=1600&q=80')">
+  <div class="content">
+    <h2>1st Conditional — Common Mistakes</h2>
+    <div class="mistake">
+      <p><span class="wrong">❌ "If it will rain, I will stay home."</span></p>
+      <p><span class="correct">✅ "If it rains, I will stay home."</span></p>
+      <p class="explanation">💡 After "if" we use <strong>present simple</strong>, NOT "will" — even though we're talking about the future. The "if" clause is always present tense in the 1st conditional.</p>
+    </div>
+    <div class="mistake">
+      <p><span class="wrong">❌ "I will buy a guitar if I will have enough money."</span></p>
+      <p><span class="correct">✅ "I will buy a guitar if I have enough money."</span></p>
+      <p class="explanation">💡 Same rule — the "if" clause uses present tense. "Will have" in the if-clause is always wrong.</p>
+    </div>
+    <div class="mistake">
+      <p><span class="wrong">❌ "If you will practice, you improve."</span></p>
+      <p><span class="correct">✅ "If you practice, you will improve."</span></p>
+      <p class="explanation">💡 The main clause needs "will" to show the future result. Without "will", it sounds like a general fact (0th conditional), not a future plan.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 8: 1st Conditional Exercise -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=80')">
+  <div class="content wide">
+    <h2>1st Conditional — Exercise</h2>
+    <div class="exercise">
+      <p class="question">Q1: "If she _____ to the concert, she _____ a great time."</p>
+      <ul class="options">
+        <li>A) will go / will have</li>
+        <li>B) goes / will have</li>
+        <li>C) goes / has</li>
+        <li>D) will go / has</li>
+      </ul>
+      <div class="answer correct-answer">✅ B) goes / will have — Correct! Present simple in IF-clause, will + base in main clause.</div>
+      <div class="answer wrong-explain">❌ A) "will go" after "if" is wrong — never use "will" in the IF-clause.</div>
+      <div class="answer wrong-explain">❌ C) "has" is present, but we need "will have" to show the future result.</div>
+      <div class="answer wrong-explain">❌ D) Two mistakes: "will go" after "if" is wrong, AND "has" doesn't show future result.</div>
+    </div>
+    <div class="exercise">
+      <p class="question">Q2: "We _____ hiking if it _____ raining."</p>
+      <ul class="options">
+        <li>A) go / will stop</li>
+        <li>B) will go / stops</li>
+        <li>C) will go / will stop</li>
+        <li>D) go / stops</li>
+      </ul>
+      <div class="answer correct-answer">✅ B) will go / stops — Correct! Main clause first (no comma), present simple after "if".</div>
+      <div class="answer wrong-explain">❌ A) "will stop" after "if" is wrong — never use "will" in the IF-clause.</div>
+      <div class="answer wrong-explain">❌ C) Two "will" clauses — the second one (after "if") is wrong.</div>
+      <div class="answer wrong-explain">❌ D) Missing "will" in the main clause — this sounds like a habit, not a future plan.</div>
+    </div>
+    <div class="exercise">
+      <p class="question">Q3: "If he _____ guitar lessons, he _____ better."</p>
+      <ul class="options">
+        <li>A) takes / will get</li>
+        <li>B) will take / gets</li>
+        <li>C) takes / gets</li>
+        <li>D) took / will get</li>
+      </ul>
+      <div class="answer correct-answer">✅ A) takes / will get — Correct! Present simple + will + base verb.</div>
+      <div class="answer wrong-explain">❌ B) "will take" after "if" is wrong.</div>
+      <div class="answer wrong-explain">❌ C) "gets" makes it a general fact (0th conditional), not a future possibility.</div>
+      <div class="answer wrong-explain">❌ D) "took" is past tense — that would be 2nd conditional, not 1st.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 9: 2nd Conditional Form -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80')">
+  <div class="content">
+    <h2>2nd Conditional — Form</h2>
+    <div class="glow-box purple">
+      <p><strong>Structure:</strong></p>
+      <p><span class="purple">If + past simple</span>, <span class="gold">would + base verb</span></p>
+    </div>
+    <h3>⚠️ Important!</h3>
+    <p>The past tense here does <strong>NOT</strong> mean past time! It means <span class="purple">"unreal / distant from reality"</span>.</p>
+    <div class="glow-box">
+      <p><span class="if-part">If I had a million euros</span>, <span class="result-part">I would buy a recording studio</span>.</p>
+      <p style="color:var(--text-dim); margin-top:.4em;">→ I don't have a million euros. This is imaginary / hypothetical.</p>
+    </div>
+    <h3>"Were" rule</h3>
+    <p>Use <span class="purple">"were"</span> for all subjects (I/he/she/it) in formal English:</p>
+    <p>✅ "If I <span class="purple">were</span> a rock star..." (not "was")</p>
+    <p style="color:var(--text-dim);">⚠️ "If I was..." is common in informal speech, but "were" is grammatically correct.</p>
+  </div>
+</section>
+
+<!-- SLIDE 10: 2nd Conditional Use -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1600&q=80')">
+  <div class="content">
+    <h2>2nd Conditional — When Do We Use It?</h2>
+    <p>For <span class="purple">unreal or unlikely situations</span> in the present or future — things that probably won't happen, but we like to imagine.</p>
+    <div class="glow-box purple">
+      <p><strong>Uses:</strong></p>
+      <p>• <span class="gold">Dreams / wishes</span>: "If I <span class="purple">had</span> more free time, I <span class="gold">would learn</span> the violin." (But I don't have free time)</p>
+      <p>• <span class="green">Advice (imaginary)</span>: "If I <span class="purple">were</span> you, I <span class="gold">would practice</span> more." (But I'm not you)</p>
+      <p>• <span class="cyan">Unlikely scenarios</span>: "If I <span class="purple">won</span> the lottery, I <span class="gold">would travel</span> the world." (Very unlikely)</p>
+    </div>
+    <h3>Key idea</h3>
+    <p>The condition is <strong>not real right now</strong>. We're imagining a different present.</p>
+  </div>
+</section>
+
+<!-- SLIDE 11: 2nd Conditional Examples -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1551632811-561732d1e306?w=1600&q=80')">
+  <div class="content">
+    <h2>2nd Conditional — Examples</h2>
+    <div class="glow-box purple">
+      <p>🚁 <span class="if-part">If I had a helicopter</span>, <span class="result-part">I would fly over the Austrian Alps</span>.</p>
+      <p>🎤 <span class="if-part">If she were a famous singer</span>, <span class="result-part">she would perform at the Vienna State Opera</span>.</p>
+      <p>🏔️ <span class="if-part">If we lived closer to the mountains</span>, <span class="result-part">we would hike every weekend</span>.</p>
+      <p>🥁 <span class="if-part">If he played the drums</span>, <span class="result-part">he would join a band</span>.</p>
+    </div>
+    <p style="color:var(--text-dim);">Notice: IF-clause = <span class="purple">past tense</span>, MAIN clause = <span class="gold">would + base verb</span></p>
+    <p style="color:var(--text-dim);">But the meaning is <strong>present/future</strong>, not past!</p>
+  </div>
+</section>
+
+<!-- SLIDE 12: 2nd Conditional Common Mistakes -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=1600&q=80')">
+  <div class="content">
+    <h2>2nd Conditional — Common Mistakes</h2>
+    <div class="mistake">
+      <p><span class="wrong">❌ "If I would have more time, I would travel."</span></p>
+      <p><span class="correct">✅ "If I had more time, I would travel."</span></p>
+      <p class="explanation">💡 <strong>Never use "would" in the IF-clause.</strong> Only use "would" in the main clause. The IF-clause uses past simple (had).</p>
+    </div>
+    <div class="mistake">
+      <p><span class="wrong">❌ "If I was you, I would study more."</span></p>
+      <p><span class="correct">✅ "If I were you, I would study more."</span></p>
+      <p class="explanation">💡 In the 2nd conditional, use <strong>"were"</strong> for all subjects (formal). "Was" is common in informal speech but "were" is grammatically correct.</p>
+    </div>
+    <div class="mistake">
+      <p><span class="wrong">❌ "If she has more money, she would buy a guitar."</span></p>
+      <p><span class="correct">✅ "If she had more money, she would buy a guitar."</span></p>
+      <p class="explanation">💡 2nd conditional needs <strong>past simple</strong> in the IF-clause, not present. "Has" is present tense — that creates a mixed conditional (which is wrong here).</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 13: 2nd Conditional Exercise -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=80')">
+  <div class="content wide">
+    <h2>2nd Conditional — Exercise</h2>
+    <div class="exercise">
+      <p class="question">Q1: "If I _____ a famous musician, I _____ all over the world."</p>
+      <ul class="options">
+        <li>A) am / will tour</li>
+        <li>B) were / would tour</li>
+        <li>C) was / will tour</li>
+        <li>D) were / will tour</li>
+      </ul>
+      <div class="answer correct-answer">✅ B) were / would tour — Correct! Past tense (were) + would + base verb for unreal present.</div>
+      <div class="answer wrong-explain">❌ A) Present tense (am) + will = 1st conditional, but "a famous musician" suggests this is hypothetical/unreal.</div>
+      <div class="answer wrong-explain">❌ C) "was" is informal (should be "were"), AND "will" doesn't match the hypothetical meaning — need "would".</div>
+      <div class="answer wrong-explain">❌ D) "were" is correct, but "will" doesn't match the unreal meaning — need "would".</div>
+    </div>
+    <div class="exercise">
+      <p class="question">Q2: "If he _____ the mountains more often, he _____ happier."</p>
+      <ul class="options">
+        <li>A) climbs / will be</li>
+        <li>B) climbed / would be</li>
+        <li>C) climbed / would have been</li>
+        <li>D) will climb / will be</li>
+      </ul>
+      <div class="answer correct-answer">✅ B) climbed / would be — Correct! Past simple + would + base for unreal present.</div>
+      <div class="answer wrong-explain">❌ A) Present tense = 1st conditional (real possibility), but context suggests he doesn't climb much (unreal).</div>
+      <div class="answer wrong-explain">❌ C) "would have been" is 3rd conditional (past), but this is about present/general feeling.</div>
+      <div class="answer wrong-explain">❌ D) "will" in the IF-clause is always wrong.</div>
+    </div>
+    <div class="exercise">
+      <p class="question">Q3: "If we _____ more, we _____ better musicians."</p>
+      <ul class="options">
+        <li>A) practice / become</li>
+        <li>B) practiced / would become</li>
+        <li>C) practiced / became</li>
+        <li>D) will practice / become</li>
+      </ul>
+      <div class="answer correct-answer">✅ B) practiced / would become — Correct! Past simple + would + base for unreal present.</div>
+      <div class="answer wrong-explain">❌ A) Present tense = 0th conditional (general fact), not hypothetical.</div>
+      <div class="answer wrong-explain">❌ C) "became" is past, not "would + verb" — this breaks the 2nd conditional structure.</div>
+      <div class="answer wrong-explain">❌ D) "will" in the IF-clause is always wrong.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 14: 3rd Conditional Form -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80')">
+  <div class="content">
+    <h2>3rd Conditional — Form</h2>
+    <div class="glow-box">
+      <p><strong>Structure:</strong></p>
+      <p><span class="purple">If + past perfect (had + past participle)</span>, <span class="gold">would have + past participle</span></p>
+    </div>
+    <h3>Meaning</h3>
+    <p>Talking about an <span class="red">unreal past</span> — imagining a different outcome for something that <strong>already happened</strong>.</p>
+    <div class="glow-box purple">
+      <p><span class="if-part">If I had studied harder</span>, <span class="result-part">I would have passed the exam</span>.</p>
+      <p style="color:var(--text-dim); margin-top:.4em;">→ I didn't study hard. I failed. I'm imagining a different past.</p>
+    </div>
+    <h3>Key rule</h3>
+    <p>You <strong>CANNOT change the past</strong>. The 3rd conditional is only for <em>imagining alternatives</em> — regrets, criticism, and "what if..."</p>
+  </div>
+</section>
+
+<!-- SLIDE 15: 3rd Conditional Use -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1600&q=80')">
+  <div class="content">
+    <h2>3rd Conditional — When Do We Use It?</h2>
+    <p>For <span class="gold">unreal situations in the past</span> — things that cannot be changed.</p>
+    <div class="glow-box">
+      <p><strong>Uses:</strong></p>
+      <p>• <span class="red">Regrets</span>: "If I <span class="purple">had woken</span> up earlier, I <span class="gold">would have caught</span> the train." (But I didn't — I missed it)</p>
+      <p>• <span class="cyan">Criticism</span>: "You <span class="gold">should have</span> practiced more." (You didn't)</p>
+      <p>• <span class="green">"What if..."</span>: "If I <span class="purple">had known</span> about the concert, I <span class="gold">would have gone</span>." (But I didn't know)</p>
+    </div>
+    <h3>Key idea</h3>
+    <p>The 3rd conditional is about <strong>the past that cannot be changed</strong>. We use it to imagine how things could have been different.</p>
+  </div>
+</section>
+
+<!-- SLIDE 16: 3rd Conditional Examples -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1551632811-561732d1e306?w=1600&q=80')">
+  <div class="content">
+    <h2>3rd Conditional — Examples</h2>
+    <div class="glow-box purple">
+      <p>🎸 <span class="if-part">If I had started guitar lessons at age 10</span>, <span class="result-part">I would have become a better player by now</span>.</p>
+      <p>🚂 <span class="if-part">If we had taken the earlier train</span>, <span class="result-part">we would have reached the summit before sunset</span>.</p>
+      <p>🎶 <span class="if-part">If she had listened to her teacher</span>, <span class="result-part">she would have improved faster</span>.</p>
+      <p>🌦️ <span class="if-part">If it hadn't rained</span>, <span class="result-part">we would have finished the hike</span>.</p>
+    </div>
+    <p style="color:var(--text-dim);">Notice: IF-clause = <span class="purple">had + past participle</span>, MAIN clause = <span class="gold">would have + past participle</span></p>
+  </div>
+</section>
+
+<!-- SLIDE 17: 3rd Conditional Common Mistakes -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=1600&q=80')">
+  <div class="content">
+    <h2>3rd Conditional — Common Mistakes</h2>
+    <div class="mistake">
+      <p><span class="wrong">❌ "If I would have went to the concert, I would have seen them."</span></p>
+      <p><span class="correct">✅ "If I had gone to the concert, I would have seen them."</span></p>
+      <p class="explanation">💡 <strong>Never use "would have" in the IF-clause.</strong> Use "had + past participle" (had gone). Also "went" is past simple — you need the past participle "gone".</p>
+    </div>
+    <div class="mistake">
+      <p><span class="wrong">❌ "If she has practiced more, she would have won."</span></p>
+      <p><span class="correct">✅ "If she had practiced more, she would have won."</span></p>
+      <p class="explanation">💡 "Has practiced" is <strong>present perfect</strong>. The 3rd conditional needs <strong>past perfect</strong> (had practiced) because we're talking about an unreal past.</p>
+    </div>
+    <div class="mistake">
+      <p><span class="wrong">❌ "If he studied harder, he would have passed."</span></p>
+      <p><span class="correct">✅ "If he had studied harder, he would have passed."</span></p>
+      <p class="explanation">💡 "Studied" is <strong>past simple</strong> (2nd conditional form). For past unreal situations, you need <strong>past perfect</strong> (had studied).</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 18: 3rd Conditional Exercise + Summary -->
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-15157056963-95cad62945b6?w=1600&q=80')">
+  <div class="content wide">
+    <h2>3rd Conditional — Exercise + Summary</h2>
+    <div class="exercise">
+      <p class="question">Q1: "If I _____ about the concert, I _____ tickets."</p>
+      <ul class="options">
+        <li>A) knew / would buy</li>
+        <li>B) had known / would have bought</li>
+        <li>C) had known / would buy</li>
+        <li>D) have known / would have bought</li>
+      </ul>
+      <div class="answer correct-answer">✅ B) had known / would have bought — Correct! Past perfect + would have + pp for unreal past.</div>
+      <div class="answer wrong-explain">❌ A) "knew / would buy" is 2nd conditional (present unreal), but the context suggests past regret.</div>
+      <div class="answer wrong-explain">❌ C) "had known" is correct, but "would buy" is 2nd conditional result — doesn't match the past context.</div>
+      <div class="answer wrong-explain">❌ D) "have known" is present perfect, not past perfect.</div>
+    </div>
+    <div class="exercise">
+      <p class="question">Q2: "If they _____ the trail map, they _____ lost."</p>
+      <ul class="options">
+        <li>A) brought / wouldn't get</li>
+        <li>B) had brought / wouldn't have gotten</li>
+        <li>C) had brought / wouldn't get</li>
+        <li>D) have brought / wouldn't have gotten</li>
+      </ul>
+      <div class="answer correct-answer">✅ B) had brought / wouldn't have gotten — Correct! Past perfect + would have + pp.</div>
+      <div class="answer wrong-explain">❌ A) 2nd conditional form, but context is past (they got lost).</div>
+      <div class="answer wrong-explain">❌ C) "wouldn't get" is present/future, doesn't match past context.</div>
+      <div class="answer wrong-explain">❌ D) "have brought" is present perfect, not past perfect.</div>
+    </div>
+    <div class="exercise">
+      <p class="question">Q3: "If she _____ the guitar competition, she _____ first place."</p>
+      <ul class="options">
+        <li>A) entered / would win</li>
+        <li>B) had entered / would have won</li>
+        <li>C) had entered / will have won</li>
+        <li>D) enters / will win</li>
+      </ul>
+      <div class="answer correct-answer">✅ B) had entered / would have won — Correct! Past perfect + would have + pp.</div>
+      <div class="answer wrong-explain">❌ A) 2nd conditional, but context is a past competition.</div>
+      <div class="answer wrong-explain">❌ C) "will have won" doesn't exist in standard conditional structures.</div>
+      <div class="answer wrong-explain">❌ D) 1st conditional (future), but context is past competition.</div>
+    </div>
+    <h3 style="margin-top:1.2em;">Final Summary</h3>
+    <table>
+      <thead>
+        <tr><th></th><th>IF-clause</th><th>MAIN clause</th><th>Time</th><th>Reality</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="cyan">1st</span></td><td>present simple</td><td>will + base</td><td>Future</td><td>Possible/real</td></tr>
+        <tr><td><span class="purple">2nd</span></td><td>past simple</td><td>would + base</td><td>Present/Future</td><td>Unreal/unlikely</td></tr>
+        <tr><td><span class="gold">3rd</span></td><td>past perfect</td><td>would have + pp</td><td>Past</td><td>Unreal/regret</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Navigation -->
+<div class="nav">
+  <button id="prevBtn" aria-label="Previous slide">◀ Prev</button>
+  <span class="slide-counter" id="slideCounter">1 / 18</span>
+  <button id="nextBtn" aria-label="Next slide">Next ▶</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+let current = 0;
+
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const slideCounter = document.getElementById('slideCounter');
+const progressBar = document.getElementById('progressBar');
+
+function update() {
+  slides.forEach((s, i) => s.classList.toggle('active', i === current));
+  slideCounter.textContent = `${current + 1} / ${slides.length}`;
+  progressBar.style.width = `${((current + 1) / slides.length) * 100}%`;
+}
+
+// Web Audio
+let audioCtx = null;
+let reverbNode = null;
+
+function ensureAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const rate = audioCtx.sampleRate;
+    const length = rate * 1.2;
+    const impulse = audioCtx.createBuffer(2, length, rate);
+    for (let ch = 0; ch < 2; ch++) {
+      const data = impulse.getChannelData(ch);
+      for (let i = 0; i < length; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2.5);
+      }
+    }
+    reverbNode = audioCtx.createConvolver();
+    reverbNode.buffer = impulse;
+    const reverbGain = audioCtx.createGain();
+    reverbGain.gain.value = 0.4;
+    reverbNode.connect(reverbGain);
+    reverbGain.connect(audioCtx.destination);
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playSwish(direction) {
+  ensureAudio();
+  const now = audioCtx.currentTime;
+
+  const bufferSize = Math.floor(audioCtx.sampleRate * 0.18);
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    const env = Math.sin((i / bufferSize) * Math.PI);
+    data[i] = (Math.random() * 2 - 1) * env;
+  }
+
+  const src = audioCtx.createBufferSource();
+  src.buffer = buffer;
+
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.Q.value = 8;
+  if (direction === 'forward') {
+    filter.frequency.setValueAtTime(800, now);
+    filter.frequency.exponentialRampToValueAtTime(4000, now + 0.15);
+  } else {
+    filter.frequency.setValueAtTime(4000, now);
+    filter.frequency.exponentialRampToValueAtTime(800, now + 0.15);
+  }
+
+  const gain = audioCtx.createGain();
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(0.12, now + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+  const dryGain = audioCtx.createGain();
+  dryGain.gain.value = 0.6;
+  const wetGain = audioCtx.createGain();
+  wetGain.gain.value = 0.4;
+
+  src.connect(filter);
+  filter.connect(gain);
+  gain.connect(dryGain);
+  gain.connect(wetGain);
+  dryGain.connect(audioCtx.destination);
+  wetGain.connect(reverbNode);
+
+  src.start(now);
+  src.stop(now + 0.2);
+
+  const osc = audioCtx.createOscillator();
+  osc.type = 'sine';
+  const oscGain = audioCtx.createGain();
+  if (direction === 'forward') {
+    osc.frequency.setValueAtTime(600, now);
+    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+  } else {
+    osc.frequency.setValueAtTime(1200, now);
+    osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+  }
+  oscGain.gain.setValueAtTime(0, now);
+  oscGain.gain.linearRampToValueAtTime(0.04, now + 0.02);
+  oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+  osc.connect(oscGain);
+  oscGain.connect(audioCtx.destination);
+  osc.start(now);
+  osc.stop(now + 0.15);
+}
+
+prevBtn.addEventListener('click', () => {
+  if (current > 0) { current--; playSwish('back'); } update();
+});
+nextBtn.addEventListener('click', () => {
+  if (current < slides.length - 1) { current++; playSwish('forward'); } update();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    if (current < slides.length - 1) { current++; playSwish('forward'); } update();
+  }
+  if (e.key === 'ArrowLeft') {
+    if (current > 0) { current--; playSwish('back'); } update();
+  }
+});
+
+update();
+</script>
+</body>
+</html>
