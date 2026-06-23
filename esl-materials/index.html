@@ -1,206 +1,655 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Sliding In — ESL Question Cards</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;510;590;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>William Thomason English — ESL Materials Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#08090a;--bg2:#0f1011;--bg3:#191a1b;--bg-card:rgba(255,255,255,0.02);--bg-card2:#141516;
-  --border:rgba(255,255,255,0.08);--border-subtle:rgba(255,255,255,0.05);--border-hover:rgba(255,255,255,0.12);
-  --text:#f7f8f8;--text-secondary:#d0d6e0;--text-muted:#8a8f98;--text-dim:#62666d;
-  --accent:#5e6ad2;--accent-hover:#7170ff;--accent-glow:rgba(94,106,210,0.25);--accent-bg:rgba(94,106,210,0.08);
-  --green:#10b981;--green-bg:rgba(16,185,129,0.08);
-  --font:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+:root {
+  --bg: #060a14;
+  --bg2: #0a0e1a;
+  --bg3: #111827;
+  --card: rgba(255,255,255,.03);
+  --card-hover: rgba(255,255,255,.06);
+  --border: rgba(255,255,255,.08);
+  --border-hover: rgba(34,211,238,.4);
+  --text: #e2e8f0;
+  --text-secondary: #b0bec5;
+  --text-dim: #6b7280;
+  --cyan: #22d3ee;
+  --purple: #a78bfa;
+  --gold: #fbbf24;
+  --green: #34d399;
+  --glow: 0 0 25px rgba(34,211,238,.15);
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html{font-size:16px;scroll-behavior:smooth}
-body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;transition:background .3s ease,color .3s ease;font-feature-settings:'cv01','ss03'}
-::selection{background:var(--accent);color:#fff}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
 
 /* ═══ NAV ═══ */
-.nav{position:sticky;top:0;z-index:50;background:rgba(8,9,10,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border-subtle);padding:0 32px;height:52px;display:flex;align-items:center;justify-content:space-between;transition:background .3s ease}
-.nav-logo{font-family:var(--mono);font-size:.85rem;font-weight:500;color:var(--text);letter-spacing:0.5px;text-decoration:none}
-.nav-logo span{color:var(--accent)}
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(6,10,20,.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: -.5px;
+}
+
+.nav-logo span { color: var(--cyan); }
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: .85rem;
+  font-weight: 500;
+  transition: color .2s;
+}
+
+.nav-links a:hover { color: var(--cyan); }
 
 /* ═══ HERO ═══ */
-.hero{padding:80px 32px 60px;text-align:center;max-width:720px;margin:0 auto}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:9999px;background:var(--accent-bg);border:1px solid var(--border-subtle);font-size:.65rem;font-weight:590;color:var(--accent);margin-bottom:20px;letter-spacing:1px;text-transform:uppercase;animation:fadeIn .6s ease}
-.hero h1{font-size:2.8rem;font-weight:510;line-height:1.05;letter-spacing:-1.5px;margin-bottom:12px;animation:slideUp .6s ease}
-.hero h1 .accent{color:var(--accent)}
-.hero p{font-size:1.05rem;color:var(--text-muted);line-height:1.7;max-width:520px;margin:0 auto;animation:slideUp .6s ease .1s both}
+.hero {
+  padding: 100px 32px 80px;
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto;
+}
 
-/* ═══ SITES GRID ═══ */
-.section{padding:60px 32px;max-width:1200px;margin:0 auto}
-.section-header{margin-bottom:40px}
-.section-header h2{font-size:1.5rem;font-weight:510;letter-spacing:-0.5px;margin-bottom:6px}
-.section-header p{color:var(--text-muted);font-size:.9rem}
-.section-num{font-family:var(--mono);font-size:.6rem;font-weight:510;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  background: rgba(34,211,238,.08);
+  border: 1px solid rgba(34,211,238,.25);
+  font-size: .7rem;
+  font-weight: 600;
+  color: var(--cyan);
+  margin-bottom: 24px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
 
-.sites-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
-.site-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;transition:all .2s cubic-bezier(.4,0,.2,1);text-decoration:none;color:inherit;display:block;overflow:hidden;position:relative;cursor:pointer}
-.site-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.5),0 0 0 1px var(--accent);filter:brightness(1.05)}
-.site-card:active{transform:translateY(-1px) scale(0.98);box-shadow:0 4px 16px rgba(0,0,0,0.3);transition-duration:.1s}
-.site-card-img{width:100%;height:180px;object-fit:cover;display:block;transition:transform .3s ease}
-.site-card:hover .site-card-img{transform:scale(1.05)}
-.site-card-body{padding:20px}
-.site-cat{font-family:var(--mono);font-size:.55rem;font-weight:510;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
-.site-card h3{font-size:1.1rem;font-weight:510;color:var(--text);margin-bottom:4px;letter-spacing:-0.2px}
-.site-card p{font-size:.85rem;color:var(--text-muted);line-height:1.5;margin-bottom:8px}
-.site-count{font-size:.7rem;color:var(--text-dim)}
+.hero h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 3.2rem;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
-/* ═══ HOW IT WORKS ═══ */
-.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.how-step{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;padding:24px;transition:all .2s}
-.how-step:hover{border-color:var(--border);background:rgba(255,255,255,0.03)}
-.how-step-num{font-family:var(--mono);font-size:1.5rem;font-weight:500;color:var(--accent);opacity:.3;margin-bottom:8px}
-.how-step h3{font-size:.95rem;font-weight:510;letter-spacing:-0.2px;margin-bottom:6px}
-.how-step p{font-size:.85rem;color:var(--text-muted);line-height:1.6}
+.hero p {
+  font-size: 1.1rem;
+  color: var(--text-dim);
+  line-height: 1.7;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ═══ SECTION ═══ */
+.section {
+  padding: 60px 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-header {
+  margin-bottom: 40px;
+}
+
+.section-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  font-weight: 600;
+  color: var(--cyan);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.section-header h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -.5px;
+  margin-bottom: 8px;
+}
+
+.section-header p {
+  color: var(--text-dim);
+  font-size: .9rem;
+}
+
+/* ═══ LEVEL CARDS ═══ */
+.levels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+.level-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  transition: all .3s cubic-bezier(.4,0,.2,1);
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.level-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-4px);
+  box-shadow: var(--glow);
+}
+
+.level-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  opacity: 0;
+  transition: opacity .3s;
+}
+
+.level-card:hover::before { opacity: 1; }
+
+.level-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 8px;
+  background: rgba(167,139,250,.12);
+  color: var(--purple);
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.level-card h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.level-card .subtitle {
+  color: var(--text-secondary);
+  font-size: .9rem;
+  margin-bottom: 16px;
+}
+
+.level-stats {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.level-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .78rem;
+  color: var(--text-dim);
+}
+
+.level-stat .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+.progress-bar-container {
+  margin-top: 16px;
+  height: 4px;
+  background: rgba(255,255,255,.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan), var(--green));
+  border-radius: 2px;
+  transition: width .5s ease;
+}
+
+.progress-text {
+  font-size: .7rem;
+  color: var(--text-dim);
+  margin-top: 6px;
+}
+
+/* ═══ PRODUCT SECTIONS ═══ */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.product-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all .25s cubic-bezier(.4,0,.2,1);
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.product-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--glow);
+}
+
+.product-card .product-icon {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
+.product-card h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.product-card p {
+  font-size: .8rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+/* ═══ BATCH LINKS ═══ */
+.batch-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.batch-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: rgba(34,211,238,.06);
+  border: 1px solid rgba(34,211,238,.2);
+  color: var(--cyan);
+  font-size: .8rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all .2s;
+}
+
+.batch-link:hover {
+  background: rgba(34,211,238,.12);
+  box-shadow: 0 0 10px rgba(34,211,238,.2);
+  transform: translateY(-1px);
+}
+
+.batch-link:active {
+  transform: translateY(0) scale(.97);
+}
+
+/* ═══ LANGUAGE SELECTOR ═══ */
+.lang-selector {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.lang-btn {
+  padding: 5px 12px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: .75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s;
+  text-decoration: none;
+}
+
+.lang-btn:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.lang-btn.active {
+  background: rgba(34,211,238,.1);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
 
 /* ═══ FOOTER ═══ */
-.footer{padding:24px 32px;text-align:center;font-size:.7rem;color:var(--text-dim);border-top:1px solid var(--border-subtle)}
+.footer {
+  padding: 32px;
+  text-align: center;
+  font-size: .75rem;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+}
 
-@media(max-width:768px){
-  .nav{padding:0 16px}
-  .hero h1{font-size:2.2rem}
-  .section,.hero{padding-left:16px;padding-right:16px}
-  .sites-grid{grid-template-columns:1fr}
-  .how-grid{grid-template-columns:1fr}
+/* ═══ DONATE ═══ */
+.donate-bar {
+  text-align: center;
+  padding: 16px 0 12px;
+  font-size: 11px;
+  color: rgba(255,255,255,.3);
+  letter-spacing: .5px;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+
+.donate-bar a {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 11px;
+  margin: 0 4px;
+  transition: all .2s;
+}
+
+.donate-bar a:hover { transform: translateY(-1px); }
+
+.donate-paypal { background: #0070ba; color: #fff; }
+.donate-wise { background: #9fe870; color: #163300; }
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 768px) {
+  .nav { padding: 0 16px; }
+  .nav-links { display: none; }
+  .hero { padding: 60px 16px 40px; }
+  .hero h1 { font-size: 2.2rem; }
+  .section { padding: 40px 16px; }
+  .levels-grid { grid-template-columns: 1fr; }
+  .products-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
 
 <div class="nav">
-  <a href="#" class="nav-logo">&#9670; <span>SLIDING</span> IN</a>
+  <a href="#" class="nav-logo">&#9670; <span>WTE</span> Materials</a>
+  <div class="nav-links">
+    <a href="#grammar">Grammar</a>
+    <a href="#speaking">Speaking</a>
+    <a href="#ielts">IELTS</a>
+    <a href="#business">Business</a>
+  </div>
 </div>
 
 <div class="hero">
-  <div class="hero-badge">&#9679; Interactive English Lessons</div>
-  <h1>Sliding <span class="accent">In</span></h1>
-  <p>Art-directed slide decks with real conversation questions. Each lesson is a visual experience designed to inspire open, confident speaking. No generic worksheets. Just well-crafted prompts that get people talking.</p>
+  <div class="hero-badge">&#9679; ESL Teaching Resources</div>
+  <h1>Slide Deck <span style="color:var(--cyan);">Materials</span></h1>
+  <p>Cyberpunk-themed grammar and speaking decks with interactive exercises, multi-language vocabulary support, and progress tracking. Built for B1 and B2 level students.</p>
 </div>
 
-<div class="section" id="sites">
+<!-- ═══ LEVELS ═══ -->
+<div class="section" id="levels">
   <div class="section-header">
-    <div class="section-num">01</div>
-    <h2>Lesson <span class="accent">Sites</span></h2>
-    <p>4 complete question card sets. Each site is a standalone resource you can open directly or share via link.</p>
+    <div class="section-num">Levels</div>
+    <h2>Choose Your <span style="color:var(--cyan);">Level</span></h2>
+    <p>Each level contains 4 product types: Grammar, Speaking, IELTS Practice, and Business English.</p>
   </div>
-  <div class="sites-grid">
-    <a class="site-card" href="Sliding In 1/index.html">
-      <img class="site-card-img" src="Sliding In Images/age_0.jpg" alt="Personal Life & Identity" onerror="this.style.display='none'">
-      <div class="site-card-body">
-        <div class="site-cat">Personal Life &amp; Identity</div>
-        <h3>Sliding In 1</h3>
-        <p>27 topics across 3 categories — age, appearance, childhood, dreams, family, happiness, personality, and more.</p>
-        <div class="site-count">3 categories &bull; 27 topics</div>
+  <div class="levels-grid">
+    <a class="level-card" href="b1/index.html">
+      <div class="level-badge">B1 — Intermediate</div>
+      <h3>Level 1</h3>
+      <p class="subtitle">Conditionals, passive voice, reported speech, relative clauses, gerunds & infinitives, and more.</p>
+      <div class="level-stats">
+        <div class="level-stat"><span class="dot"></span> 12 Grammar Decks</div>
+        <div class="level-stat"><span class="dot"></span> 12 Speaking Decks</div>
+        <div class="level-stat"><span class="dot"></span> 10 IELTS Practice</div>
+        <div class="level-stat"><span class="dot"></span> 12 Business Decks</div>
       </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" style="width: 0%"></div>
+      </div>
+      <div class="progress-text">0 / 46 decks completed</div>
     </a>
-    <a class="site-card" href="Sliding In 2/index.html">
-      <img class="site-card-img" src="Sliding In Images/education_0.jpg" alt="Education & Learning" onerror="this.style.display='none'">
-      <div class="site-card-body">
-        <div class="site-cat">Education &amp; Learning</div>
-        <h3>Sliding In 2</h3>
-        <p>27 topics across 5 categories — books, learning, intelligence, culture, science, technology, and the big questions about knowledge.</p>
-        <div class="site-count">5 categories &bull; 27 topics</div>
+    <a class="level-card" href="b2/index.html">
+      <div class="level-badge">B2 — Upper Intermediate</div>
+      <h3>Level 2</h3>
+      <p class="subtitle">Future continuous/perfect, mixed conditionals, inversion, noun clauses, participle clauses, and more.</p>
+      <div class="level-stats">
+        <div class="level-stat"><span class="dot"></span> 12 Grammar Decks</div>
+        <div class="level-stat"><span class="dot"></span> 12 Speaking Decks</div>
+        <div class="level-stat"><span class="dot"></span> 10 IELTS Practice</div>
+        <div class="level-stat"><span class="dot"></span> 12 Business Decks</div>
       </div>
-    </a>
-    <a class="site-card" href="Sliding In 3/index.html">
-      <img class="site-card-img" src="Sliding In Images/privacy_0.jpg" alt="Society & Culture" onerror="this.style.display='none'">
-      <div class="site-card-body">
-        <div class="site-cat">Society &amp; Culture</div>
-        <h3>Sliding In 3</h3>
-        <p>27 topics across 3 categories — privacy, politics, religion, social issues, law, prejudice, community, and the forces that shape society.</p>
-        <div class="site-count">3 categories &bull; 27 topics</div>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" style="width: 0%"></div>
       </div>
-    </a>
-    <a class="site-card" href="Sliding In 4/index.html">
-      <img class="site-card-img" src="Sliding In Images/airportsflying_0.jpg" alt="Entertainment & Leisure" onerror="this.style.display='none'">
-      <div class="site-card-body">
-        <div class="site-cat">Entertainment &amp; Leisure</div>
-        <h3>Sliding In 4</h3>
-        <p>26 topics across 3 categories — travel, airports, food, music, movies, sports, hobbies, and the things we do for fun.</p>
-        <div class="site-count">3 categories &bull; 26 topics</div>
-      </div>
+      <div class="progress-text">0 / 46 decks completed</div>
     </a>
   </div>
 </div>
 
-<div class="section" id="speaking-decks">
+<!-- ═══ GRAMMAR ═══ -->
+<div class="section" id="grammar">
   <div class="section-header">
-    <div class="section-num">02</div>
-    <h2>Speaking <span class="accent">Slide Decks</span></h2>
-    <p>Cyberpunk-themed grammar lessons with exercises, examples, and wrong-answer explanations. Designed for teenage learners who love music and the outdoors.</p>
+    <div class="section-num">01 — Grammar Examples</div>
+    <h2>Grammar <span style="color:var(--cyan);">Decks</span></h2>
+    <p>Rich contextual examples for each grammar point. Form → Use → Examples → Mistakes → Exercise with hidden answers.</p>
   </div>
-  <div class="sites-grid">
-    <a class="site-card" href="esl-materials/speaking-slide-decks/travel-english/index.html">
-      <div class="site-card-body">
-        <div class="site-cat">Travel Phrases</div>
-        <h3>Travel English</h3>
-        <p>Essential phrases for airports, restaurants, hotels, shops, and transport. Real-world dialogues with Italian translations.</p>
-        <div class="site-count">5 scenarios &bull; 40+ phrases</div>
-      </div>
+  <div class="products-grid">
+    <a class="product-card" href="b1/grammar/grammar-batch-1.html">
+      <div class="product-icon">📐</div>
+      <h4>B1 Grammar — Batch 1</h4>
+      <p>Conditionals, Passive Voice, Present Perfect Continuous, Past Perfect, Reported Speech, Relative Clauses</p>
     </a>
-    <a class="site-card" href="esl-materials/speaking-slide-decks/conditionals/index.html">
-      <div class="site-card-body">
-        <div class="site-cat">Grammar Lesson</div>
-        <h3>Conditionals (1st, 2nd, 3rd)</h3>
-        <p>Learn all three conditional structures with music and hiking examples. Exercises with full explanations of why wrong answers are wrong.</p>
-        <div class="site-count">18 slides &bull; 9 exercises</div>
-      </div>
+    <a class="product-card" href="b1/grammar/grammar-batch-2.html">
+      <div class="product-icon">📐</div>
+      <h4>B1 Grammar — Batch 2</h4>
+      <p>Gerund vs Infinitive, Modal Perfect, Wish/If Only, Would Rather/Had Better, Mixed Conditionals, B1 Review</p>
     </a>
-    <a class="site-card" href="esl-materials/speaking-slide-decks/gerund-infinitive/index.html">
-      <div class="site-card-body">
-        <div class="site-cat">Grammar Lesson</div>
-        <h3>Gerund vs Infinitive</h3>
-        <p>When to use -ing or to + verb. Covers gerund-only verbs, infinitive-only verbs, both with same meaning, and meaning-change verbs.</p>
-        <div class="site-count">16 slides &bull; 10 exercises</div>
-      </div>
+    <a class="product-card" href="b2/grammar/grammar-batch-1.html">
+      <div class="product-icon">📐</div>
+      <h4>B2 Grammar — Batch 1</h4>
+      <p>Future Continuous/Perfect, Mixed Conditionals Advanced, Causative Have/Get, Advanced Passive, Inversion, Noun Clauses</p>
+    </a>
+    <a class="product-card" href="b2/grammar/grammar-batch-2.html">
+      <div class="product-icon">📐</div>
+      <h4>B2 Grammar — Batch 2</h4>
+      <p>Participle Clauses, Advanced Relative Clauses, Determiners Advanced, Advanced Modals, Advanced Tense Usage, B2 Review</p>
     </a>
   </div>
 </div>
 
-<div class="section" id="how-it-works">
+<!-- ═══ SPEAKING ═══ -->
+<div class="section" id="speaking">
   <div class="section-header">
-    <div class="section-num">03</div>
-    <h2>How It <span class="accent">Works</span></h2>
-    <p>Simple. Visual. Effective.</p>
+    <div class="section-num">02 — General Speaking</div>
+    <h2>Speaking <span style="color:var(--purple);">Decks</span></h2>
+    <p>Open conversation practice with 2-4 questions per slide, visual cues, and clickable vocabulary with 6-language translations.</p>
   </div>
-  <div class="how-grid">
-    <div class="how-step">
-      <div class="how-step-num">01</div>
-      <h3>Choose a Site</h3>
-      <p>Each link opens a standalone lesson site. Bookmark or share the URL directly — no setup needed.</p>
-    </div>
-    <div class="how-step">
-      <div class="how-step-num">02</div>
-      <h3>Slide Through</h3>
-      <p>Each question is a visual slide. Use arrow keys or buttons to navigate. Press shuffle for a fresh order.</p>
-    </div>
-    <div class="how-step">
-      <div class="how-step-num">03</div>
-      <h3>Talk</h3>
-      <p>The questions spark genuine conversation. No right answers. Just open, confident speaking.</p>
-    </div>
+  <div class="products-grid">
+    <a class="product-card" href="b1/speaking/speaking-batch-1.html">
+      <div class="product-icon">💬</div>
+      <h4>B1 Speaking — Batch 1</h4>
+      <p>Music & Festivals, Hiking & Outdoors, Travel & Adventure, Food & Culture, Technology & Social Media, Environment & Nature</p>
+    </a>
+    <a class="product-card" href="b1/speaking/speaking-batch-2.html">
+      <div class="product-icon">💬</div>
+      <h4>B1 Speaking — Batch 2</h4>
+      <p>Health & Fitness, Work & Career, Education & Learning, Daily Life & Routine, Friends & Relationships, Future & Ambitions</p>
+    </a>
+    <a class="product-card" href="b2/speaking/speaking-batch-1.html">
+      <div class="product-icon">💬</div>
+      <h4>B2 Speaking — Batch 1</h4>
+      <p>Abstract topics, work presentations, cultural analysis, news discussion, argumentation, interview skills</p>
+    </a>
+    <a class="product-card" href="b2/speaking/speaking-batch-2.html">
+      <div class="product-icon">💬</div>
+      <h4>B2 Speaking — Batch 2</h4>
+      <p>Academic discussion, social issues, technology trends, environment advanced, media critique, IELTS speaking practice</p>
+    </a>
   </div>
 </div>
 
+<!-- ═══ IELTS ═══ -->
+<div class="section" id="ielts">
+  <div class="section-header">
+    <div class="section-num">03 — IELTS Practice</div>
+    <h2>IELTS <span style="color:var(--gold);">Practice</span></h2>
+  </div>
+  <div class="products-grid">
+    <a class="product-card" href="b1/ielts-practice/ielts-batch-1.html">
+      <div class="product-icon">🎯</div>
+      <h4>B1 IELTS Practice</h4>
+      <p>10 full IELTS Speaking simulations with hidden model answers. Part 1 = 3 sentences with reasons. Part 2 = cue cards. Part 3 = discussion.</p>
+    </a>
+    <a class="product-card" href="b2/ielts-practice/ielts-batch-1.html">
+      <div class="product-icon">🎯</div>
+      <h4>B2 IELTS Practice</h4>
+      <p>Advanced IELTS Speaking practice with abstract topics, balanced arguments, and extended responses.</p>
+    </a>
+  </div>
+</div>
+
+<!-- ═══ BUSINESS ═══ -->
+<div class="section" id="business">
+  <div class="section-header">
+    <div class="section-num">04 — Business Speaking</div>
+    <h2>Business <span style="color:var(--green);">English</span></h2>
+    <p>Professional English with theme-based color schemes, animated buttons, and modern UI.</p>
+  </div>
+  <div class="products-grid">
+    <a class="product-card" href="b1/business/business-batch-1.html">
+      <div class="product-icon">🏢</div>
+      <h4>B1 Business — Batch 1</h4>
+      <p>Introductions & Networking, Meetings & Discussions, Presentations & Pitches, Phone Calls & Video Conferences, Emails & Written Communication, Negotiations & Deal-Making</p>
+    </a>
+    <a class="product-card" href="b1/business/business-batch-2.html">
+      <div class="product-icon">🏢</div>
+      <h4>B1 Business — Batch 2</h4>
+      <p>Customer Service, Teamwork & Collaboration, Job Interviews, Career Development, Marketing & Branding, Project Management</p>
+    </a>
+    <a class="product-card" href="b2/business/business-batch-1.html">
+      <div class="product-icon">🏢</div>
+      <h4>B2 Business — Batch 1</h4>
+      <p>Advanced business communication, leadership, strategic presentations, cross-cultural communication.</p>
+    </a>
+    <a class="product-card" href="b2/business/business-batch-2.html">
+      <div class="product-icon">🏢</div>
+      <h4>B2 Business — Batch 2</h4>
+      <p>Executive communication, complex negotiations, stakeholder management, professional networking.</p>
+    </a>
+  </div>
+</div>
+
+<!-- ═══ LANGUAGES ═══ -->
+<div class="section" id="languages">
+  <div class="section-header">
+    <div class="section-num">L1 Vocabulary</div>
+    <h2>Multi-Language <span style="color:var(--cyan);">Support</span></h2>
+    <p>All speaking decks include clickable vocabulary with translations in 6 languages. Select your L1:</p>
+  </div>
+  <div class="lang-selector">
+    <a class="lang-btn active" href="#">English Only</a>
+    <a class="lang-btn" href="b1-de/index.html">🇩🇪 German L1</a>
+    <a class="lang-btn" href="b1-es/index.html">🇪🇸 Spanish L1</a>
+    <a class="lang-btn" href="b1-fr/index.html">🇫🇷 French L1</a>
+    <a class="lang-btn" href="b1-it/index.html">🇮🇹 Italian L1</a>
+    <a class="lang-btn" href="b1-pt/index.html">🇵🇹 Portuguese L1</a>
+    <a class="lang-btn" href="b1-ja/index.html">🇯🇵 Japanese L1</a>
+  </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
 <div class="footer">
-  <p>&copy; 2026 William Thomason English. Sliding In is a private teaching resource. Not for redistribution.</p>
+  <p>&copy; 2026 William Thomason English. All materials are private teaching resources. Not for redistribution.</p>
 </div>
 
-<!-- Donate Section — inconspicuous, bottom of page -->
-<div id="donate-bar" style="text-align:center;padding:12px 0 8px;font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.5px;border-top:1px solid rgba(255,255,255,0.06);margin-top:auto">
+<!-- ═══ DONATE ═══ -->
+<div class="donate-bar">
   <span style="margin-right:10px">Support this project</span>
-  <a href="https://paypal.me/williamgraythomason" target="_blank" rel="noopener" style="display:inline-block;background:#0070ba;color:#fff;padding:4px 12px;border-radius:4px;text-decoration:none;font-weight:600;font-size:11px;margin:0 4px">PayPal</a>
-  <a href="https://wise.com/payme/williamgraythomason" target="_blank" rel="noopener" style="display:inline-block;background:#9fe870;color:#163300;padding:4px 12px;border-radius:4px;text-decoration:none;font-weight:600;font-size:11px;margin:0 4px">Wise</a>
+  <a href="https://paypal.me/williamgraythomason" target="_blank" rel="noopener" class="donate-paypal">PayPal</a>
+  <a href="https://wise.com/payme/williamgraythomason" target="_blank" rel="noopener" class="donate-wise">Wise</a>
 </div>
+
+<script>
+// Restore progress from localStorage
+(function restoreProgress() {
+  const progress = JSON.parse(localStorage.getItem('esl-progress') || '{}');
+  let b1Completed = 0;
+  let b2Completed = 0;
+  Object.entries(progress).forEach(([key, val]) => {
+    if (val.completed) {
+      if (key.includes('/b1/') || key.includes('\\b1\\')) b1Completed++;
+      if (key.includes('/b2/') || key.includes('\\b2\\')) b2Completed++;
+    }
+  });
+  
+  // Update progress bars
+  const b1Bar = document.querySelector('.level-card[href="b1/index.html"] .progress-bar-fill');
+  const b1Text = document.querySelector('.level-card[href="b1/index.html"] .progress-text');
+  const b2Bar = document.querySelector('.level-card[href="b2/index.html"] .progress-bar-fill');
+  const b2Text = document.querySelector('.level-card[href="b2/index.html"] .progress-text');
+  
+  if (b1Bar) {
+    const pct = Math.round((b1Completed / 46) * 100);
+    b1Bar.style.width = pct + '%';
+    b1Text.textContent = `${b1Completed} / 46 decks completed`;
+  }
+  if (b2Bar) {
+    const pct = Math.round((b2Completed / 46) * 100);
+    b2Bar.style.width = pct + '%';
+    b2Text.textContent = `${b2Completed} / 46 decks completed`;
+  }
+})();
+</script>
+
 </body>
 </html>

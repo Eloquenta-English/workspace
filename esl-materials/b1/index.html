@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B1 Intermediate — ESL Materials</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060a14;
+  --card: rgba(255,255,255,.03);
+  --border: rgba(255,255,255,.08);
+  --border-hover: rgba(34,211,238,.4);
+  --text: #e2e8f0;
+  --text-secondary: #b0bec5;
+  --text-dim: #6b7280;
+  --cyan: #22d3ee;
+  --purple: #a78bfa;
+  --gold: #fbbf24;
+  --green: #34d399;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+.nav { position: sticky; top: 0; z-index: 100; background: rgba(6,10,20,.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 0 32px; height: 52px; display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { font-family: 'Montserrat', sans-serif; font-size: 1rem; font-weight: 800; color: var(--text); text-decoration: none; }
+.nav-logo span { color: var(--cyan); }
+.nav-back { color: var(--text-secondary); text-decoration: none; font-size: .85rem; font-weight: 500; transition: color .2s; }
+.nav-back:hover { color: var(--cyan); }
+
+.hero { padding: 60px 32px 40px; text-align: center; max-width: 600px; margin: 0 auto; }
+.hero-badge { display: inline-block; padding: 4px 14px; border-radius: 9999px; background: rgba(167,139,250,.1); border: 1px solid rgba(167,139,250,.3); font-size: .65rem; font-weight: 700; color: var(--purple); margin-bottom: 16px; letter-spacing: 1px; text-transform: uppercase; }
+.hero h1 { font-family: 'Montserrat', sans-serif; font-size: 2.4rem; font-weight: 900; line-height: 1.1; margin-bottom: 12px; }
+.hero p { color: var(--text-dim); font-size: .95rem; }
+
+.section { padding: 40px 32px; max-width: 1000px; margin: 0 auto; }
+.section-header { margin-bottom: 28px; }
+.section-num { font-family: 'JetBrains Mono', monospace; font-size: .6rem; font-weight: 600; color: var(--cyan); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+.section-header h2 { font-family: 'Montserrat', sans-serif; font-size: 1.3rem; font-weight: 800; margin-bottom: 4px; }
+.section-header p { color: var(--text-dim); font-size: .85rem; }
+
+.product-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(260px,1fr)); gap: 14px; margin-bottom: 32px; }
+.product-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; text-decoration: none; color: inherit; display: block; transition: all .25s cubic-bezier(.4,0,.2,1); }
+.product-card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: 0 0 20px rgba(34,211,238,.1); }
+.product-card .icon { font-size: 1.3rem; margin-bottom: 6px; }
+.product-card h4 { font-size: .95rem; font-weight: 600; margin-bottom: 4px; }
+.product-card p { font-size: .78rem; color: var(--text-dim); line-height: 1.4; }
+
+.batch-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.batch-link { display: inline-flex; align-items: center; gap: 5px; padding: 6px 14px; border-radius: 16px; background: rgba(34,211,238,.06); border: 1px solid rgba(34,211,238,.2); color: var(--cyan); font-size: .75rem; font-weight: 500; text-decoration: none; transition: all .2s; }
+.batch-link:hover { background: rgba(34,211,238,.12); transform: translateY(-1px); }
+.batch-link:active { transform: translateY(0) scale(.97); }
+
+.progress-container { margin-top: 14px; }
+.progress-bar-bg { height: 4px; background: rgba(255,255,255,.06); border-radius: 2px; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--green)); border-radius: 2px; transition: width .5s; }
+.progress-text { font-size: .7rem; color: var(--text-dim); margin-top: 5px; }
+
+.footer { padding: 24px 32px; text-align: center; font-size: .7rem; color: var(--text-dim); border-top: 1px solid var(--border); }
+
+@media (max-width: 768px) {
+  .nav { padding: 0 16px; }
+  .hero { padding: 40px 16px 30px; }
+  .hero h1 { font-size: 1.8rem; }
+  .section { padding: 30px 16px; }
+  .product-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <a href="../index.html" class="nav-logo">&#9670; <span>WTE</span> B1</a>
+  <a href="../index.html" class="nav-back">← Back to Hub</a>
+</div>
+
+<div class="hero">
+  <div class="hero-badge">B1 — Intermediate</div>
+  <h1>Level <span style="color:var(--cyan);">1</span></h1>
+  <p>Grammar, Speaking, IELTS Practice, and Business English. 46 decks across 4 product types. 2 lessons per week = complete in 3 months.</p>
+  <div class="progress-container" style="max-width:300px;margin:20px auto 0;">
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-text" id="progressText">0 / 46 decks completed</div>
+  </div>
+</div>
+
+<!-- ═══ GRAMMAR ═══ -->
+<div class="section" id="grammar">
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <h2>Grammar <span style="color:var(--cyan);">Examples</span></h2>
+    <p>12 decks with contextual examples, common mistakes, and exercises with hidden answers.</p>
+  </div>
+  <div class="product-grid">
+    <a class="product-card" href="grammar/grammar-batch-1.html">
+      <div class="icon">📐</div>
+      <h4>Grammar Batch 1</h4>
+      <p>Conditionals, Passive Voice, Present Perfect Continuous, Past Perfect, Reported Speech, Relative Clauses</p>
+      <div class="batch-links">
+        <span class="batch-link">15 decks</span>
+      </div>
+    </a>
+    <a class="product-card" href="grammar/grammar-batch-2.html">
+      <div class="icon">📐</div>
+      <h4>Grammar Batch 2</h4>
+      <p>Gerund vs Infinitive, Modal Perfect, Wish/If Only, Would Rather/Had Better, Mixed Conditionals, B1 Review</p>
+      <div class="batch-links">
+        <span class="batch-link">9 decks</span>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- ═══ SPEAKING ═══ -->
+<div class="section" id="speaking">
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <h2>General <span style="color:var(--purple);">Speaking</span></h2>
+    <p>12 decks with 2-4 questions per slide, visual cues, and clickable vocabulary in 6 languages.</p>
+  </div>
+  <div class="product-grid">
+    <a class="product-card" href="speaking/speaking-batch-1.html">
+      <div class="icon">💬</div>
+      <h4>Speaking Batch 1</h4>
+      <p>Music & Festivals, Hiking & Outdoors, Travel & Adventure, Food & Culture, Technology & Social Media, Environment & Nature</p>
+      <div class="batch-links">
+        <span class="batch-link">15 decks</span>
+      </div>
+    </a>
+    <a class="product-card" href="speaking/speaking-batch-2.html">
+      <div class="icon">💬</div>
+      <h4>Speaking Batch 2</h4>
+      <p>Health & Fitness, Work & Career, Education & Learning, Daily Life & Routine, Friends & Relationships, Future & Ambitions</p>
+      <div class="batch-links">
+        <span class="batch-link">6 decks</span>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- ═══ IELTS ═══ -->
+<div class="section" id="ielts">
+  <div class="section-header">
+    <div class="section-num">03</div>
+    <h2>IELTS <span style="color:var(--gold);">Practice</span></h2>
+    <p>10 full IELTS Speaking simulations with hidden model answers and self-assessment.</p>
+  </div>
+  <div class="product-grid">
+    <a class="product-card" href="ielts-practice/ielts-batch-1.html">
+      <div class="icon">🎯</div>
+      <h4>IELTS Practice</h4>
+      <p>Music, Travel, Work, Health, Environment, Technology, Education, Daily Life, Relationships, City</p>
+      <div class="batch-links">
+        <span class="batch-link">10 decks</span>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- ═══ BUSINESS ═══ -->
+<div class="section" id="business">
+  <div class="section-header">
+    <div class="section-num">04</div>
+    <h2>Business <span style="color:var(--green);">English</span></h2>
+    <p>12 professional English decks with theme-based colors and animated buttons.</p>
+  </div>
+  <div class="product-grid">
+    <a class="product-card" href="business/business-batch-1.html">
+      <div class="icon">🏢</div>
+      <h4>Business Batch 1</h4>
+      <p>Introductions, Meetings, Presentations, Phone Calls, Emails, Negotiations</p>
+      <div class="batch-links">
+        <span class="batch-link">15 decks</span>
+      </div>
+    </a>
+    <a class="product-card" href="business/business-batch-2.html">
+      <div class="icon">🏢</div>
+      <h4>Business Batch 2</h4>
+      <p>Customer Service, Teamwork, Job Interviews, Career Development, Marketing, Project Management</p>
+      <div class="batch-links">
+        <span class="batch-link">6 decks</span>
+      </div>
+    </a>
+  </div>
+</div>
+
+<div class="footer">
+  <p>&copy; 2026 William Thomason English. B1 Intermediate Level. Not for redistribution.</p>
+</div>
+
+<script>
+(function() {
+  const progress = JSON.parse(localStorage.getItem('esl-progress') || '{}');
+  let completed = 0;
+  Object.entries(progress).forEach(([key, val]) => {
+    if (val.completed && (key.includes('/b1/') || key.includes('\\b1\\'))) completed++;
+  });
+  const pct = Math.round((completed / 46) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = completed + ' / 46 decks completed';
+})();
+</script>
+
+</body>
+</html>
