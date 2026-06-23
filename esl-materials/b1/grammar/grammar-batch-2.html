@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>B1 Grammar Batch 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060a14;--cyan:#22d3ee;--purple:#a78bfa;--gold:#fbbf24;--green:#34d399;--red:#f87171;--text:#e2e8f0;--text-dim:#b0bec5;--glow:0 0 25px rgba(34,211,238,.25),0 0 60px rgba(34,211,238,.1);--hue-rotate:0deg}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:clamp(.95rem,1.4vw,1.2rem);line-height:1.75}
+.slide{position:fixed;inset:0;background-size:cover;background-position:center;opacity:0;pointer-events:none;transition:opacity .35s ease;display:flex;flex-direction:column;justify-content:flex-start;padding:3vh 5vw 10vh;overflow-y:auto;filter:hue-rotate(var(--hue-rotate))}
+.slide::-webkit-scrollbar{width:0;background:transparent}
+.slide{scrollbar-width:none;-ms-overflow-style:none}
+.slide.active{opacity:1;pointer-events:auto}
+.slide::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,10,20,.78) 0%,rgba(6,10,20,.45) 45%,rgba(6,10,20,.18) 100%);z-index:0}
+.content{position:relative;z-index:1;max-width:80vw;width:100%;background:rgba(6,10,20,.72);border:1px solid rgba(34,211,238,.4);box-shadow:var(--glow);border-radius:16px;padding:2.5em 3em;backdrop-filter:blur(8px);margin:auto 0}
+.content.wide{max-width:88vw}
+.hue-control{position:fixed;top:16px;right:20px;z-index:300;display:flex;align-items:center;gap:10px;background:rgba(6,10,20,.85);border:1px solid rgba(34,211,238,.3);border-radius:24px;padding:8px 16px;backdrop-filter:blur(6px)}
+.hue-control label{font-size:.75rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em}
+.hue-control input[type=range]{width:100px;height:4px;-webkit-appearance:none;appearance:none;border-radius:2px;cursor:pointer}
+#hueSlider{background:linear-gradient(90deg,#ff0000,#ffff00,#00ff00,#00ffff,#0000ff,#ff00ff,#ff0000)}
+#glowSlider{background:linear-gradient(90deg,#1a1a2e,#22d3ee,#fbbf24)}
+.hue-control input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:white;border:2px solid var(--cyan);cursor:pointer}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--cyan),var(--purple));z-index:200;transition:width .35s ease}
+.nav{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:1.2em;z-index:200;background:rgba(6,10,20,.85);border:1px solid rgba(34,211,238,.3);border-radius:40px;padding:10px 24px;backdrop-filter:blur(6px)}
+.nav button{background:none;border:1px solid rgba(34,211,238,.5);color:var(--cyan);font-family:'Inter',sans-serif;font-size:1rem;padding:8px 18px;border-radius:24px;cursor:pointer;transition:all .2s;min-width:44px;min-height:44px}
+.nav button:hover{background:rgba(34,211,238,.15);box-shadow:0 0 15px rgba(34,211,238,.3)}
+.nav .slide-counter{font-family:'Inter',monospace;color:var(--text-dim);font-size:.85rem;min-width:60px;text-align:center}
+h1{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(2rem,4.5vw,3.8rem);background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(34,211,238,.4));margin-bottom:.5em;line-height:1.15}
+h2{font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(1.4rem,2.8vw,2.2rem);color:var(--cyan);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.7em;text-shadow:0 0 12px rgba(34,211,238,.3)}
+h3{font-family:'Oswald',sans-serif;font-weight:600;font-size:clamp(1.1rem,2vw,1.5rem);color:var(--purple);margin:1em 0 .5em}
+p,li{margin-bottom:.5em}
+.formula-box{background:linear-gradient(135deg,rgba(34,211,238,.12),rgba(167,139,250,.12));border:2px solid rgba(34,211,238,.5);box-shadow:0 0 30px rgba(34,211,238,.2);border-radius:14px;padding:1.2em 1.6em;margin:1em 0;font-family:'JetBrains Mono',monospace;font-size:1.05rem;text-align:center}
+.formula-box .formula-main{font-weight:700;color:var(--cyan);font-size:1.3rem}
+.formula-box .formula-note{font-size:.85rem;color:var(--text-dim);margin-top:.4em}
+.example-block{background:rgba(6,10,20,.55);border-left:3px solid var(--cyan);border-radius:0 10px 10px 0;padding:.8em 1.2em;margin:.6em 0}
+.example-block .context-tag{display:inline-block;font-size:.7rem;padding:2px 8px;border-radius:8px;background:rgba(167,139,250,.2);color:var(--purple);margin-bottom:.4em;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.example-block p{margin:.3em 0;font-size:.95rem}
+.example-block .highlight{color:var(--gold);font-weight:600}
+.mistake{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.35);border-radius:10px;padding:.8em 1.2em;margin:.7em 0}
+.mistake .wrong{color:var(--red);font-weight:600;text-decoration:line-through;text-decoration-color:rgba(248,113,113,.6)}
+.mistake .correct{color:var(--green);font-weight:600}
+.mistake .explanation{color:var(--text-dim);font-size:.92rem;margin-top:.4em;padding-left:.5em;border-left:2px solid rgba(248,113,113,.3)}
+.exercise{background:linear-gradient(135deg,rgba(251,191,36,.06),rgba(34,211,238,.06));border:1px solid rgba(251,191,36,.35);border-radius:12px;padding:1em 1.4em;margin:.8em 0}
+.exercise .question{font-weight:600;color:var(--gold);margin-bottom:.5em}
+.exercise .options{list-style:none;padding:0;margin:.5em 0}
+.exercise .options li{padding:4px 0 4px 1.2em;position:relative}
+.exercise .options li::before{content:'•';position:absolute;left:0;color:var(--text-dim)}
+.exercise .answer{margin-top:.6em;padding:.5em .8em;border-radius:8px;font-size:.93rem}
+.exercise .answer.correct-answer{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3);color:var(--green)}
+.exercise .answer.wrong-explain{background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.2);color:var(--text-dim);margin-top:.3em}
+.reveal-btn{display:inline-block;margin-top:1em;background:linear-gradient(135deg,rgba(34,211,238,.15),rgba(167,139,250,.15));border:1px solid rgba(34,211,238,.5);color:var(--cyan);font-family:'Inter',sans-serif;font-size:.95rem;padding:10px 24px;border-radius:24px;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);min-width:44px;min-height:44px;font-weight:600;user-select:none;-webkit-tap-highlight-color:transparent}
+.reveal-btn:hover{background:rgba(52,211,153,.25);box-shadow:0 0 15px rgba(52,211,153,.3);transform:translateY(-2px)}
+.reveal-btn:active{transform:translateY(1px) scale(.96);background:rgba(52,211,153,.35);box-shadow:0 0 8px rgba(52,211,153,.2);transition:all .1s}
+.reveal-btn.revealed{background:linear-gradient(135deg,rgba(52,211,153,.3),rgba(168,224,99,.2));border-color:rgba(168,224,99,.7);box-shadow:0 0 20px rgba(168,224,99,.4)}
+.reveal-btn.revealed:hover{box-shadow:0 0 25px rgba(168,224,99,.6)}
+.reveal-btn.revealed:active{transform:translateY(1px) scale(.96);transition:all .1s}
+.mark-complete-btn{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.4);color:var(--green);font-family:'Inter',sans-serif;font-size:.95rem;padding:10px 24px;border-radius:24px;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);font-weight:600;margin:.5em .8em .5em 0;user-select:none;-webkit-tap-highlight-color:transparent}
+.mark-complete-btn:hover{background:rgba(52,211,153,.2);box-shadow:0 0 15px rgba(52,211,153,.3);transform:translateY(-2px)}
+.mark-complete-btn:active{transform:translateY(1px) scale(.96);background:rgba(52,211,153,.35);box-shadow:0 0 8px rgba(52,211,153,.2);transition:all .1s}
+.mark-complete-btn.completed{background:linear-gradient(135deg,rgba(52,211,153,.3),rgba(168,224,99,.2));border-color:rgba(168,224,99,.7);box-shadow:0 0 20px rgba(168,224,99,.4);animation:pulse-glow 2s ease-in-out infinite}
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(168,224,99,.4)}50%{box-shadow:0 0 35px rgba(168,224,99,.7)}}
+.start-prompt{color:var(--text-dim);font-size:.9rem;margin-top:1em;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+.deck-label{text-align:center;padding:.8em 0;font-family:'Montserrat',sans-serif;font-size:1.2rem;font-weight:800;color:var(--gold);border-top:2px solid rgba(251,191,36,.2);margin-top:1.5em}
+@media(max-width:768px){.content{max-width:92vw;padding:1.5em 1.8em}.content.wide{max-width:95vw}h1{font-size:1.8rem}h2{font-size:1.3rem}.nav{bottom:12px;padding:8px 16px;gap:.6em}.nav button{padding:6px 12px;font-size:.85rem}.hue-control{top:8px;right:8px;padding:6px 10px}.hue-control input[type=range]{width:60px}}
+</style></head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="hue-control" id="hueControl"><label>HUE</label><input type="range" id="hueSlider" min="0" max="360" value="0"><span style="width:1px;height:20px;background:rgba(255,255,255,.2)"></span><label>GLOW</label><input type="range" id="glowSlider" min="0" max="100" value="50"></div>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 16</h1><p style="font-size:1.2rem;color:var(--text-dim);">Future Continuous & Perfect</p><div class="formula-box"><div class="formula-main">will be + verb-ing / will have + pp</div><div class="formula-note">Actions in progress or completed at a future time</div></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80')"><div class="content wide"><h2>Examples - Future continuous</h2><div class="example-block"><span class="context-tag">Future continuous</span><p>This time tomorrow, I will be hiking.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=80')"><div class="content wide"><h2>Examples - Future perfect</h2><div class="example-block"><span class="context-tag">Future perfect</span><p>By next year, she will have graduated.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1551632811-561732d1e306?w=1600&q=80')"><div class="content wide"><h2>Examples - Combined</h2><div class="example-block"><span class="context-tag">Combined</span><p>When you arrive, we will have finished dinner.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1600&q=80')"><div class="content"><h2>Common Mistakes</h2>
+<div class="mistake"><p><span class="wrong">❌ "I will be finish by then."</span></p><p><span class="correct">✅ "I will have finished by then."</span></p><p class="explanation">💡 Future perfect: will have + pp, not will be + base.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "She will be graduate by June."</span></p><p><span class="correct">✅ "She will have graduated by June."</span></p><p class="explanation">💡 Use will have + pp for completion.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "They will be arrive by 5pm."</span></p><p><span class="correct">✅ "They will have arrived by 5pm."</span></p><p class="explanation">💡 Will have + past participle.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600&q=80')"><div class="content wide"><h2>Exercise</h2><div class="exercise"><p class="question">By next summer, I _____ (complete) my degree.</p><ul class="options">
+<li>will be completing</li>
+<li>will have completed</li>
+<li>will complete</li>
+<li>am completing</li>
+</ul><div class="answer correct-answer hidden-answer">✅ will have completed - Correct! Future perfect for completion before a future time.</div><button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">future</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">continuous</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">perfect</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">progress</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">completion</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">by</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">deadline</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">duration</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">ongoing</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">finished</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 17</h1><p style="font-size:1.2rem;color:var(--text-dim);">Advanced Mixed Conditionals</p><div class="formula-box"><div class="formula-main">Mix any if-clause with any main clause</div><div class="formula-note">Past/present/future conditions with any result</div></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=1600&q=80')"><div class="content wide"><h2>Examples - Past cond -> present result</h2><div class="example-block"><span class="context-tag">Past cond -> present result</span><p>If I had accepted that job, I would be living in Tokyo now.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1600&q=80')"><div class="content wide"><h2>Examples - Present cond -> past result</h2><div class="example-block"><span class="context-tag">Present cond -> past result</span><p>If he were more confident, he would have asked her out.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600&q=80')"><div class="content wide"><h2>Examples - Past perf -> present perf</h2><div class="example-block"><span class="context-tag">Past perf -> present perf</span><p>If she had left earlier, she wouldn't be stuck in traffic.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600&q=80')"><div class="content"><h2>Common Mistakes</h2>
+<div class="mistake"><p><span class="wrong">❌ "If I would have seen him, I would say hello."</span></p><p><span class="correct">✅ "If I had seen him, I would have said hello."</span></p><p class="explanation">💡 Past perfect in if-clause, not 'would have'.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "If he was taller, he would have joined the team."</span></p><p><span class="correct">✅ "If he were taller, he would have joined the team."</span></p><p class="explanation">💡 Use 'were' for all subjects in unreal present.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "If I had more money, I would buy a house is 2nd conditional."</span></p><p><span class="correct">✅ "If I had more money, I would buy a house. (This is 2nd conditional, not mixed)"</span></p><p class="explanation">💡 Mixed = past if-clause + present main, OR present if-clause + past main.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1600&q=80')"><div class="content wide"><h2>Exercise</h2><div class="exercise"><p class="question">If she _____ (take) that job, she _____ (live) in Tokyo now.</p><ul class="options">
+<li>took / would live</li>
+<li>had taken / would be living</li>
+<li>had taken / would have lived</li>
+<li>took / will live</li>
+</ul><div class="answer correct-answer hidden-answer">✅ had taken / would be living - Correct! Past condition -> present result (mixed).</div><button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">mixed</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">unreal</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">hypothetical</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">contrary</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">alternative</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">scenario</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">imaginary</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">counterfactual</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">regret</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">possibility</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 18</h1><p style="font-size:1.2rem;color:var(--text-dim);">Causative Have/Get (Advanced)</p><div class="formula-box"><div class="formula-main">have/get + object + pp / have + object + base verb</div><div class="formula-note">Arrange services or make someone do something</div></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600&q=80')"><div class="content wide"><h2>Examples - Service (passive)</h2><div class="example-block"><span class="context-tag">Service (passive)</span><p>I'm having my house painted.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1600&q=80')"><div class="content wide"><h2>Examples - Make someone</h2><div class="example-block"><span class="context-tag">Make someone</span><p>The boss had everyone work late.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1600&q=80')"><div class="content wide"><h2>Examples - Get someone to</h2><div class="example-block"><span class="context-tag">Get someone to</span><p>I got the mechanic to check the brakes.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600&q=80')"><div class="content"><h2>Common Mistakes</h2>
+<div class="mistake"><p><span class="wrong">❌ "I had repaired my car yesterday."</span></p><p><span class="correct">✅ "I had my car repaired yesterday."</span></p><p class="explanation">💡 Causative: have + object + pp.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "She got to fix her computer."</span></p><p><span class="correct">✅ "She got her phone fixed."</span></p><p class="explanation">💡 Get + object + pp, not get to + verb.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "He made his son to clean his room."</span></p><p><span class="correct">✅ "He made his son clean his room."</span></p><p class="explanation">💡 Make + object + base verb (no 'to').</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1600&q=80')"><div class="content wide"><h2>Exercise</h2><div class="exercise"><p class="question">We need to _____ our photos _____ (develop).</p><ul class="options">
+<li>have / developed</li>
+<li>get / developing</li>
+<li>have / developing</li>
+<li>get / to develop</li>
+</ul><div class="answer correct-answer hidden-answer">✅ have / developed - Correct! Causative: have + object + past participle.</div><button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">causative</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">arrange</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">service</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">repair</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">fix</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">clean</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">paint</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">install</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">deliver</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">maintain</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1551632811-561732d1e306?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 19</h1><p style="font-size:1.2rem;color:var(--text-dim);">Advanced Passive (Reporting Verbs)</p><div class="formula-box"><div class="formula-main">It + be + pp + that... / Subject + be + pp + to + verb</div><div class="formula-note">Formal passive structures for reporting</div></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80')"><div class="content wide"><h2>Examples - It is said...</h2><div class="example-block"><span class="context-tag">It is said...</span><p>It is said that the company is closing.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=80')"><div class="content wide"><h2>Examples - He is believed to...</h2><div class="example-block"><span class="context-tag">He is believed to...</span><p>He is believed to have left the country.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1551632811-561732d1e306?w=1600&q=80')"><div class="content wide"><h2>Examples - It was reported...</h2><div class="example-block"><span class="context-tag">It was reported...</span><p>It was reported that the ship had sunk.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1600&q=80')"><div class="content"><h2>Common Mistakes</h2>
+<div class="mistake"><p><span class="wrong">❌ "He is said to left yesterday."</span></p><p><span class="correct">✅ "He is said to have left yesterday."</span></p><p class="explanation">💡 Perfect infinitive: to have + pp for past.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "She is believed being innocent."</span></p><p><span class="correct">✅ "She is believed to be innocent."</span></p><p class="explanation">💡 Passive + to + base verb, not -ing.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "It was reported that the man died."</span></p><p><span class="correct">✅ "The man was reported to have died."</span></p><p class="explanation">💡 Both structures are correct, but the second is more formal.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80')"><div class="content wide"><h2>Exercise</h2><div class="exercise"><p class="question">The company _____ (rumour) _____ (go) bankrupt.</p><ul class="options">
+<li>is rumoured / to go</li>
+<li>is rumoured / to have gone</li>
+<li>was rumoured / to go</li>
+<li>has been rumoured / going</li>
+</ul><div class="answer correct-answer hidden-answer">✅ is rumoured / to have gone - Correct! Passive + perfect infinitive for past event.</div><button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1551632811-561732d1e306?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">reporting</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">passive</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">rumour</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">believe</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">say</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">report</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">claim</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">allege</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">suppose</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">formal</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 20</h1><p style="font-size:1.2rem;color:var(--text-dim);">Inversion (Advanced Structures)</p><div class="formula-box"><div class="formula-main">Not only...but also / No sooner...than / Hardly...when</div><div class="formula-note">Inversion after negative/time adverbials</div></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=1600&q=80')"><div class="content wide"><h2>Examples - Not only</h2><div class="example-block"><span class="context-tag">Not only</span><p>Not only did she win, but she also set a record.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1600&q=80')"><div class="content wide"><h2>Examples - No sooner</h2><div class="example-block"><span class="context-tag">No sooner</span><p>No sooner had I sat down than the phone rang.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600&q=80')"><div class="content wide"><h2>Examples - Hardly</h2><div class="example-block"><span class="context-tag">Hardly</span><p>Hardly had we left when it started raining.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1600&q=80')"><div class="content"><h2>Common Mistakes</h2>
+<div class="mistake"><p><span class="wrong">❌ "Not only she won, but she also broke the record."</span></p><p><span class="correct">✅ "Not only did she win, but she also broke the record."</span></p><p class="explanation">💡 Inversion after 'not only': auxiliary before subject.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "No sooner I arrived than it started."</span></p><p><span class="correct">✅ "No sooner had I arrived than it started."</span></p><p class="explanation">💡 No sooner + had + subject + pp.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "Hardly I had left when the phone rang."</span></p><p><span class="correct">✅ "Hardly had I left when the phone rang."</span></p><p class="explanation">💡 Hardly + had + subject + pp.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=80')"><div class="content wide"><h2>Exercise</h2><div class="exercise"><p class="question">No sooner _____ (we / arrive) _____ the power went out.</p><ul class="options">
+<li>we arrived / than</li>
+<li>had we arrived / than</li>
+<li>we had arrived / when</li>
+<li>did we arrive / than</li>
+</ul><div class="answer correct-answer hidden-answer">✅ had we arrived / than - Correct! No sooner + had + subject + pp + than.</div><button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">inversion</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">negative</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">emphasis</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">not only</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">no sooner</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">hardly</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">scarcely</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">auxiliary</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">formal</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">literary</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 21</h1><p style="font-size:1.2rem;color:var(--text-dim);">Noun Clauses (Advanced)</p><div class="formula-box"><div class="formula-main">what/how/whether/that + clause as subject/object</div><div class="formula-note">Complex noun clauses in formal writing</div></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600&q=80')"><div class="content wide"><h2>Examples - Subject</h2><div class="example-block"><span class="context-tag">Subject</span><p>What she achieved was remarkable.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1600&q=80')"><div class="content wide"><h2>Examples - Object</h2><div class="example-block"><span class="context-tag">Object</span><p>I don't understand how he managed it.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1600&q=80')"><div class="content wide"><h2>Examples - Whether</h2><div class="example-block"><span class="context-tag">Whether</span><p>Whether we go or stay depends on the weather.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80')"><div class="content"><h2>Common Mistakes</h2>
+<div class="mistake"><p><span class="wrong">❌ "I wonder that if he's coming."</span></p><p><span class="correct">✅ "I wonder if he's coming."</span></p><p class="explanation">💡 Don't use 'that if' together.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "How he did it is unclear remains a mystery."</span></p><p><span class="correct">✅ "How he did it remains a mystery."</span></p><p class="explanation">💡 Don't add 'is unclear' before 'remains'.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "She asked me what was my name."</span></p><p><span class="correct">✅ "She asked me what my name was."</span></p><p class="explanation">💡 No question inversion in noun clauses.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1551632811-561732d1e306?w=1600&q=80')"><div class="content wide"><h2>Exercise</h2><div class="exercise"><p class="question">_____ he didn't call is very strange.</p><ul class="options">
+<li>That</li>
+<li>What</li>
+<li>Whether</li>
+<li>The fact that</li>
+</ul><div class="answer correct-answer hidden-answer">✅ That - Correct! 'That' introduces a noun clause as subject.</div><button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">noun clause</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">subject</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">object</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">complement</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">that</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">what</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">whether</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">how</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">formal</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">complex</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 22</h1><p style="font-size:1.2rem;color:var(--text-dim);">Participle Clauses (Advanced)</p><div class="formula-box"><div class="formula-main">-ing / -ed / having + pp / being + pp</div><div class="formula-note">Reduced clauses for time, reason, condition</div></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80')"><div class="content wide"><h2>Examples - Reason</h2><div class="example-block"><span class="context-tag">Reason</span><p>Feeling tired, she went to bed early.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=80')"><div class="content wide"><h2>Examples - Condition</h2><div class="example-block"><span class="context-tag">Condition</span><p>Given more time, I could do better.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1551632811-561732d1e306?w=1600&q=80')"><div class="content wide"><h2>Examples - Passive</h2><div class="example-block"><span class="context-tag">Passive</span><p>Being interviewed, he was nervous.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=80')"><div class="content"><h2>Common Mistakes</h2>
+<div class="mistake"><p><span class="wrong">❌ "Walking to work, the bus passed me."</span></p><p><span class="correct">✅ "Walking to work, I saw the bus pass me."</span></p><p class="explanation">💡 Dangling participle: subject must match.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "Having been eat, we left."</span></p><p><span class="correct">✅ "Having eaten, we left."</span></p><p class="explanation">💡 Perfect participle: having + pp.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "Finishing his work, he went home."</span></p><p><span class="correct">✅ "Having finished his work, he went home."</span></p><p class="explanation">💡 Use 'having + pp' for sequence.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=1600&q=80')"><div class="content wide"><h2>Exercise</h2><div class="exercise"><p class="question">_____ (give) a second chance, she would succeed.</p><ul class="options">
+<li>Giving</li>
+<li>Given</li>
+<li>Having giving</li>
+<li>Being giving</li>
+</ul><div class="answer correct-answer hidden-answer">✅ Given - Correct! Past participle for passive meaning (she is given).</div><button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">participle</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">reduced</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">reason</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">time</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">condition</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">passive</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">perfect</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">dangling</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">sequence</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">formal</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 23</h1><p style="font-size:1.2rem;color:var(--text-dim);">Advanced Tense Usage</p><div class="formula-box"><div class="formula-main">Present perfect vs past simple / Future perfect continuous</div><div class="formula-note">Subtle tense choices for precision</div></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=1600&q=80')"><div class="content wide"><h2>Examples - Present perfect vs past</h2><div class="example-block"><span class="context-tag">Present perfect vs past</span><p>I have visited Paris (experience) vs I visited Paris last year (specific time).</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1600&q=80')"><div class="content wide"><h2>Examples - Future perfect continuous</h2><div class="example-block"><span class="context-tag">Future perfect continuous</span><p>By June, I will have been studying for 3 years.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600&q=80')"><div class="content wide"><h2>Examples - Past perfect vs past simple</h2><div class="example-block"><span class="context-tag">Past perfect vs past simple</span><p>She had already eaten when he arrived.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1551632811-561732d1e306?w=1600&q=80')"><div class="content"><h2>Common Mistakes</h2>
+<div class="mistake"><p><span class="wrong">❌ "I have seen him yesterday."</span></p><p><span class="correct">✅ "I saw him yesterday."</span></p><p class="explanation">💡 Don't use present perfect with specific past time.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "I have been knowing her for years."</span></p><p><span class="correct">✅ "I have known her for years."</span></p><p class="explanation">💡 Stative verbs don't use continuous.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "By next week, I will be working here for a year."</span></p><p><span class="correct">✅ "By next week, I will have been working here for a year."</span></p><p class="explanation">💡 Future perfect continuous for duration up to a future point.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1600&q=80')"><div class="content wide"><h2>Exercise</h2><div class="exercise"><p class="question">By December, I _____ (work) here for five years.</p><ul class="options">
+<li>will be working</li>
+<li>will have been working</li>
+<li>have been working</li>
+<li>will work</li>
+</ul><div class="answer correct-answer hidden-answer">✅ will have been working - Correct! Future perfect continuous for duration up to a future point.</div><button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">tense</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">precision</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">present perfect</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">past simple</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">future</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">duration</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">experience</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">specific</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">stative</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">continuous</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 24</h1><p style="font-size:1.2rem;color:var(--text-dim);">B1 Grammar Review</p><div class="formula-box"><div class="formula-main">Mixed structures from all B1 topics</div><div class="formula-note">Comprehensive review combining all grammar points</div></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600&q=80')"><div class="content wide"><h2>Examples - Mixed</h2><div class="example-block"><span class="context-tag">Mixed</span><p>If I had known you were coming, I would have prepared dinner.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1600&q=80')"><div class="content wide"><h2>Examples - Mixed</h2><div class="example-block"><span class="context-tag">Mixed</span><p>She said she had been waiting for an hour.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1600&q=80')"><div class="content wide"><h2>Examples - Mixed</h2><div class="example-block"><span class="context-tag">Mixed</span><p>Not only did he finish early, but he also helped others.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=1600&q=80')"><div class="content"><h2>Common Mistakes</h2>
+<div class="mistake"><p><span class="wrong">❌ "I wish I can help you."</span></p><p><span class="correct">✅ "I wish I could help you."</span></p><p class="explanation">💡 After 'wish' for present, use past simple.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "He told me he is busy yesterday."</span></p><p><span class="correct">✅ "He told me he was busy yesterday."</span></p><p class="explanation">💡 Backshift in reported speech.</p></div>
+<div class="mistake"><p><span class="wrong">❌ "The house was build in 1990."</span></p><p><span class="correct">✅ "The house was built in 1990."</span></p><p class="explanation">💡 Passive: be + past participle.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600&q=80')"><div class="content wide"><h2>Exercise</h2><div class="exercise"><p class="question">By the time she arrived, we _____ (already / finish).</p><ul class="options">
+<li>had already finished</li>
+<li>already finished</li>
+<li>have already finished</li>
+<li>were already finishing</li>
+</ul><div class="answer correct-answer hidden-answer">✅ had already finished - Correct! Past perfect for the earlier of two past actions.</div><button class="reveal-btn" onclick="revealAnswers(this)">Reveal Answers ▶</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">review</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">mixed</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">comprehensive</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">conditionals</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">passive</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">reported</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">inversion</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">participles</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">tenses</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">mastery</span></p>
+</div></div></section>
+
+<div class="nav"><button id="prevBtn">◀ Prev</button><span class="slide-counter" id="slideCounter">1 / 63</span><button id="nextBtn">Next ▶</button></div>
+<script>
+let audioCtx=null,reverbNode=null;
+function ensureAudio(){
+  if(!audioCtx){
+    audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    const rate=audioCtx.sampleRate,length=rate*1.2;
+    const impulse=audioCtx.createBuffer(2,length,rate);
+    for(let ch=0;ch<2;ch++){const data=impulse.getChannelData(ch);for(let i=0;i<length;i++){data[i]=(Math.random()*2-1)*Math.pow(1-i/length,2.5);}}
+    reverbNode=audioCtx.createConvolver();reverbNode.buffer=impulse;
+    const rg=audioCtx.createGain();rg.gain.value=0.4;reverbNode.connect(rg);rg.connect(audioCtx.destination);
+  }
+  if(audioCtx.state==='suspended')audioCtx.resume();
+}
+function playSwish(dir){
+  ensureAudio();const now=audioCtx.currentTime;
+  const buf=Math.floor(audioCtx.sampleRate*0.18);
+  const buffer=audioCtx.createBuffer(1,buf,audioCtx.sampleRate);
+  const data=buffer.getChannelData(0);
+  for(let i=0;i<buf;i++){const env=Math.sin((i/buf)*Math.PI);data[i]=(Math.random()*2-1)*env;}
+  const src=audioCtx.createBufferSource();src.buffer=buffer;
+  const filter=audioCtx.createBiquadFilter();filter.type='bandpass';filter.Q.value=8;
+  filter.frequency.setValueAtTime(dir==='forward'?800:4000,now);
+  filter.frequency.exponentialRampToValueAtTime(dir==='forward'?4000:800,now+0.15);
+  const gain=audioCtx.createGain();gain.gain.setValueAtTime(0,now);gain.gain.linearRampToValueAtTime(0.12,now+0.02);gain.gain.exponentialRampToValueAtTime(0.001,now+0.18);
+  const dG=audioCtx.createGain();dG.gain.value=0.6;const wG=audioCtx.createGain();wG.gain.value=0.4;
+  src.connect(filter);filter.connect(gain);gain.connect(dG);gain.connect(wG);
+  dG.connect(audioCtx.destination);wG.connect(reverbNode);src.start(now);src.stop(now+0.2);
+  const osc=audioCtx.createOscillator();osc.type='sine';const oG=audioCtx.createGain();
+  osc.frequency.setValueAtTime(dir==='forward'?600:1200,now);
+  osc.frequency.exponentialRampToValueAtTime(dir==='forward'?1200:600,now+0.1);
+  oG.gain.setValueAtTime(0,now);oG.gain.linearRampToValueAtTime(0.04,now+0.02);oG.gain.exponentialRampToValueAtTime(0.001,now+0.12);
+  osc.connect(oG);oG.connect(audioCtx.destination);osc.start(now);osc.stop(now+0.15);
+}
+function revealAnswers(btn){
+  const ex=btn.closest('.exercise');if(!ex)return;
+  const answers=ex.querySelectorAll('.answer');
+  const anyHidden=Array.from(answers).some(a=>a.classList.contains('hidden-answer'));
+  if(anyHidden){answers.forEach(a=>a.classList.remove('hidden-answer'));btn.textContent='▲ Hide Answers';btn.classList.add('revealed');}
+  else{answers.forEach(a=>a.classList.add('hidden-answer'));btn.textContent='Reveal Answers ▶';btn.classList.remove('revealed');}
+}
+const hueSlider=document.getElementById('hueSlider'),root=document.documentElement;
+hueSlider.addEventListener('input',e=>{
+  const h=e.target.value;root.style.setProperty('--hue-rotate',h+'deg');
+  document.querySelectorAll('.slide').forEach(s=>{s.style.filter=`hue-rotate(${h}deg) saturate(${1+h/720})`;});
+  root.style.setProperty('--cyan',`hsl(${h},80%,60%)`);root.style.setProperty('--gold',`hsl(${h},80%,75%)`);
+});
+const glowSlider=document.getElementById('glowSlider');
+glowSlider.addEventListener('input',e=>{
+  const int=e.target.value/100;const gs=10+int*40;const go=0.2+int*0.5;
+  document.querySelectorAll('.content').forEach(c=>{c.style.boxShadow=`0 0 ${gs}px rgba(34,211,238,${go}),0 0 ${gs*2}px rgba(167,139,250,${go*0.5})`;});
+});
+function toggleMarkComplete(btn){
+  const id=window.location.pathname;const p=JSON.parse(localStorage.getItem('esl-progress')||'{}');
+  if(btn.classList.contains('completed')){btn.classList.remove('completed');btn.textContent='✓ Mark Complete';if(p[id])p[id].completed=false;}
+  else{btn.classList.add('completed');btn.textContent='✓ Completed!';if(!p[id])p[id]={};p[id].completed=true;p[id].date=new Date().toISOString().split('T')[0];}
+  localStorage.setItem('esl-progress',JSON.stringify(p));
+}
+(function(){const b=document.getElementById('markCompleteBtn');if(!b)return;const p=JSON.parse(localStorage.getItem('esl-progress')||'{}');if(p[window.location.pathname]&&p[window.location.pathname].completed){b.classList.add('completed');b.textContent='✓ Completed!';}})();
+const slides=document.querySelectorAll('.slide');let current=0;
+const prevBtn=document.getElementById('prevBtn'),nextBtn=document.getElementById('nextBtn');
+const slideCounter=document.getElementById('slideCounter'),progressBar=document.getElementById('progressBar');
+function update(){slides.forEach((s,i)=>s.classList.toggle('active',i===current));slideCounter.textContent=`${current+1} / ${slides.length}`;progressBar.style.width=`${((current+1)/slides.length)*100}%`;}
+prevBtn.addEventListener('click',()=>{if(current>0){current--;playSwish('back');}update();});
+nextBtn.addEventListener('click',()=>{if(current<slides.length-1){current++;playSwish('forward');}update();});
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){if(current<slides.length-1){current++;playSwish('forward');}update();}
+  if(e.key==='ArrowLeft'){if(current>0){current--;playSwish('back');}update();}
+});
+update();
+</script>
+</body>
+</html>
+</body></html>
