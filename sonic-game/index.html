@@ -26,16 +26,13 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;touch
 #splash-bg{position:absolute;inset:0;overflow:hidden}
 #splash-bg::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:radial-gradient(ellipse at 20% 20%,rgba(34,211,238,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 30%,rgba(163,230,53,0.06) 0%,transparent 50%)}
 #splash-bg::after{content:'';position:absolute;bottom:0;left:0;right:0;height:45%;background:linear-gradient(180deg,transparent 0%,#0d2818 30%,#1a4a2a 70%,#2d6a3e 100%)}
-#splash-sonic{position:absolute;left:15%;bottom:30%;width:80px;height:80px;z-index:2;animation:sonicBounce 1.2s ease-in-out infinite}
-#splash-sonic::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 40% 35%,#2563eb 0%,#1e40af 60%,#0030a0 100%);border-radius:50%;box-shadow:0 0 30px rgba(34,211,238,0.4)}
-#splash-sonic::after{content:'';position:absolute;top:15%;left:55%;width:20px;height:24px;background:#fff;border-radius:50%;box-shadow:22px 4px 0 -2px #000}
-@keyframes sonicBounce{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-15px) rotate(5deg)}}
-#splash-title{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:5;user-select:none;width:90%}
-#splash-title h1{font-size:clamp(32px,8vw,72px);font-weight:900;letter-spacing:2px;line-height:1;margin-bottom:4px;background:linear-gradient(135deg,#22d3ee,#a3e635,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 30px rgba(34,211,238,.4))}
-#splash-title .subtitle{font-size:clamp(12px,3vw,22px);font-weight:600;color:rgba(255,255,255,.5);letter-spacing:4px;text-transform:uppercase;margin-top:8px}
-#splash-title .press-start{margin-top:30px;font-size:clamp(12px,3vw,16px);color:rgba(255,255,255,.35);letter-spacing:2px;animation:pulse 2s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:.35}50%{opacity:.8}}
+#splash-sonic{display:none}
+#splash-logo{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(500px,85vw);height:auto;z-index:3;animation:logoFloat 3s ease-in-out infinite;filter:drop-shadow(0 0 30px rgba(34,211,238,0.4))}
+@keyframes logoFloat{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.04)}}
+#splash-title{position:absolute;bottom:12%;left:50%;transform:translateX(-50%);text-align:center;z-index:5;user-select:none}
+#splash-title .press-start{font-size:clamp(14px,3.5vw,20px);color:rgba(255,255,255,.4);letter-spacing:3px;animation:pulse 2s ease-in-out infinite}
 #splash-rings{position:absolute;bottom:20%;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:5}
+.splash-ring{width:48px;height:48px;border:3px solid #fbbf24;border-radius:50%;animation:ringFloat 3s ease-in-out infinite}
 .splash-ring{width:16px;height:16px;border:3px solid #fbbf24;border-radius:50%;animation:ringFloat 3s ease-in-out infinite}
 .splash-ring:nth-child(2){animation-delay:.3s}
 .splash-ring:nth-child(3){animation-delay:.6s}
@@ -63,9 +60,8 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;touch
 <div id="splash">
   <div id="splash-bg"></div>
   <div id="splash-sonic"></div>
+  <img id="splash-logo" src="Temu Sonic-Inspired Game Logo.png" alt="Temu Sonic">
   <div id="splash-title">
-    <h1>TEMU SONIC</h1>
-    <div class="subtitle">Green Hill Zone</div>
     <div class="press-start">Tap to start</div>
   </div>
   <div id="splash-rings">
@@ -115,7 +111,7 @@ let screenShake = 0;
 const GRAVITY = 0.42;              // gravity acceleration
 const GROUND_ACCEL = 0.0625;       // ground acceleration (original — keep)
 const AIR_ACCEL = 0.1875;          // air acceleration (original — keep)
-const GROUND_DECEL = 0.25;         // ground deceleration (moderate — keeps momentum)
+const GROUND_DECEL = 0.5;          // ground deceleration (strong grip, stops fast)
 const AIR_DECEL = 0.046875;        // air drag (light — preserves air momentum)
 const SLOPE_UP_FRICTION = 0.75;    // speed loss going uphill (6x — max grip on slopes)
 const SLOPE_DOWN_FRICTION = 0.125; // speed gain going downhill (unchanged)
@@ -287,26 +283,21 @@ const dnbPattern = [
   'K.H.SOH.K.H.S.H',
 ];
 
-// Bass line — dark DnB sub drops
-const bassPattern = [
-  'B...B.B...B.B..',  // E-E-E-E
-  'B...B.B...B.B..',
-  'B...B.B...B.B..',
-  'B...B.B...B.B..',
+// Bass arpeggios — funky DnB rhythms with 16th note patterns
+// Letters = note offsets from BASS_ROOT (semitones), '.' = rest, 'B' = root
+// Pattern plays every 16th note for tight funky grooves
+const bassPatterns = [
+  // Bar 0: root-5th-octave-7th bounce (funky 16ths)
+  'B.5.B.7.B.5.B.7',
+  // Bar 1: chromatic walkup with syncopation
+  'B.3.5.7.B.5.3.B',
+  // Bar 2: octave jump with ghost notes
+  'B...5...7...B.5.',
+  // Bar 3: driving 16ths with rests for groove
+  'B.5.7.B.3.5.B.7',
 ];
+const BASS_NOTES = { B: 0, 3: 3, 5: 5, 7: 7, 9: 9 }; // semitone offsets from root
 const BASS_ROOT = 41;  // E1 in Hz
-
-// Reese synth — long detuned sawtooth pads with minor second bends at end
-// Each cell = 1 beat (quarter note). 'R' = sustained root, 'U' = bend up, 'D' = bend down
-const reesePattern = [
-  'R.......U.......',  // long E, bend up at end (2 beats)
-  'R.......D.......',  // long E, bend down at end
-  'R.......U.......',  // long E, bend up at end
-  'R.......D.......',  // long E, bend down at end
-];
-const REESE_ROOT = 82;   // E2
-const REESE_UP = 87;     // F2 (minor second up)
-const REESE_DOWN = 78;   // Eb2 (minor second down)
 
 // Green Hill Zone REVERSED melody (original by Masato Nakamura, 1991)
 // Original: E G A B A G E D... played with a bouncy major feel
@@ -463,62 +454,6 @@ function playSub(freq, dur) {
   osc.stop(audioCtx.currentTime + dur);
 }
 
-// REESE SYNTH — detuned sawtooth with filter sweep and minor second bends
-function playReese(freq, dur, bend) {
-  ensureAudio();
-  const osc1 = audioCtx.createOscillator();
-  const osc2 = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  const filter = audioCtx.createBiquadFilter();
-
-  osc1.type = 'sawtooth';
-  osc2.type = 'sawtooth';
-  osc1.frequency.setValueAtTime(freq, audioCtx.currentTime);
-  osc2.frequency.setValueAtTime(freq * 1.012, audioCtx.currentTime); // wide detune
-
-  // Minor second bend at the end
-  if (bend === 'up') {
-    osc1.frequency.setValueAtTime(freq, audioCtx.currentTime + dur * 0.7);
-    osc1.frequency.linearRampToValueAtTime(freq * 1.059, audioCtx.currentTime + dur); // +minor 2nd
-    osc2.frequency.setValueAtTime(freq * 1.012, audioCtx.currentTime + dur * 0.7);
-    osc2.frequency.linearRampToValueAtTime(freq * 1.059 * 1.012, audioCtx.currentTime + dur);
-  } else if (bend === 'down') {
-    osc1.frequency.setValueAtTime(freq, audioCtx.currentTime + dur * 0.7);
-    osc1.frequency.linearRampToValueAtTime(freq * 0.944, audioCtx.currentTime + dur); // -minor 2nd
-    osc2.frequency.setValueAtTime(freq * 1.012, audioCtx.currentTime + dur * 0.7);
-    osc2.frequency.linearRampToValueAtTime(freq * 0.944 * 1.012, audioCtx.currentTime + dur);
-  }
-
-  filter.type = 'lowpass';
-  filter.frequency.setValueAtTime(200, audioCtx.currentTime);
-  filter.frequency.setValueAtTime(200, audioCtx.currentTime + dur * 0.7);
-  filter.frequency.linearRampToValueAtTime(3000, audioCtx.currentTime + dur * 0.85);
-  filter.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + dur);
-  filter.Q.value = 12;
-
-  const dryGain = audioCtx.createGain();
-  const wetGain = audioCtx.createGain();
-  dryGain.gain.value = 0.6;
-  wetGain.gain.value = 0.4;
-
-  gain.gain.setValueAtTime(0, audioCtx.currentTime);
-  gain.gain.linearRampToValueAtTime(0.06, audioCtx.currentTime + dur * 0.1);
-  gain.gain.setValueAtTime(0.06, audioCtx.currentTime + dur * 0.7);
-  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-
-  osc1.connect(filter);
-  osc2.connect(filter);
-  filter.connect(gain);
-  gain.connect(dryGain);
-  gain.connect(wetGain);
-  dryGain.connect(masterGain);
-  wetGain.connect(reverbNode);
-  osc1.start();
-  osc2.start();
-  osc1.stop(audioCtx.currentTime + dur);
-  osc2.stop(audioCtx.currentTime + dur);
-}
-
 // Cymbal sounds with reverb
 function playCymbalCrash(intensity) {
   ensureAudio();
@@ -591,48 +526,6 @@ function playCymbalReverse(intensity) {
 }
 
 // Riser — long slow rising pitch noise sweep for transition
-function playRiser(intensity) {
-  ensureAudio();
-  const dur = 8.0;
-  const osc = audioCtx.createOscillator();
-  const osc2 = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  const filter = audioCtx.createBiquadFilter();
-  const dryGain = audioCtx.createGain();
-  const wetGain = audioCtx.createGain();
-
-  osc.type = 'sawtooth';
-  osc2.type = 'sawtooth';
-  osc.frequency.setValueAtTime(80, audioCtx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(1500, audioCtx.currentTime + dur);
-  osc2.frequency.setValueAtTime(83, audioCtx.currentTime);
-  osc2.frequency.exponentialRampToValueAtTime(1510, audioCtx.currentTime + dur);
-
-  filter.type = 'bandpass';
-  filter.frequency.setValueAtTime(300, audioCtx.currentTime);
-  filter.frequency.exponentialRampToValueAtTime(3000, audioCtx.currentTime + dur);
-  filter.Q.value = 1.5;
-
-  gain.gain.setValueAtTime(0, audioCtx.currentTime);
-  gain.gain.linearRampToValueAtTime(intensity * 0.22, audioCtx.currentTime + dur * 0.75);
-  gain.gain.setValueAtTime(intensity * 0.22, audioCtx.currentTime + dur * 0.9);
-  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-  dryGain.gain.value = 0.3;
-  wetGain.gain.value = 0.7;
-
-  osc.connect(filter);
-  osc2.connect(filter);
-  filter.connect(gain);
-  gain.connect(dryGain);
-  gain.connect(wetGain);
-  dryGain.connect(masterGain);
-  wetGain.connect(reverbNode);
-  osc.start();
-  osc2.start();
-  osc.stop(audioCtx.currentTime + dur);
-  osc2.stop(audioCtx.currentTime + dur);
-}
-
 // Synth lead stab
 function playLead(freq, dur) {
   ensureAudio();
@@ -694,26 +587,14 @@ function startMusic() {
     if (hit === 'H') playHiHat(false);
     if (hit === 'O') playHiHat(true);
 
-    // Bass (every 4th step = quarter notes)
-    if (pos % 4 === 0) {
-      const bassHit = bassPattern[bar % 4][pos];
-      if (bassHit === 'B') {
-        playSub(BASS_ROOT, 0.3);
-      }
-    }
-
-    // REESE SYNTH — long sustained pad, plays on beat 0 of each bar, 2 beats long
-    if (pos === 0) {
-      const reeseHit = reesePattern[bar % 4][0];
-      if (reeseHit === 'R' || reeseHit === 'U' || reeseHit === 'D') {
-        if (bar === 0) playReese(REESE_ROOT, 0.5, 'up');
-        else if (bar === 1) playReese(REESE_ROOT, 0.5, 'down');
-        else if (bar === 2) playReese(REESE_ROOT, 0.5, 'up');
-        else if (bar === 3) playReese(REESE_ROOT, 0.5, 'down');
-        else if (bar === 4) playReese(REESE_ROOT, 0.5, 'up');
-        else if (bar === 5) playReese(REESE_ROOT, 0.5, 'down');
-        else if (bar === 6) playReese(REESE_ROOT, 0.5, 'up');
-        else playReese(REESE_ROOT, 0.5, 'down');
+    // Bass arpeggios — 16th note patterns with semitone offsets
+    {
+      const bassRow = bassPatterns[bar % 4];
+      const noteChar = bassRow[pos];
+      if (noteChar !== '.' && noteChar !== undefined) {
+        const semitone = BASS_NOTES[noteChar] || 0;
+        const freq = BASS_ROOT * Math.pow(2, semitone / 12);
+        playSub(freq, 0.15);
       }
     }
 
@@ -738,10 +619,9 @@ function startMusic() {
       if (bassNote > 0) playTone(bassNote, 0.15, 'sine', 0.72);
     }
 
-    // CYMBALS — bar 1: crash, bar 4: second crash, bar 5: 8s riser, bar 7: cymbal hits as riser ends
+    // CYMBALS — bar 1: crash, bar 4: second crash, bar 7: final crash
     if (bar === 0 && pos === 0) playCymbalCrash(1.0);
     if (bar === 3 && pos === 0) playCymbalCrash(0.8);
-    if (bar === 5 && pos === 0) playRiser(1.0);
     if (bar === 7 && pos === 0) playCymbalCrash(1.2);
 
     step = (step + 1) % (16 * 8);  // 8-bar loop
@@ -791,7 +671,7 @@ function buildLevel() {
     platforms.push({ x, y, w, h: 20, type: 'float' });
   });
 
-  platforms.push({ x: 1100, y: 380, w: 80, h: 60, type: 'ramp', angle: -0.4 });
+  platforms.push({ x: 900, y: 380, w: 80, h: 60, type: 'ramp', angle: -0.4 });
   platforms.push({ x: 2250, y: 380, w: 80, h: 60, type: 'ramp', angle: -0.4 });
 
   const ringPositions = [
@@ -826,10 +706,10 @@ function buildLevel() {
   });
 
   const enemyDefs = [
-    [600, 410, 1, 0], [950, 410, -1, 0], [1300, 410, 1, 0],
-    [1750, 410, -1, 0], [2100, 410, 1, 0], [2500, 410, -1, 0],
-    [2900, 410, 1, 0], [3300, 410, -1, 0], [3700, 410, 1, 0],
-    [4100, 410, -1, 0], [4500, 410, 1, 0], [4900, 410, -1, 0],
+    [600, 416, 1, 0], [950, 416, -1, 0], [1300, 416, 1, 0],
+    [1750, 416, -1, 0], [2100, 416, 1, 0], [2500, 416, -1, 0],
+    [2900, 416, 1, 0], [3300, 416, -1, 0], [3700, 416, 1, 0],
+    [4100, 416, -1, 0], [4500, 416, 1, 0], [4900, 416, -1, 0],
     // Flying enemies (plane 1 — above ground)
     [1050, 280, 1, 1], [2350, 260, -1, 1],
     [3550, 280, 1, 1], [4750, 260, -1, 1],
@@ -849,8 +729,8 @@ function buildLevel() {
   });
 
   const springDefs = [
-    [500, 424], [1150, 424], [1800, 424], [2450, 424],
-    [3150, 424], [3850, 424], [4550, 424], [5250, 424], [5950, 424]
+    [500, 446], [1150, 446], [1800, 446], [2450, 446],
+    [3150, 446], [3850, 446], [4550, 446], [5250, 446], [5950, 446]
   ];
   springDefs.forEach(([x, y]) => {
     springs.push({ x, y: y - 6, w: 30, h: 10, compressed: 0 });
@@ -1056,6 +936,17 @@ function update() {
     if (!e.alive) return;
     e.anim += 0.1;
 
+    // Flying enemies (plane 1) — patrol 700px then turn around
+    if (e.plane === 1) {
+      e.homeX = e.homeX || e.x;
+      e.x += e.vx;
+      if (Math.abs(e.x - e.homeX) >= 350) {
+        e.vx = -e.vx;
+        e.dir = e.vx > 0 ? 1 : -1;
+      }
+      if (e.x < 50 || e.x > 6200) e.vx = -e.vx;
+    } else {
+    // Ground enemies — turn at platform edges
     // Check if enemy would be on platform NEXT frame — turn before walking off
     const nextX = e.x + e.vx;
     let onPlatformNext = false;
@@ -1086,14 +977,23 @@ function update() {
       e.x += e.vx;
     }
 
+    } // end ground enemy movement
+
     if (player.invincible <= 0 && rectCollide(player, e)) {
-      // Stomp kill — player is falling AND above the enemy AND same plane
-      const playerBottom = player.y + player.h;
-      const enemyTop = e.y;
-      const isAbove = playerBottom < enemyTop + 15;
-      const isFalling = player.vy > 0;
-      const samePlane = (e.plane === 0 && player.grounded) || (e.plane === 1) || (player.vy > 0);
-      if (isFalling && isAbove && samePlane) {
+      // Airborne enemies (plane 1) — player always wins
+      if (e.plane === 1) {
+        e.alive = false;
+        player.vy = -10;
+        screenShake = 6;
+        playEnemyKill();
+        spawnParticles(e.x + e.w/2, e.y + e.h/2, '#fbbf24', 16, 8);
+      } else {
+        // Ground enemies — stomp kill only when falling from above
+        const playerBottom = player.y + player.h;
+        const enemyTop = e.y;
+        const isAbove = playerBottom < enemyTop + 15;
+        const isFalling = player.vy > 0;
+        if (isFalling && isAbove) {
         e.alive = false;
         player.vy = -10;
         screenShake = 6;
@@ -1121,6 +1021,7 @@ function update() {
         playEnemyKill();
         spawnParticles(e.x + e.w/2, e.y + e.h/2, '#fbbf24', 20, 10);
       }
+      } // end ground enemy else
     }
   });
 
@@ -1144,13 +1045,11 @@ function update() {
     }
   });
 
-  // Spring collision
+  // Spring collision — smaller collision rect (top 6px only)
   springs.forEach(s => {
-    // Only trigger when player is above the spring and falling onto it
-    const playerBottom = player.y + player.h;
-    const springTop = s.y;
-    const isAbove = playerBottom <= springTop + 8;
-    if (rectCollide(player, s) && player.vy > 0 && isAbove) {
+    const springTopRect = { x: s.x + 4, y: s.y - 2, w: s.w - 8, h: 8 };
+    const playerFeet = { x: player.x + 4, y: player.y + player.h - 4, w: player.w - 8, h: 4 };
+    if (rectCollide(playerFeet, springTopRect) && player.vy > 0) {
       player.vy = SPRING_FORCE;
       s.compressed = 12;
       screenShake = 4;
@@ -1340,39 +1239,75 @@ function draw() {
   // Draw enemies
   enemies.forEach(e => {
     if (!e.alive) return;
-    ctx.fillStyle = '#dc2626';
-    ctx.beginPath();
-    ctx.ellipse(e.x + e.w/2, e.y + e.h/2 + 2, e.w/2, e.h/2 - 2, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#fff';
-    ctx.beginPath();
-    ctx.arc(e.x + e.w/2 + e.dir * 4, e.y + 8, 5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#000';
-    ctx.beginPath();
-    ctx.arc(e.x + e.w/2 + e.dir * 6, e.y + 8, 2.5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#333';
-    const wheelY = e.y + e.h - 4;
-    ctx.beginPath();
-    ctx.arc(e.x + 8, wheelY, 6, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(e.x + e.w - 8, wheelY, 6, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = '#666';
-    ctx.lineWidth = 1;
-    const rot = e.anim * 3;
-    for (let i = 0; i < 3; i++) {
-      const a = rot + (i * Math.PI * 2 / 3);
+    if (e.plane === 1) {
+      // Yellow flying enemy with wings
+      const ex = e.x + e.w/2;
+      const ey = e.y + e.h/2;
+      const wingFlap = Math.sin(game.time * 0.15) * 6;
+      // Wings
+      ctx.fillStyle = '#a3e635';
       ctx.beginPath();
-      ctx.moveTo(e.x + 8, wheelY);
-      ctx.lineTo(e.x + 8 + Math.cos(a) * 5, wheelY + Math.sin(a) * 5);
-      ctx.stroke();
+      ctx.moveTo(ex - 4, ey - 2);
+      ctx.lineTo(ex - 22, ey - 10 + wingFlap);
+      ctx.lineTo(ex - 18, ey + 4);
+      ctx.closePath();
+      ctx.fill();
       ctx.beginPath();
-      ctx.moveTo(e.x + e.w - 8, wheelY);
-      ctx.lineTo(e.x + e.w - 8 + Math.cos(a) * 5, wheelY + Math.sin(a) * 5);
-      ctx.stroke();
+      ctx.moveTo(ex + 4, ey - 2);
+      ctx.lineTo(ex + 22, ey - 10 + wingFlap);
+      ctx.lineTo(ex + 18, ey + 4);
+      ctx.closePath();
+      ctx.fill();
+      // Body (yellow)
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.ellipse(ex, ey + 2, e.w/2, e.h/2 - 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Eyes
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(ex + e.dir * 4, ey - 2, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(ex + e.dir * 6, ey - 2, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      // Ground enemy (red)
+      ctx.fillStyle = '#dc2626';
+      ctx.beginPath();
+      ctx.ellipse(e.x + e.w/2, e.y + e.h/2 + 2, e.w/2, e.h/2 - 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(e.x + e.w/2 + e.dir * 4, e.y + 8, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(e.x + e.w/2 + e.dir * 6, e.y + 8, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#333';
+      const wheelY = e.y + e.h - 4;
+      ctx.beginPath();
+      ctx.arc(e.x + 8, wheelY, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(e.x + e.w - 8, wheelY, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#666';
+      ctx.lineWidth = 1;
+      const rot = e.anim * 3;
+      for (let i = 0; i < 3; i++) {
+        const a = rot + (i * Math.PI * 2 / 3);
+        ctx.beginPath();
+        ctx.moveTo(e.x + 8, wheelY);
+        ctx.lineTo(e.x + 8 + Math.cos(a) * 5, wheelY + Math.sin(a) * 5);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(e.x + e.w - 8, wheelY);
+        ctx.lineTo(e.x + e.w - 8 + Math.cos(a) * 5, wheelY + Math.sin(a) * 5);
+        ctx.stroke();
+      }
     }
   });
 
@@ -1666,7 +1601,7 @@ function drawPlayer() {
 
   // Draw sprite (20 cols x 20 rows, 2px per tile = 40x40)
   const offsetX = -10; // center the 20-col sprite
-  const offsetY = -10;
+  const offsetY = -2;  // align sprite bottom with hitbox bottom (feet)
   drawSprite(frame, offsetX, offsetY, 2);
 
   ctx.restore();
