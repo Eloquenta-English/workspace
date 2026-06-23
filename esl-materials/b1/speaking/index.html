@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B1 Speaking — William Thomason English</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060a14;--card:rgba(255,255,255,.03);--border:rgba(255,255,255,.08);--border-hover:rgba(34,211,238,.4);--text:#e2e8f0;--text-secondary:#b0bec5;--text-dim:#6b7280;--cyan:#22d3ee;--purple:#a78bfa;--gold:#fbbf24;--green:#34d399}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.nav{position:sticky;top:0;z-index:100;background:rgba(6,10,20,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 32px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:800;color:var(--text);text-decoration:none}
+.nav-logo span{color:var(--cyan)}
+.nav-back{color:var(--text-secondary);text-decoration:none;font-size:.85rem;font-weight:500;transition:color .2s}
+.nav-back:hover{color:var(--cyan)}
+.hero{padding:60px 32px 40px;text-align:center;max-width:600px;margin:0 auto}
+.hero-badge{display:inline-block;padding:4px 14px;border-radius:9999px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.25);font-size:.65rem;font-weight:700;color:var(--cyan);margin-bottom:16px;letter-spacing:1px;text-transform:uppercase}
+.hero h1{font-family:'Montserrat',sans-serif;font-size:2.4rem;font-weight:900;line-height:1.1;margin-bottom:12px}
+.hero p{color:var(--text-dim);font-size:.95rem}
+.section{padding:40px 32px;max-width:1100px;margin:0 auto}
+.decks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:32px}
+.deck-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;text-decoration:none;color:inherit;display:block;transition:all .3s cubic-bezier(.4,0,.2,1);position:relative}
+.deck-card:hover{border-color:var(--border-hover);transform:translateY(-4px);box-shadow:0 8px 30px rgba(34,211,238,.15)}
+.deck-card-img{width:100%;height:130px;object-fit:cover;display:block}
+.deck-card-body{padding:16px 18px}
+.deck-card-tag{display:inline-block;font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:8px;background:rgba(167,139,250,.12);color:var(--purple);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.deck-card h3{font-size:.95rem;font-weight:700;margin-bottom:6px;line-height:1.2}
+.deck-card p{font-size:.78rem;color:var(--text-dim);line-height:1.4;margin-bottom:10px}
+.deck-card-meta{display:flex;gap:12px;font-size:.7rem;color:var(--text-dim)}
+.deck-card-status{position:absolute;top:12px;right:12px;width:10px;height:10px;border-radius:50%;background:var(--text-dim)}
+.deck-card-status.completed{background:var(--green);box-shadow:0 0 8px rgba(52,211,153,.5)}
+.footer{padding:24px 32px;text-align:center;font-size:.7rem;color:var(--text-dim);border-top:1px solid var(--border)}
+@media(max-width:768px){.nav{padding:0 16px}.hero{padding:40px 16px 30px}.hero h1{font-size:1.8rem}.section{padding:30px 16px}.decks-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="nav">
+  <a href="../index.html" class="nav-logo">&#9670; <span>WTE</span> B1 Speaking</a>
+  <a href="../index.html" class="nav-back">← Back to Hub</a>
+</div>
+
+<div class="hero">
+  <div class="hero-badge">B1 — Intermediate</div>
+  <h1>Speaking <span style="color:var(--cyan);">Decks</span></h1>
+  <p>15 interactive slide decks with real-world scenarios, key phrases, and practice activities.</p>
+</div>
+
+<div class="section">
+  <div class="decks-grid">
+    <a class="deck-card" href="music-festivals.html">
+  <div class="deck-card-status"></div>
+  <img class="deck-card-img" src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&q=70" alt="Music & Festivals" loading="lazy" onerror="this.style.display='none'">
+  <div class="deck-card-body">
+    <div class="deck-card-tag">Speaking</div>
+    <h3>Music & Festivals</h3>
+    <p>Talk about concerts, genres, and live music experiences</p>
+  </div>
+</a>
+<a class="deck-card" href="hiking-outdoors.html">
+  <div class="deck-card-status"></div>
+  <img class="deck-card-img" src="https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&q=70" alt="Hiking & Outdoors" loading="lazy" onerror="this.style.display='none'">
+  <div class="deck-card-body">
+    <div class="deck-card-tag">Speaking</div>
+    <h3>Hiking & Outdoors</h3>
+    <p>Discuss trails, nature, and outdoor activities</p>
+  </div>
+</a>
+<a class="deck-card" href="travel-adventure.html">
+  <div class="deck-card-status"></div>
+  <img class="deck-card-img" src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=70" alt="Travel & Adventure" loading="lazy" onerror="this.style.display='none'">
+  <div class="deck-card-body">
+    <div class="deck-card-tag">Speaking</div>
+    <h3>Travel & Adventure</h3>
+    <p>Share travel experiences and destination preferences</p>
+  </div>
+</a>
+<a class="deck-card" href="food-culture.html">
+  <div class="deck-card-status"></div>
+  <img class="deck-card-img" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=70" alt="Food & Culture" loading="lazy" onerror="this.style.display='none'">
+  <div class="deck-card-body">
+    <div class="deck-card-tag">Speaking</div>
+    <h3>Food & Culture</h3>
+    <p>Talk about cooking, dining, and food traditions</p>
+  </div>
+</a>
+<a class="deck-card" href="technology-social.html">
+  <div class="deck-card-status"></div>
+  <img class="deck-card-img" src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&q=70" alt="Technology & Social Media" loading="lazy" onerror="this.style.display='none'">
+  <div class="deck-card-body">
+    <div class="deck-card-tag">Speaking</div>
+    <h3>Technology & Social Media</h3>
+    <p>Discuss digital life, apps, and social platforms</p>
+  </div>
+</a>
+<a class="deck-card" href="environment-nature.html">
+  <div class="deck-card-status"></div>
+  <img class="deck-card-img" src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&q=70" alt="Environment & Nature" loading="lazy" onerror="this.style.display='none'">
+  <div class="deck-card-body">
+    <div class="deck-card-tag">Speaking</div>
+    <h3>Environment & Nature</h3>
+    <p>Talk about environmental issues and conservation</p>
+  </div>
+</a>
+<a class="deck-card" href="health-fitness.html">
+  <div class="deck-card-status"></div>
+  <img class="deck-card-img" src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=70" alt="Health & Fitness" loading="lazy" onerror="this.style.display='none'">
+  <div class="deck-card-body">
+    <div class="deck-card-tag">Speaking</div>
+    <h3>Health & Fitness</h3>
+    <p>Discuss exercise habits, diet, and wellbeing</p>
+  </div>
+</a>
+<a class="deck-card" href="work-career.html">
+  <div class="deck-card-status"></div>
+  <img class="deck-card-img" src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=70" alt="Work & Career" loading="lazy" onerror="this.style.display='none'">
+  <div class="deck-card-body">
+    <div class="deck-card-tag">Speaking</div>
+    <h3>Work & Career</h3>
+    <p>Talk about jobs, responsibilities, and career paths</p>
+  </div>
+</a>
+<a class="deck-card" href="education-learning.html">
+  <div class="deck-card-status"></div>
+  <img class="deck-card-img" src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&q=70" alt="Education & Learning" loading="lazy" onerror="this.style.display='none'">
+  <div class="deck-card-body">
+    <div class="deck-card-tag">Speaking</div>
+    <h3>Education & Learning</h3>
+    <p>Discuss school, studies, and learning preferences</p>
+  </div>
+</a>
+<a class="deck-card" href="daily-life.html">
+  <div class="deck-card-status"></div>
+  <img class="deck-card-img" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=70" alt="Daily Life & Routine" loading="lazy" onerror="this.style.display='none'">
+  <div class="deck-card-body">
+    <div class="deck-card-tag">Speaking</div>
+    <h3>Daily Life & Routine</h3>
+    <p>Describe your typical day and free time activities</p>
+  </div>
+</a>
+<a class="deck-card" href="friends-relationships.html">
+  <div class="deck-card-status"></div>
+  <img class="deck-card-img" src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&q=70" alt="Friends & Relationships" loading="lazy" onerror="this.style.display='none'">
+  <div class="deck-card-body">
+    <div class="deck-card-tag">Speaking</div>
+    <h3>Friends & Relationships</h3>
+    <p>Talk about friendships and social connections</p>
+  </div>
+</a>
+<a class="deck-card" href="future-ambitions.html">
+  <div class="deck-card-status"></div>
+  <img class="deck-card-img" src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&q=70" alt="Future & Ambitions" loading="lazy" onerror="this.style.display='none'">
+  <div class="deck-card-body">
+    <div class="deck-card-tag">Speaking</div>
+    <h3>Future & Ambitions</h3>
+    <p>Discuss plans, goals, and dreams</p>
+  </div>
+</a>
+<a class="deck-card" href="shopping-fashion.html">
+  <div class="deck-card-status"></div>
+  <img class="deck-card-img" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&q=70" alt="Shopping & Fashion" loading="lazy" onerror="this.style.display='none'">
+  <div class="deck-card-body">
+    <div class="deck-card-tag">Speaking</div>
+    <h3>Shopping & Fashion</h3>
+    <p>Talk about clothes, style, and shopping habits</p>
+  </div>
+</a>
+<a class="deck-card" href="weather-seasons.html">
+  <div class="deck-card-status"></div>
+  <img class="deck-card-img" src="https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=400&q=70" alt="Weather & Seasons" loading="lazy" onerror="this.style.display='none'">
+  <div class="deck-card-body">
+    <div class="deck-card-tag">Speaking</div>
+    <h3>Weather & Seasons</h3>
+    <p>Discuss weather preferences and seasonal changes</p>
+  </div>
+</a>
+<a class="deck-card" href="home-accommodation.html">
+  <div class="deck-card-status"></div>
+  <img class="deck-card-img" src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&q=70" alt="Home & Accommodation" loading="lazy" onerror="this.style.display='none'">
+  <div class="deck-card-body">
+    <div class="deck-card-tag">Speaking</div>
+    <h3>Home & Accommodation</h3>
+    <p>Describe your home and favorite spaces</p>
+  </div>
+</a>
+
+  </div>
+</div>
+
+<div class="footer">
+  <p>&copy; 2026 William Thomason English. Not for redistribution.</p>
+</div>
+</body>
+</html>
