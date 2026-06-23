@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Shopping & Fashion - Speaking Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060a14;
+  --cyan: #22d3ee;
+  --purple: #a78bfa;
+  --gold: #fbbf24;
+  --green: #34d399;
+  --red: #f87171;
+  --text: #e2e8f0;
+  --text-dim: #b0bec5;
+  --glow-cyan: 0 0 25px rgba(34,211,238,.25), 0 0 60px rgba(34,211,238,.1);
+  --glow-purple: 0 0 25px rgba(167,139,250,.25), 0 0 60px rgba(167,139,250,.1);
+  --hue-rotate: 0deg;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(.95rem, 1.4vw, 1.2rem);
+  line-height: 1.75;
+}
+
+.slide {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 3vh 5vw 10vh;
+  overflow-y: auto;
+  filter: hue-rotate(var(--hue-rotate));
+}
+
+.slide::-webkit-scrollbar { width: 0; background: transparent; }
+.slide { scrollbar-width: none; -ms-overflow-style: none; }
+
+.slide.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    rgba(6,10,20,.78) 0%,
+    rgba(6,10,20,.45) 45%,
+    rgba(6,10,20,.18) 100%);
+  z-index: 0;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  max-width: 80vw;
+  width: 100%;
+  background: rgba(6,10,20,.72);
+  border: 1px solid rgba(34,211,238,.4);
+  box-shadow: var(--glow-cyan);
+  border-radius: 16px;
+  padding: 2.5em 3em;
+  backdrop-filter: blur(8px);
+  margin: auto 0;
+}
+
+.content.wide { max-width: 88vw; }
+.content.narrow { max-width: 68vw; }
+
+/* Hue Slider */
+.hue-control {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(6,10,20,.85);
+  border: 1px solid rgba(34,211,238,.3);
+  border-radius: 24px;
+  padding: 8px 16px;
+  backdrop-filter: blur(6px);
+}
+
+.hue-control label {
+  font-size: .75rem;
+  color: var(--text-dim);
+  font-family: 'Inter', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.hue-control input[type="range"] {
+  width: 100px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.hue-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid var(--cyan);
+  cursor: pointer;
+}
+
+/* Glow slider track */
+#glowSlider {
+  background: linear-gradient(90deg, #1a1a2e, #22d3ee, #fbbf24);
+}
+
+/* Mark Complete button */
+.mark-complete-btn {
+  background: rgba(52,211,153,.1);
+  border: 1px solid rgba(52,211,153,.4);
+  color: var(--green);
+  font-family: 'Inter', sans-serif;
+  font-size: .95rem;
+  padding: 10px 24px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all .25s;
+  font-weight: 600;
+}
+
+.mark-complete-btn:hover {
+  background: rgba(52,211,153,.2);
+  box-shadow: 0 0 15px rgba(52,211,153,.3);
+}
+
+.reveal-btn.revealed {
+  background: rgba(52,211,153,.15);
+  border-color: rgba(52,211,153,.5);
+  color: var(--green);
+}
+
+/* Ensure buttons never touch content edges */
+.content > button,
+.content > .mark-complete-btn,
+.content > div > button {
+  margin-left: .5em;
+  margin-right: .5em;
+}
+
+/* Progress bar */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  z-index: 200;
+  transition: width .35s ease;
+}
+
+/* Navigation */
+.nav {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 1.2em;
+  z-index: 200;
+  background: rgba(6,10,20,.85);
+  border: 1px solid rgba(34,211,238,.3);
+  border-radius: 40px;
+  padding: 10px 24px;
+  backdrop-filter: blur(6px);
+}
+
+.nav button {
+  background: none;
+  border: 1px solid rgba(34,211,238,.5);
+  color: var(--cyan);
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  padding: 8px 18px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all .2s;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.nav button:hover {
+  background: rgba(34,211,238,.15);
+  box-shadow: 0 0 15px rgba(34,211,238,.3);
+}
+
+.nav .slide-counter {
+  font-family: 'Inter', monospace;
+  color: var(--text-dim);
+  font-size: .85rem;
+  min-width: 60px;
+  text-align: center;
+}
+
+/* Typography */
+h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2rem, 4.5vw, 3.8rem);
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(34,211,238,.4));
+  margin-bottom: .5em;
+  line-height: 1.15;
+}
+
+h2 {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: .7em;
+  text-shadow: 0 0 12px rgba(34,211,238,.3);
+}
+
+h3 {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  color: var(--purple);
+  margin: 1em 0 .5em;
+}
+
+p, li { margin-bottom: .5em; }
+
+.subtitle {
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  color: var(--text-dim);
+  margin-top: -.3em;
+}
+
+/* Tags */
+.tag {
+  display: inline-block;
+  font-size: .78rem;
+  padding: 2px 10px;
+  border-radius: 12px;
+  margin-right: 6px;
+  font-weight: 600;
+}
+
+.tag-cyan { background: rgba(34,211,238,.15); color: var(--cyan); border: 1px solid rgba(34,211,238,.4); }
+.tag-purple { background: rgba(167,139,250,.15); color: var(--purple); border: 1px solid rgba(167,139,250,.4); }
+.tag-gold { background: rgba(251,191,36,.15); color: var(--gold); border: 1px solid rgba(251,191,36,.4); }
+.tag-green { background: rgba(52,211,153,.15); color: var(--green); border: 1px solid rgba(52,211,153,.4); }
+.tag-red { background: rgba(248,113,113,.15); color: var(--red); border: 1px solid rgba(248,113,113,.4); }
+
+/* Glow boxes */
+.glow-box {
+  background: linear-gradient(135deg, rgba(34,211,238,.08), rgba(167,139,250,.08));
+  border: 1px solid rgba(34,211,238,.4);
+  box-shadow: 0 0 20px rgba(34,211,238,.15);
+  border-radius: 12px;
+  padding: 1em 1.4em;
+  margin: .8em 0;
+}
+
+.glow-box.purple {
+  border-color: rgba(167,139,250,.4);
+  box-shadow: 0 0 20px rgba(167,139,250,.15);
+  background: linear-gradient(135deg, rgba(167,139,250,.08), rgba(34,211,238,.05));
+}
+
+/* Vocab words */
+.vocab-word {
+  color: var(--gold);
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 1px dashed rgba(251,191,36,.4);
+  position: relative;
+}
+
+.vocab-word:hover {
+  color: #fde68a;
+  border-bottom-color: #fde68a;
+}
+
+.vocab-tooltip {
+  position: fixed;
+  z-index: 1000;
+  background: rgba(6,10,20,.95);
+  border: 1px solid rgba(251,191,36,.5);
+  box-shadow: 0 0 20px rgba(251,191,36,.2);
+  border-radius: 10px;
+  padding: 12px 16px;
+  max-width: 280px;
+  font-size: .85rem;
+  line-height: 1.6;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+.vocab-tooltip.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.vocab-tooltip .word-title {
+  font-weight: 700;
+  color: var(--gold);
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.vocab-tooltip .vocab-lang {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
+  color: var(--text);
+}
+
+.vocab-tooltip .vocab-lang .flag {
+  font-size: 1rem;
+}
+
+.vocab-tooltip .vocab-example {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,.1);
+  font-style: italic;
+  color: var(--text-dim);
+  font-size: .8rem;
+}
+
+/* Question cards */
+.question-card {
+  background: linear-gradient(135deg, rgba(251,191,36,.06), rgba(34,211,238,.06));
+  border: 1px solid rgba(251,191,36,.35);
+  border-radius: 12px;
+  padding: 1em 1.4em;
+  margin: .8em 0;
+}
+
+.question-card .question {
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: .5em;
+}
+
+/* Start prompt */
+.start-prompt {
+  color: var(--text-dim);
+  font-size: .9rem;
+  margin-top: 1em;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: .6; }
+  50% { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .content { max-width: 92vw; padding: 1.5em 1.8em; }
+  .content.wide { max-width: 95vw; }
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.3rem; }
+  .nav { bottom: 12px; padding: 8px 16px; gap: .6em; }
+  .nav button { padding: 6px 12px; font-size: .85rem; }
+  .hue-control { top: 8px; right: 8px; padding: 6px 10px; }
+  .hue-control input[type="range"] { width: 60px; }
+}
+</style></head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="hue-control" id="hueControl"><label>HUE</label><input type="range" id="hueSlider" min="0" max="360" value="0"><span style="width:1px;height:20px;background:rgba(255,255,255,.2)"></span><label>GLOW</label><input type="range" id="glowSlider" min="0" max="100" value="50"></div>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Shopping & Fashion</h1><p style="font-size:1.2rem;color:var(--text-dim);">Speaking Practice</p></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80')"><div class="content">
+<div class="question-card"><p class="question">Do you enjoy shopping? What do you usually buy? Do you prefer shopping online or in stores?</p></div>
+<div class="question-card"><p class="question">How important is fashion to you? Do you follow trends or have your own style?</p></div>
+<div class="question-card" style="border-color:rgba(167,139,250,.35);background:linear-gradient(135deg,rgba(167,139,250,.06),rgba(34,211,238,.06));"><p class="question" style="color:var(--purple);">Follow-up:</p><p class="question">Can you give me a specific example?</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80')"><div class="content">
+<div class="question-card"><p class="question">How has shopping changed in recent years? What do you think about fast fashion and sustainability?</p></div>
+<div class="question-card" style="border-color:rgba(167,139,250,.35);background:linear-gradient(135deg,rgba(167,139,250,.06),rgba(34,211,238,.06));"><p class="question" style="color:var(--purple);">Follow-up:</p><p class="question">How did that experience make you feel?</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">shopping</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">fashion</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">style</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">brand</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">trend</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">online</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">store</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">purchase</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">consumer</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">sustainable</span></p>
+</div></div></section>
+<div class="nav"><button id="prevBtn">Prev</button><span class="slide-counter" id="slideCounter">1 / 3</span><button id="nextBtn">Next</button></div>
+<script>
+// Shared systems
+let audioCtx = null, reverbNode = null;
+
+function ensureAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const rate = audioCtx.sampleRate;
+    const length = rate * 1.2;
+    const impulse = audioCtx.createBuffer(2, length, rate);
+    for (let ch = 0; ch < 2; ch++) {
+      const data = impulse.getChannelData(ch);
+      for (let i = 0; i < length; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2.5);
+      }
+    }
+    reverbNode = audioCtx.createConvolver();
+    reverbNode.buffer = impulse;
+    const reverbGain = audioCtx.createGain();
+    reverbGain.gain.value = 0.4;
+    reverbNode.connect(reverbGain);
+    reverbGain.connect(audioCtx.destination);
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playSwish(direction) {
+  ensureAudio();
+  const now = audioCtx.currentTime;
+  const bufferSize = Math.floor(audioCtx.sampleRate * 0.18);
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    const env = Math.sin((i / bufferSize) * Math.PI);
+    data[i] = (Math.random() * 2 - 1) * env;
+  }
+  const src = audioCtx.createBufferSource();
+  src.buffer = buffer;
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.Q.value = 8;
+  if (direction === 'forward') {
+    filter.frequency.setValueAtTime(800, now);
+    filter.frequency.exponentialRampToValueAtTime(4000, now + 0.15);
+  } else {
+    filter.frequency.setValueAtTime(4000, now);
+    filter.frequency.exponentialRampToValueAtTime(800, now + 0.15);
+  }
+  const gain = audioCtx.createGain();
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(0.12, now + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+  const dryGain = audioCtx.createGain();
+  dryGain.gain.value = 0.6;
+  const wetGain = audioCtx.createGain();
+  wetGain.gain.value = 0.4;
+  src.connect(filter);
+  filter.connect(gain);
+  gain.connect(dryGain);
+  gain.connect(wetGain);
+  dryGain.connect(audioCtx.destination);
+  wetGain.connect(reverbNode);
+  src.start(now);
+  src.stop(now + 0.2);
+  const osc = audioCtx.createOscillator();
+  osc.type = 'sine';
+  const oscGain = audioCtx.createGain();
+  if (direction === 'forward') {
+    osc.frequency.setValueAtTime(600, now);
+    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+  } else {
+    osc.frequency.setValueAtTime(1200, now);
+    osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+  }
+  oscGain.gain.setValueAtTime(0, now);
+  oscGain.gain.linearRampToValueAtTime(0.04, now + 0.02);
+  oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+  osc.connect(oscGain);
+  oscGain.connect(audioCtx.destination);
+  osc.start(now);
+  osc.stop(now + 0.15);
+}
+
+// Vocab system — 10-15 words per question set
+const vocabDictionary = {
+  // Warm-Up vocab
+  "concert": { example: "We went to a concert last weekend.", de: "Konzert", es: "concierto", fr: "concert", it: "concerto", pt: "concerto", ja: "コンサート" },
+  "festival": { example: "The Salzburg Festival is famous.", de: "Festival", es: "festival", fr: "festival", it: "festival", pt: "festival", ja: "フェスティバル" },
+  "live music": { example: "I prefer live music to recordings.", de: "Live-Musik", es: "música en vivo", fr: "musique en direct", it: "musica dal vivo", pt: "música ao vivo", ja: "ライブ音楽" },
+  "to perform": { example: "She performs every Friday.", de: "auftreten", es: "actuar", fr: "se produire", it: "esibirsi", pt: "apresentar-se", ja: "演奏する" },
+  "atmosphere": { example: "The atmosphere at the gig was amazing.", de: "Atmosphäre", es: "atmósfera", fr: "atmosphère", it: "atmosfera", pt: "atmosfera", ja: "雰囲気" },
+  "crowd": { example: "The crowd was singing along.", de: "Menge", es: "multitud", fr: "foule", it: "folla", pt: "multidão", ja: "群衆" },
+  "encore": { example: "The band played an encore.", de: "Zugabe", es: "bis", fr: "rappel", it: "bis", pt: "bis", ja: "アンコール" },
+  "genre": { example: "What's your favourite music genre?", de: "Genre", es: "género", fr: "genre", it: "genere", pt: "gênero", ja: "ジャンル" },
+  "to sing along": { example: "I like to sing along to my favourite songs.", de: "mitsingen", es: "cantar junto", fr: "chanter avec", it: "cantare insieme", pt: "cantar junto", ja: "一緒に歌う" },
+  "ticket": { example: "I bought tickets in advance.", de: "Ticket", es: "entrada", fr: "billet", it: "biglietto", pt: "bilhete", ja: "チケット" },
+  "venue": { example: "The venue was packed.", de: "Veranstaltungsort", es: "lugar", fr: "lieu", it: "locale", pt: "local", ja: "会場" },
+  "soundcheck": { example: "We arrived early for the soundcheck.", de: "Soundcheck", es: "prueba de sonido", fr: "balance", it: "prova del suono", pt: "teste de som", ja: "サウンドチェック" },
+  "opening act": { example: "The opening act was surprisingly good.", de: "Vorband", es: "telonero", fr: "première partie", it: "apripista", pt: "abertura", ja: "前座" },
+  "setlist": { example: "What was the setlist for the show?", de: "Setlist", es: "repertorio", fr: "setlist", it: "scaletta", pt: "repertório", ja: "セットリスト" },
+  "mosh pit": { example: "He jumped into the mosh pit.", de: "Mosh Pit", es: "pogo", fr: "mosh pit", it: "mosh pit", pt: "mosh pit", ja: "モッシュピット" },
+  // Follow-Up vocab
+  "memorable": { example: "It was a memorable experience.", de: "denkwürdig", es: "memorable", fr: "mémorable", it: "memorabile", pt: "memorável", ja: "忘れられない" },
+  "unforgettable": { example: "The view was unforgettable.", de: "unvergesslich", es: "inolvidable", fr: "inoubliable", it: "indimenticabile", pt: "inesquecível", ja: "忘れられない" },
+  "to influence": { example: "Who influences young people most?", de: "beeinflussen", es: "influir", fr: "influencer", it: "influenzare", pt: "influenciar", ja: "影響する" },
+  "role model": { example: "Young people need role models.", de: "Vorbild", es: "modelo a seguir", fr: "modèle", it: "modello", pt: "modelo", ja: "ロールモデル" },
+  "to achieve": { example: "I want to achieve my goals.", de: "erreichen", es: "lograr", fr: "atteindre", it: "raggiungere", pt: "alcançar", ja: "達成する" },
+  "passion": { example: "She has a passion for music.", de: "Leidenschaft", es: "pasión", fr: "passion", it: "passione", pt: "paixão", ja: "情熱" },
+  "dedication": { example: "His dedication is impressive.", de: "Hingabe", es: "dedicación", fr: "dévouement", it: "dedizione", pt: "dedicação", ja: "献身" },
+  "talent": { example: "He has a natural talent.", de: "Talent", es: "talento", fr: "talent", it: "talento", pt: "talento", ja: "才能" },
+  "rehearsal": { example: "The band had a rehearsal.", de: "Probe", es: "ensayo", fr: "répétition", it: "prova", pt: "ensaio", ja: "リハーサル" },
+  "backstage": { example: "We went backstage after the show.", de: "Backstage", es: "backstage", fr: "backstage", it: "backstage", pt: "backstage", ja: "楽屋" },
+  "spontaneous": { example: "It was a spontaneous decision.", de: "spontan", es: "espontáneo", fr: "spontané", it: "spontaneo", pt: "espontâneo", ja: "自発的" },
+  "to immerse": { example: "Immerse yourself in the culture.", de: "eintauchen", es: "sumergir", fr: "s'immerger", it: "immergere", pt: "mergulhar", ja: "没頭する" },
+  "vibe": { example: "The vibe was incredible.", de: "Atmosphäre/Vibe", es: "ambiente", fr: "ambiance", it: "vibe", pt: "vibe", ja: "雰囲気" },
+  "to resonate": { example: "That song resonates with me.", de: "widerhallen", es: "resonar", fr: "résonner", it: "risuonare", pt: "ressoar", ja: "響く" },
+  "nostalgia": { example: "It fills me with nostalgia.", de: "Nostalgie", es: "nostalgia", fr: "nostalgie", it: "nostalgia", pt: "nostalgia", ja: "ノスタルジア" },
+};
+
+const tooltip = document.getElementById('vocabTooltip');
+let activeVocabWord = null;
+
+document.addEventListener('click', (e) => {
+  const vocabWord = e.target.closest('.vocab-word');
+  if (vocabWord) {
+    const word = vocabWord.dataset.vocab;
+    const entry = vocabDictionary[word];
+    if (!entry) return;
+    
+    // Position tooltip
+    const rect = vocabWord.getBoundingClientRect();
+    const top = rect.bottom + 8;
+    const left = Math.min(rect.left, window.innerWidth - 300);
+    tooltip.style.top = top + 'px';
+    tooltip.style.left = left + 'px';
+    
+    tooltip.innerHTML = `
+      <div class="word-title">${word}</div>
+      <div class="vocab-lang"><span class="flag">🇩🇪</span> ${entry.de}</div>
+      <div class="vocab-lang"><span class="flag">🇪🇸</span> ${entry.es}</div>
+      <div class="vocab-lang"><span class="flag">🇫🇷</span> ${entry.fr}</div>
+      <div class="vocab-lang"><span class="flag">🇮🇹</span> ${entry.it}</div>
+      <div class="vocab-lang"><span class="flag">🇵🇹</span> ${entry.pt}</div>
+      <div class="vocab-lang"><span class="flag">🇯🇵</span> ${entry.ja}</div>
+      <div class="vocab-example">"${entry.example}"</div>
+    `;
+    
+    tooltip.classList.add('visible');
+    activeVocabWord = tooltip;
+    e.stopPropagation();
+  } else if (activeVocabWord) {
+    tooltip.classList.remove('visible');
+    activeVocabWord = null;
+  }
+});
+
+// Hue slider
+const hueSlider = document.getElementById('hueSlider');
+const root = document.documentElement;
+hueSlider.addEventListener('input', (e) => {
+  const hue = e.target.value;
+  root.style.setProperty('--hue-rotate', hue + 'deg');
+  document.querySelectorAll('.slide').forEach(slide => {
+    slide.style.filter = `hue-rotate(${hue}deg) saturate(${1 + hue/720})`;
+  });
+  const accent = `hsl(${hue}, 80%, 60%)`;
+  const accentLight = `hsl(${hue}, 80%, 75%)`;
+  root.style.setProperty('--cyan', accent);
+  root.style.setProperty('--gold', accentLight);
+});
+
+// Glow intensity slider
+const glowSlider = document.getElementById('glowSlider');
+glowSlider.addEventListener('input', (e) => {
+  const intensity = e.target.value / 100; // 0 to 1
+  const glowSize = 10 + intensity * 40; // 10px to 50px
+  const glowOpacity = 0.2 + intensity * 0.5; // 0.2 to 0.7
+  root.style.setProperty('--glow-intensity', intensity);
+  root.style.setProperty('--glow-size', glowSize + 'px');
+  root.style.setProperty('--glow-opacity', glowOpacity);
+  // Update content box glow
+  document.querySelectorAll('.content').forEach(c => {
+    c.style.boxShadow = `0 0 ${glowSize}px rgba(34,211,238,${glowOpacity}), 0 0 ${glowSize * 2}px rgba(167,139,250,${glowOpacity * 0.5})`;
+  });
+});
+
+// Mark Complete with localStorage
+function toggleMarkComplete(btn) {
+  const deckId = window.location.pathname;
+  const progress = JSON.parse(localStorage.getItem('esl-progress') || '{}');
+  
+  if (btn.classList.contains('completed')) {
+    btn.classList.remove('completed');
+    btn.textContent = '✓ Mark Complete';
+    if (progress[deckId]) {
+      progress[deckId].completed = false;
+    }
+  } else {
+    btn.classList.add('completed');
+    btn.textContent = '✓ Completed!';
+    if (!progress[deckId]) progress[deckId] = {};
+    progress[deckId].completed = true;
+    progress[deckId].date = new Date().toISOString().split('T')[0];
+  }
+  localStorage.setItem('esl-progress', JSON.stringify(progress));
+}
+
+// Restore mark complete state on load
+(function restoreProgress() {
+  const deckId = window.location.pathname;
+  const progress = JSON.parse(localStorage.getItem('esl-progress') || '{}');
+  const btn = document.getElementById('markCompleteBtn');
+  if (btn && progress[deckId] && progress[deckId].completed) {
+    btn.classList.add('completed');
+    btn.textContent = '✓ Completed!';
+  }
+})();
+
+// Navigation
+const slides = document.querySelectorAll('.slide');
+let current = 0;
+
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const slideCounter = document.getElementById('slideCounter');
+const progressBar = document.getElementById('progressBar');
+
+function update() {
+  slides.forEach((s, i) => s.classList.toggle('active', i === current));
+  slideCounter.textContent = `${current + 1} / ${slides.length}`;
+  progressBar.style.width = `${((current + 1) / slides.length) * 100}%`;
+  
+  // Show/hide hue slider on first slide
+  document.getElementById('hueControl').style.display = current === 0 ? 'flex' : 'none';
+}
+
+prevBtn.addEventListener('click', () => {
+  if (current > 0) { current--; playSwish('back'); } update();
+});
+nextBtn.addEventListener('click', () => {
+  if (current < slides.length - 1) { current++; playSwish('forward'); } update();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    if (current < slides.length - 1) { current++; playSwish('forward'); } update();
+  }
+  if (e.key === 'ArrowLeft') {
+    if (current > 0) { current--; playSwish('back'); } update();
+  }
+});
+
+update();
+</script>
+</body></html>
+</body></html>
