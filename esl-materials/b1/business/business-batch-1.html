@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>B1 Business Batch 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e1a;
+  --primary: #2d5016;
+  --primary-light: #4a7c2e;
+  --accent: #8bc34a;
+  --gold: #fbbf24;
+  --text: #e8f0e4;
+  --text-dim: #a8b8a0;
+  --card-bg: rgba(10,14,26,.78);
+  --glow: rgba(139,195,74,.25);
+  --hue-rotate: 0deg;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(.95rem, 1.4vw, 1.2rem);
+  line-height: 1.75;
+}
+
+.slide {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 3vh 5vw 10vh;
+  overflow-y: auto;
+  filter: hue-rotate(var(--hue-rotate));
+}
+
+.slide::-webkit-scrollbar { width: 0; background: transparent; }
+.slide { scrollbar-width: none; -ms-overflow-style: none; }
+
+.slide.active { opacity: 1; pointer-events: auto; }
+
+.slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+    rgba(10,14,26,.82) 0%,
+    rgba(10,14,26,.55) 40%,
+    rgba(10,14,26,.25) 100%);
+  z-index: 0;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  max-width: 80vw;
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid rgba(139,195,74,.35);
+  box-shadow: 0 0 25px var(--glow), 0 0 60px rgba(139,195,74,.1);
+  border-radius: 16px;
+  padding: 2.5em 3em;
+  backdrop-filter: blur(8px);
+  margin: auto 0;
+}
+
+/* Glow control */
+.hue-control {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(10,14,26,.85);
+  border: 1px solid rgba(139,195,74,.3);
+  border-radius: 24px;
+  padding: 8px 16px;
+  backdrop-filter: blur(6px);
+}
+
+.hue-control label {
+  font-size: .75rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.hue-control input[type="range"] {
+  width: 100px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+#hueSlider {
+  background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+}
+
+#glowSlider {
+  background: linear-gradient(90deg, #1a2e0a, #4a7c2e, #8bc34a);
+}
+
+.hue-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid var(--accent);
+  cursor: pointer;
+}
+
+/* Progress bar */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  z-index: 200;
+  transition: width .35s ease;
+}
+
+/* Navigation */
+.nav {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 1.2em;
+  z-index: 200;
+  background: rgba(10,14,26,.85);
+  border: 1px solid rgba(139,195,74,.3);
+  border-radius: 40px;
+  padding: 10px 24px;
+  backdrop-filter: blur(6px);
+}
+
+.nav button {
+  background: none;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  padding: 8px 18px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all .2s;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.nav button:hover {
+  background: rgba(139,195,74,.15);
+  box-shadow: 0 0 15px rgba(139,195,74,.3);
+}
+
+.nav .slide-counter {
+  font-family: 'Inter', monospace;
+  color: var(--text-dim);
+  font-size: .85rem;
+  min-width: 60px;
+  text-align: center;
+}
+
+/* Typography */
+h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2rem, 4.5vw, 3.8rem);
+  background: linear-gradient(135deg, var(--accent), #c8e685);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(139,195,74,.4));
+  margin-bottom: .5em;
+  line-height: 1.15;
+}
+
+h2 {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: .7em;
+  text-shadow: 0 0 12px rgba(139,195,74,.3);
+}
+
+h3 {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  color: var(--gold);
+  margin: 1em 0 .5em;
+}
+
+p, li { margin-bottom: .5em; }
+
+.subtitle {
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  color: var(--text-dim);
+  margin-top: -.3em;
+}
+
+/* Business scenario box */
+.scenario-box {
+  background: linear-gradient(135deg, rgba(45,80,22,.12), rgba(74,124,46,.08));
+  border: 1px solid rgba(139,195,74,.35);
+  box-shadow: 0 0 20px rgba(139,195,74,.15);
+  border-radius: 12px;
+  padding: 1em 1.4em;
+  margin: .8em 0;
+}
+
+.scenario-box .context-tag {
+  display: inline-block;
+  font-size: .7rem;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: rgba(139,195,74,.2);
+  color: var(--accent);
+  margin-bottom: .4em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+/* Key phrases */
+.phrase-block {
+  background: rgba(10,14,26,.55);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  padding: .8em 1.2em;
+  margin: .5em 0;
+}
+
+.phrase-block .phrase {
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: .2em;
+}
+
+.phrase-block .usage {
+  font-size: .9rem;
+  color: var(--text-dim);
+}
+
+/* Dialogue */
+.dialogue {
+  background: rgba(10,14,26,.55);
+  border-radius: 12px;
+  padding: 1em 1.4em;
+  margin: .8em 0;
+}
+
+.dialogue .speaker {
+  font-weight: 700;
+  color: var(--accent);
+  margin: .3em 0;
+}
+
+.dialogue .line {
+  padding: .3em 0 .3em 1em;
+  color: var(--text);
+  font-size: .95rem;
+}
+
+/* Language focus */
+.lang-focus {
+  background: linear-gradient(135deg, rgba(251,191,36,.06), rgba(139,195,74,.06));
+  border: 1px solid rgba(251,191,36,.3);
+  border-radius: 12px;
+  padding: 1em 1.4em;
+  margin: .8em 0;
+}
+
+.lang-focus .focus-title {
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: .4em;
+}
+
+/* Role-play */
+.roleplay {
+  background: linear-gradient(135deg, rgba(167,139,250,.08), rgba(139,195,74,.08));
+  border: 1px solid rgba(167,139,250,.3);
+  border-radius: 12px;
+  padding: 1em 1.4em;
+  margin: .8em 0;
+}
+
+.roleplay .role-badge {
+  display: inline-block;
+  font-size: .7rem;
+  padding: 3px 10px;
+  border-radius: 8px;
+  background: rgba(167,139,250,.2);
+  color: #a78bfa;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: .5em;
+}
+
+/* Business button */
+.btn-business {
+  display: inline-block;
+  margin-top: 1em;
+  margin-bottom: .5em;
+  margin-right: .8em;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 15px rgba(139,195,74,.3);
+  color: white;
+  font-family: 'Inter', sans-serif;
+  font-size: .95rem;
+  padding: 12px 28px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all .25s cubic-bezier(.4,0,.2,1);
+  font-weight: 600;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-business:hover {
+  box-shadow: 0 0 25px rgba(139,195,74,.5);
+  transform: translateY(-2px);
+}
+
+.btn-business:active {
+  transform: translateY(1px) scale(.96);
+  box-shadow: 0 0 10px rgba(139,195,74,.3);
+  transition: all .1s;
+}
+
+.btn-business.practiced {
+  background: linear-gradient(135deg, #2d5016, #6abf45);
+  border-color: #a8e063;
+  box-shadow: 0 0 25px rgba(168,224,99,.5);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(168,224,99,.4); }
+  50% { box-shadow: 0 0 35px rgba(168,224,99,.7); }
+}
+/* Mark Complete */
+.mark-complete-btn {
+  display: inline-block;
+  background: rgba(139,195,74,.1);
+  border: 1px solid rgba(139,195,74,.4);
+  color: var(--accent);
+  font-family: 'Inter', sans-serif;
+  font-size: .95rem;
+  padding: 12px 28px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all .25s cubic-bezier(.4,0,.2,1);
+  font-weight: 600;
+  margin: .5em .8em .5em 0;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mark-complete-btn:hover {
+  background: rgba(139,195,74,.2);
+  box-shadow: 0 0 15px rgba(139,195,74,.3);
+  transform: translateY(-2px);
+}
+
+.mark-complete-btn:active {
+  transform: translateY(1px) scale(.96);
+  background: rgba(139,195,74,.35);
+  box-shadow: 0 0 8px rgba(139,195,74,.2);
+  transition: all .1s;
+}
+
+.mark-complete-btn.completed {
+  background: linear-gradient(135deg, rgba(139,195,74,.3), rgba(168,224,99,.2));
+  border-color: rgba(168,224,99,.7);
+  box-shadow: 0 0 20px rgba(168,224,99,.4);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Ensure buttons never touch content edges */
+.content > button,
+.content > .btn-business,
+.content > .mark-complete-btn,
+.content > .reveal-btn,
+.content > div > button {
+  margin-left: .5em;
+  margin-right: .5em;
+}
+
+.start-prompt {
+  color: var(--text-dim);
+  font-size: .9rem;
+  margin-top: 1em;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: .6; }
+  50% { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .content { max-width: 92vw; padding: 1.5em 1.8em; }
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.3rem; }
+  .nav { bottom: 12px; padding: 8px 16px; gap: .6em; }
+  .nav button { padding: 6px 12px; font-size: .85rem; }
+  .hue-control { top: 8px; right: 8px; padding: 6px 10px; }
+  .hue-control input[type="range"] { width: 60px; }
+}
+</style></head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="hue-control" id="hueControl"><label>HUE</label><input type="range" id="hueSlider" min="0" max="360" value="0"><span style="width:1px;height:20px;background:rgba(255,255,255,.2)"></span><label>GLOW</label><input type="range" id="glowSlider" min="0" max="100" value="50"></div>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 1</h1><p style="font-size:1.2rem;color:var(--text-dim);">Introductions & Networking</p></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1600&q=80')"><div class="content"><h2>Scenario</h2><div class="scenario-box"><span class="context-tag">Networking Event</span><p>You're at a business networking event in Vienna. Introduce yourself, make small talk, and exchange business cards.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1600&q=80')"><div class="content"><h2>Key Phrases</h2>
+<div class="phrase-block"><p class="phrase">Key phrase 1 for Introductions & Networking.</p><p class="usage">Use: When you need to open the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 2 for Introductions & Networking.</p><p class="usage">Use: When you need to discuss the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 3 for Introductions & Networking.</p><p class="usage">Use: When you need to close the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 4 for Introductions & Networking.</p><p class="usage">Use: When you need to follow up the conversation.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=1600&q=80')"><div class="content"><h2>Example Dialogue</h2><div class="dialogue">
+<p class="speaker">Person A</p><p class="line">Opening line for Introductions & Networking.</p>
+<p class="speaker">Person B</p><p class="line">Response line for Introductions & Networking.</p>
+<p class="speaker">Person A</p><p class="line">Follow-up for Introductions & Networking.</p>
+<p class="speaker">Person B</p><p class="line">Closing for Introductions & Networking.</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600&q=80')"><div class="content"><h2>Language Focus</h2><div class="lang-focus"><p class="focus-title">Business Communication Focus</p>
+<p>Formal register for professional situations</p>
+<p>Key collocations and phrases</p>
+<p>Common mistakes to avoid</p>
+<p>Practice tip for this topic</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1600&q=80')"><div class="content"><h2>Your Turn</h2><div class="roleplay"><span class="role-badge">Practice Task</span><p>Practice a scenario for Introductions & Networking. Use the key phrases from this lesson.</p><button class="btn-business" onclick="markPracticed(this)">✓ I Practiced This</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">business</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">professional</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">communication</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">meeting</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">presentation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">email</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">negotiation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">service</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">interview</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">career</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 2</h1><p style="font-size:1.2rem;color:var(--text-dim);">Meetings & Discussions</p></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1600&q=80')"><div class="content"><h2>Scenario</h2><div class="scenario-box"><span class="context-tag">Team Meeting</span><p>You're leading a weekly team meeting. Review progress, address blockers, and assign action items.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=1600&q=80')"><div class="content"><h2>Key Phrases</h2>
+<div class="phrase-block"><p class="phrase">Key phrase 1 for Meetings & Discussions.</p><p class="usage">Use: When you need to open the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 2 for Meetings & Discussions.</p><p class="usage">Use: When you need to discuss the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 3 for Meetings & Discussions.</p><p class="usage">Use: When you need to close the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 4 for Meetings & Discussions.</p><p class="usage">Use: When you need to follow up the conversation.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600&q=80')"><div class="content"><h2>Example Dialogue</h2><div class="dialogue">
+<p class="speaker">Person A</p><p class="line">Opening line for Meetings & Discussions.</p>
+<p class="speaker">Person B</p><p class="line">Response line for Meetings & Discussions.</p>
+<p class="speaker">Person A</p><p class="line">Follow-up for Meetings & Discussions.</p>
+<p class="speaker">Person B</p><p class="line">Closing for Meetings & Discussions.</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1600&q=80')"><div class="content"><h2>Language Focus</h2><div class="lang-focus"><p class="focus-title">Business Communication Focus</p>
+<p>Formal register for professional situations</p>
+<p>Key collocations and phrases</p>
+<p>Common mistakes to avoid</p>
+<p>Practice tip for this topic</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=1600&q=80')"><div class="content"><h2>Your Turn</h2><div class="roleplay"><span class="role-badge">Practice Task</span><p>Practice a scenario for Meetings & Discussions. Use the key phrases from this lesson.</p><button class="btn-business" onclick="markPracticed(this)">✓ I Practiced This</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">business</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">professional</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">communication</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">meeting</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">presentation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">email</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">negotiation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">service</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">interview</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">career</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 3</h1><p style="font-size:1.2rem;color:var(--text-dim);">Presentations & Pitches</p></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=1600&q=80')"><div class="content"><h2>Scenario</h2><div class="scenario-box"><span class="context-tag">Client Pitch</span><p>You're presenting a new project proposal to a potential client. Engage them and handle questions.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600&q=80')"><div class="content"><h2>Key Phrases</h2>
+<div class="phrase-block"><p class="phrase">Key phrase 1 for Presentations & Pitches.</p><p class="usage">Use: When you need to open the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 2 for Presentations & Pitches.</p><p class="usage">Use: When you need to discuss the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 3 for Presentations & Pitches.</p><p class="usage">Use: When you need to close the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 4 for Presentations & Pitches.</p><p class="usage">Use: When you need to follow up the conversation.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1600&q=80')"><div class="content"><h2>Example Dialogue</h2><div class="dialogue">
+<p class="speaker">Person A</p><p class="line">Opening line for Presentations & Pitches.</p>
+<p class="speaker">Person B</p><p class="line">Response line for Presentations & Pitches.</p>
+<p class="speaker">Person A</p><p class="line">Follow-up for Presentations & Pitches.</p>
+<p class="speaker">Person B</p><p class="line">Closing for Presentations & Pitches.</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=1600&q=80')"><div class="content"><h2>Language Focus</h2><div class="lang-focus"><p class="focus-title">Business Communication Focus</p>
+<p>Formal register for professional situations</p>
+<p>Key collocations and phrases</p>
+<p>Common mistakes to avoid</p>
+<p>Practice tip for this topic</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1600&q=80')"><div class="content"><h2>Your Turn</h2><div class="roleplay"><span class="role-badge">Practice Task</span><p>Practice a scenario for Presentations & Pitches. Use the key phrases from this lesson.</p><button class="btn-business" onclick="markPracticed(this)">✓ I Practiced This</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">business</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">professional</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">communication</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">meeting</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">presentation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">email</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">negotiation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">service</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">interview</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">career</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 4</h1><p style="font-size:1.2rem;color:var(--text-dim);">Phone Calls & Video Conferences</p></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600&q=80')"><div class="content"><h2>Scenario</h2><div class="scenario-box"><span class="context-tag">Client Call</span><p>You're calling a client to discuss a project update. The connection is poor and you need to be clear.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1600&q=80')"><div class="content"><h2>Key Phrases</h2>
+<div class="phrase-block"><p class="phrase">Key phrase 1 for Phone Calls & Video Conferences.</p><p class="usage">Use: When you need to open the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 2 for Phone Calls & Video Conferences.</p><p class="usage">Use: When you need to discuss the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 3 for Phone Calls & Video Conferences.</p><p class="usage">Use: When you need to close the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 4 for Phone Calls & Video Conferences.</p><p class="usage">Use: When you need to follow up the conversation.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=1600&q=80')"><div class="content"><h2>Example Dialogue</h2><div class="dialogue">
+<p class="speaker">Person A</p><p class="line">Opening line for Phone Calls & Video Conferences.</p>
+<p class="speaker">Person B</p><p class="line">Response line for Phone Calls & Video Conferences.</p>
+<p class="speaker">Person A</p><p class="line">Follow-up for Phone Calls & Video Conferences.</p>
+<p class="speaker">Person B</p><p class="line">Closing for Phone Calls & Video Conferences.</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1600&q=80')"><div class="content"><h2>Language Focus</h2><div class="lang-focus"><p class="focus-title">Business Communication Focus</p>
+<p>Formal register for professional situations</p>
+<p>Key collocations and phrases</p>
+<p>Common mistakes to avoid</p>
+<p>Practice tip for this topic</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1600&q=80')"><div class="content"><h2>Your Turn</h2><div class="roleplay"><span class="role-badge">Practice Task</span><p>Practice a scenario for Phone Calls & Video Conferences. Use the key phrases from this lesson.</p><button class="btn-business" onclick="markPracticed(this)">✓ I Practiced This</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">business</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">professional</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">communication</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">meeting</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">presentation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">email</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">negotiation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">service</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">interview</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">career</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 5</h1><p style="font-size:1.2rem;color:var(--text-dim);">Emails & Written Communication</p></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1600&q=80')"><div class="content"><h2>Scenario</h2><div class="scenario-box"><span class="context-tag">Professional Email</span><p>You need to write a formal email to a client explaining a project delay.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=1600&q=80')"><div class="content"><h2>Key Phrases</h2>
+<div class="phrase-block"><p class="phrase">Key phrase 1 for Emails & Written Communication.</p><p class="usage">Use: When you need to open the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 2 for Emails & Written Communication.</p><p class="usage">Use: When you need to discuss the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 3 for Emails & Written Communication.</p><p class="usage">Use: When you need to close the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 4 for Emails & Written Communication.</p><p class="usage">Use: When you need to follow up the conversation.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1600&q=80')"><div class="content"><h2>Example Dialogue</h2><div class="dialogue">
+<p class="speaker">Person A</p><p class="line">Opening line for Emails & Written Communication.</p>
+<p class="speaker">Person B</p><p class="line">Response line for Emails & Written Communication.</p>
+<p class="speaker">Person A</p><p class="line">Follow-up for Emails & Written Communication.</p>
+<p class="speaker">Person B</p><p class="line">Closing for Emails & Written Communication.</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1600&q=80')"><div class="content"><h2>Language Focus</h2><div class="lang-focus"><p class="focus-title">Business Communication Focus</p>
+<p>Formal register for professional situations</p>
+<p>Key collocations and phrases</p>
+<p>Common mistakes to avoid</p>
+<p>Practice tip for this topic</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1600&q=80')"><div class="content"><h2>Your Turn</h2><div class="roleplay"><span class="role-badge">Practice Task</span><p>Practice a scenario for Emails & Written Communication. Use the key phrases from this lesson.</p><button class="btn-business" onclick="markPracticed(this)">✓ I Practiced This</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">business</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">professional</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">communication</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">meeting</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">presentation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">email</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">negotiation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">service</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">interview</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">career</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 6</h1><p style="font-size:1.2rem;color:var(--text-dim);">Negotiations & Deal-Making</p></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=1600&q=80')"><div class="content"><h2>Scenario</h2><div class="scenario-box"><span class="context-tag">Price Negotiation</span><p>You're negotiating a contract with a supplier. Reach a win-win agreement.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1600&q=80')"><div class="content"><h2>Key Phrases</h2>
+<div class="phrase-block"><p class="phrase">Key phrase 1 for Negotiations & Deal-Making.</p><p class="usage">Use: When you need to open the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 2 for Negotiations & Deal-Making.</p><p class="usage">Use: When you need to discuss the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 3 for Negotiations & Deal-Making.</p><p class="usage">Use: When you need to close the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 4 for Negotiations & Deal-Making.</p><p class="usage">Use: When you need to follow up the conversation.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1600&q=80')"><div class="content"><h2>Example Dialogue</h2><div class="dialogue">
+<p class="speaker">Person A</p><p class="line">Opening line for Negotiations & Deal-Making.</p>
+<p class="speaker">Person B</p><p class="line">Response line for Negotiations & Deal-Making.</p>
+<p class="speaker">Person A</p><p class="line">Follow-up for Negotiations & Deal-Making.</p>
+<p class="speaker">Person B</p><p class="line">Closing for Negotiations & Deal-Making.</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1600&q=80')"><div class="content"><h2>Language Focus</h2><div class="lang-focus"><p class="focus-title">Business Communication Focus</p>
+<p>Formal register for professional situations</p>
+<p>Key collocations and phrases</p>
+<p>Common mistakes to avoid</p>
+<p>Practice tip for this topic</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1600&q=80')"><div class="content"><h2>Your Turn</h2><div class="roleplay"><span class="role-badge">Practice Task</span><p>Practice a scenario for Negotiations & Deal-Making. Use the key phrases from this lesson.</p><button class="btn-business" onclick="markPracticed(this)">✓ I Practiced This</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">business</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">professional</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">communication</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">meeting</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">presentation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">email</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">negotiation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">service</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">interview</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">career</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 7</h1><p style="font-size:1.2rem;color:var(--text-dim);">Customer Service</p></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1600&q=80')"><div class="content"><h2>Scenario</h2><div class="scenario-box"><span class="context-tag">Complaint Handling</span><p>A customer is unhappy with your service. Resolve the issue while maintaining the relationship.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1600&q=80')"><div class="content"><h2>Key Phrases</h2>
+<div class="phrase-block"><p class="phrase">Key phrase 1 for Customer Service.</p><p class="usage">Use: When you need to open the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 2 for Customer Service.</p><p class="usage">Use: When you need to discuss the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 3 for Customer Service.</p><p class="usage">Use: When you need to close the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 4 for Customer Service.</p><p class="usage">Use: When you need to follow up the conversation.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1600&q=80')"><div class="content"><h2>Example Dialogue</h2><div class="dialogue">
+<p class="speaker">Person A</p><p class="line">Opening line for Customer Service.</p>
+<p class="speaker">Person B</p><p class="line">Response line for Customer Service.</p>
+<p class="speaker">Person A</p><p class="line">Follow-up for Customer Service.</p>
+<p class="speaker">Person B</p><p class="line">Closing for Customer Service.</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1600&q=80')"><div class="content"><h2>Language Focus</h2><div class="lang-focus"><p class="focus-title">Business Communication Focus</p>
+<p>Formal register for professional situations</p>
+<p>Key collocations and phrases</p>
+<p>Common mistakes to avoid</p>
+<p>Practice tip for this topic</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1600&q=80')"><div class="content"><h2>Your Turn</h2><div class="roleplay"><span class="role-badge">Practice Task</span><p>Practice a scenario for Customer Service. Use the key phrases from this lesson.</p><button class="btn-business" onclick="markPracticed(this)">✓ I Practiced This</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1541746972996-4e0b0f93e586?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">business</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">professional</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">communication</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">meeting</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">presentation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">email</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">negotiation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">service</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">interview</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">career</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 8</h1><p style="font-size:1.2rem;color:var(--text-dim);">Job Interviews</p></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1600&q=80')"><div class="content"><h2>Scenario</h2><div class="scenario-box"><span class="context-tag">Job Interview</span><p>You're interviewing for a position at an international company. Answer behavioral questions confidently.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1600&q=80')"><div class="content"><h2>Key Phrases</h2>
+<div class="phrase-block"><p class="phrase">Key phrase 1 for Job Interviews.</p><p class="usage">Use: When you need to open the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 2 for Job Interviews.</p><p class="usage">Use: When you need to discuss the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 3 for Job Interviews.</p><p class="usage">Use: When you need to close the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 4 for Job Interviews.</p><p class="usage">Use: When you need to follow up the conversation.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1600&q=80')"><div class="content"><h2>Example Dialogue</h2><div class="dialogue">
+<p class="speaker">Person A</p><p class="line">Opening line for Job Interviews.</p>
+<p class="speaker">Person B</p><p class="line">Response line for Job Interviews.</p>
+<p class="speaker">Person A</p><p class="line">Follow-up for Job Interviews.</p>
+<p class="speaker">Person B</p><p class="line">Closing for Job Interviews.</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1600&q=80')"><div class="content"><h2>Language Focus</h2><div class="lang-focus"><p class="focus-title">Business Communication Focus</p>
+<p>Formal register for professional situations</p>
+<p>Key collocations and phrases</p>
+<p>Common mistakes to avoid</p>
+<p>Practice tip for this topic</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1541746972996-4e0b0f93e586?w=1600&q=80')"><div class="content"><h2>Your Turn</h2><div class="roleplay"><span class="role-badge">Practice Task</span><p>Practice a scenario for Job Interviews. Use the key phrases from this lesson.</p><button class="btn-business" onclick="markPracticed(this)">✓ I Practiced This</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1497215842964-222b430dc094?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">business</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">professional</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">communication</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">meeting</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">presentation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">email</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">negotiation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">service</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">interview</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">career</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 9</h1><p style="font-size:1.2rem;color:var(--text-dim);">Career Development</p></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1600&q=80')"><div class="content"><h2>Scenario</h2><div class="scenario-box"><span class="context-tag">Promotion Discussion</span><p>You're discussing a promotion with your manager. Present your case confidently.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1600&q=80')"><div class="content"><h2>Key Phrases</h2>
+<div class="phrase-block"><p class="phrase">Key phrase 1 for Career Development.</p><p class="usage">Use: When you need to open the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 2 for Career Development.</p><p class="usage">Use: When you need to discuss the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 3 for Career Development.</p><p class="usage">Use: When you need to close the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 4 for Career Development.</p><p class="usage">Use: When you need to follow up the conversation.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1600&q=80')"><div class="content"><h2>Example Dialogue</h2><div class="dialogue">
+<p class="speaker">Person A</p><p class="line">Opening line for Career Development.</p>
+<p class="speaker">Person B</p><p class="line">Response line for Career Development.</p>
+<p class="speaker">Person A</p><p class="line">Follow-up for Career Development.</p>
+<p class="speaker">Person B</p><p class="line">Closing for Career Development.</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1541746972996-4e0b0f93e586?w=1600&q=80')"><div class="content"><h2>Language Focus</h2><div class="lang-focus"><p class="focus-title">Business Communication Focus</p>
+<p>Formal register for professional situations</p>
+<p>Key collocations and phrases</p>
+<p>Common mistakes to avoid</p>
+<p>Practice tip for this topic</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1497215842964-222b430dc094?w=1600&q=80')"><div class="content"><h2>Your Turn</h2><div class="roleplay"><span class="role-badge">Practice Task</span><p>Practice a scenario for Career Development. Use the key phrases from this lesson.</p><button class="btn-business" onclick="markPracticed(this)">✓ I Practiced This</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">business</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">professional</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">communication</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">meeting</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">presentation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">email</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">negotiation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">service</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">interview</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">career</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 10</h1><p style="font-size:1.2rem;color:var(--text-dim);">Marketing & Branding</p></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1600&q=80')"><div class="content"><h2>Scenario</h2><div class="scenario-box"><span class="context-tag">Brand Strategy</span><p>You're presenting a new brand strategy to the leadership team.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1600&q=80')"><div class="content"><h2>Key Phrases</h2>
+<div class="phrase-block"><p class="phrase">Key phrase 1 for Marketing & Branding.</p><p class="usage">Use: When you need to open the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 2 for Marketing & Branding.</p><p class="usage">Use: When you need to discuss the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 3 for Marketing & Branding.</p><p class="usage">Use: When you need to close the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 4 for Marketing & Branding.</p><p class="usage">Use: When you need to follow up the conversation.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1541746972996-4e0b0f93e586?w=1600&q=80')"><div class="content"><h2>Example Dialogue</h2><div class="dialogue">
+<p class="speaker">Person A</p><p class="line">Opening line for Marketing & Branding.</p>
+<p class="speaker">Person B</p><p class="line">Response line for Marketing & Branding.</p>
+<p class="speaker">Person A</p><p class="line">Follow-up for Marketing & Branding.</p>
+<p class="speaker">Person B</p><p class="line">Closing for Marketing & Branding.</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1497215842964-222b430dc094?w=1600&q=80')"><div class="content"><h2>Language Focus</h2><div class="lang-focus"><p class="focus-title">Business Communication Focus</p>
+<p>Formal register for professional situations</p>
+<p>Key collocations and phrases</p>
+<p>Common mistakes to avoid</p>
+<p>Practice tip for this topic</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=1600&q=80')"><div class="content"><h2>Your Turn</h2><div class="roleplay"><span class="role-badge">Practice Task</span><p>Practice a scenario for Marketing & Branding. Use the key phrases from this lesson.</p><button class="btn-business" onclick="markPracticed(this)">✓ I Practiced This</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">business</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">professional</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">communication</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">meeting</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">presentation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">email</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">negotiation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">service</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">interview</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">career</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 11</h1><p style="font-size:1.2rem;color:var(--text-dim);">Project Management</p></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1600&q=80')"><div class="content"><h2>Scenario</h2><div class="scenario-box"><span class="context-tag">Project Update</span><p>You're giving a project update to stakeholders. Be transparent about challenges.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1541746972996-4e0b0f93e586?w=1600&q=80')"><div class="content"><h2>Key Phrases</h2>
+<div class="phrase-block"><p class="phrase">Key phrase 1 for Project Management.</p><p class="usage">Use: When you need to open the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 2 for Project Management.</p><p class="usage">Use: When you need to discuss the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 3 for Project Management.</p><p class="usage">Use: When you need to close the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 4 for Project Management.</p><p class="usage">Use: When you need to follow up the conversation.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1497215842964-222b430dc094?w=1600&q=80')"><div class="content"><h2>Example Dialogue</h2><div class="dialogue">
+<p class="speaker">Person A</p><p class="line">Opening line for Project Management.</p>
+<p class="speaker">Person B</p><p class="line">Response line for Project Management.</p>
+<p class="speaker">Person A</p><p class="line">Follow-up for Project Management.</p>
+<p class="speaker">Person B</p><p class="line">Closing for Project Management.</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=1600&q=80')"><div class="content"><h2>Language Focus</h2><div class="lang-focus"><p class="focus-title">Business Communication Focus</p>
+<p>Formal register for professional situations</p>
+<p>Key collocations and phrases</p>
+<p>Common mistakes to avoid</p>
+<p>Practice tip for this topic</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80')"><div class="content"><h2>Your Turn</h2><div class="roleplay"><span class="role-badge">Practice Task</span><p>Practice a scenario for Project Management. Use the key phrases from this lesson.</p><button class="btn-business" onclick="markPracticed(this)">✓ I Practiced This</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">business</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">professional</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">communication</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">meeting</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">presentation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">email</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">negotiation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">service</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">interview</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">career</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 12</h1><p style="font-size:1.2rem;color:var(--text-dim);">Time Management</p></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1541746972996-4e0b0f93e586?w=1600&q=80')"><div class="content"><h2>Scenario</h2><div class="scenario-box"><span class="context-tag">Prioritization</span><p>You're discussing workload management with your team. Help them prioritize effectively.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1497215842964-222b430dc094?w=1600&q=80')"><div class="content"><h2>Key Phrases</h2>
+<div class="phrase-block"><p class="phrase">Key phrase 1 for Time Management.</p><p class="usage">Use: When you need to open the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 2 for Time Management.</p><p class="usage">Use: When you need to discuss the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 3 for Time Management.</p><p class="usage">Use: When you need to close the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 4 for Time Management.</p><p class="usage">Use: When you need to follow up the conversation.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=1600&q=80')"><div class="content"><h2>Example Dialogue</h2><div class="dialogue">
+<p class="speaker">Person A</p><p class="line">Opening line for Time Management.</p>
+<p class="speaker">Person B</p><p class="line">Response line for Time Management.</p>
+<p class="speaker">Person A</p><p class="line">Follow-up for Time Management.</p>
+<p class="speaker">Person B</p><p class="line">Closing for Time Management.</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80')"><div class="content"><h2>Language Focus</h2><div class="lang-focus"><p class="focus-title">Business Communication Focus</p>
+<p>Formal register for professional situations</p>
+<p>Key collocations and phrases</p>
+<p>Common mistakes to avoid</p>
+<p>Practice tip for this topic</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1600&q=80')"><div class="content"><h2>Your Turn</h2><div class="roleplay"><span class="role-badge">Practice Task</span><p>Practice a scenario for Time Management. Use the key phrases from this lesson.</p><button class="btn-business" onclick="markPracticed(this)">✓ I Practiced This</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">business</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">professional</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">communication</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">meeting</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">presentation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">email</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">negotiation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">service</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">interview</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">career</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1541746972996-4e0b0f93e586?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 13</h1><p style="font-size:1.2rem;color:var(--text-dim);">Problem Solving</p></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1497215842964-222b430dc094?w=1600&q=80')"><div class="content"><h2>Scenario</h2><div class="scenario-box"><span class="context-tag">Crisis Management</span><p>A major issue has just emerged. Lead the team through a solution.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=1600&q=80')"><div class="content"><h2>Key Phrases</h2>
+<div class="phrase-block"><p class="phrase">Key phrase 1 for Problem Solving.</p><p class="usage">Use: When you need to open the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 2 for Problem Solving.</p><p class="usage">Use: When you need to discuss the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 3 for Problem Solving.</p><p class="usage">Use: When you need to close the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 4 for Problem Solving.</p><p class="usage">Use: When you need to follow up the conversation.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80')"><div class="content"><h2>Example Dialogue</h2><div class="dialogue">
+<p class="speaker">Person A</p><p class="line">Opening line for Problem Solving.</p>
+<p class="speaker">Person B</p><p class="line">Response line for Problem Solving.</p>
+<p class="speaker">Person A</p><p class="line">Follow-up for Problem Solving.</p>
+<p class="speaker">Person B</p><p class="line">Closing for Problem Solving.</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1600&q=80')"><div class="content"><h2>Language Focus</h2><div class="lang-focus"><p class="focus-title">Business Communication Focus</p>
+<p>Formal register for professional situations</p>
+<p>Key collocations and phrases</p>
+<p>Common mistakes to avoid</p>
+<p>Practice tip for this topic</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1600&q=80')"><div class="content"><h2>Your Turn</h2><div class="roleplay"><span class="role-badge">Practice Task</span><p>Practice a scenario for Problem Solving. Use the key phrases from this lesson.</p><button class="btn-business" onclick="markPracticed(this)">✓ I Practiced This</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">business</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">professional</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">communication</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">meeting</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">presentation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">email</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">negotiation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">service</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">interview</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">career</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1497215842964-222b430dc094?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 14</h1><p style="font-size:1.2rem;color:var(--text-dim);">Leadership</p></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=1600&q=80')"><div class="content"><h2>Scenario</h2><div class="scenario-box"><span class="context-tag">Team Meeting</span><p>You're addressing your team about a new strategic direction.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80')"><div class="content"><h2>Key Phrases</h2>
+<div class="phrase-block"><p class="phrase">Key phrase 1 for Leadership.</p><p class="usage">Use: When you need to open the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 2 for Leadership.</p><p class="usage">Use: When you need to discuss the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 3 for Leadership.</p><p class="usage">Use: When you need to close the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 4 for Leadership.</p><p class="usage">Use: When you need to follow up the conversation.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1600&q=80')"><div class="content"><h2>Example Dialogue</h2><div class="dialogue">
+<p class="speaker">Person A</p><p class="line">Opening line for Leadership.</p>
+<p class="speaker">Person B</p><p class="line">Response line for Leadership.</p>
+<p class="speaker">Person A</p><p class="line">Follow-up for Leadership.</p>
+<p class="speaker">Person B</p><p class="line">Closing for Leadership.</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1600&q=80')"><div class="content"><h2>Language Focus</h2><div class="lang-focus"><p class="focus-title">Business Communication Focus</p>
+<p>Formal register for professional situations</p>
+<p>Key collocations and phrases</p>
+<p>Common mistakes to avoid</p>
+<p>Practice tip for this topic</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=1600&q=80')"><div class="content"><h2>Your Turn</h2><div class="roleplay"><span class="role-badge">Practice Task</span><p>Practice a scenario for Leadership. Use the key phrases from this lesson.</p><button class="btn-business" onclick="markPracticed(this)">✓ I Practiced This</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">business</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">professional</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">communication</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">meeting</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">presentation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">email</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">negotiation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">service</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">interview</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">career</span></p>
+</div></div></section>
+<section class="slide active" style="background-image:url('https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=1600&q=80')"><div class="content narrow" style="text-align:center;"><h1>Deck 15</h1><p style="font-size:1.2rem;color:var(--text-dim);">Team Motivation</p></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80')"><div class="content"><h2>Scenario</h2><div class="scenario-box"><span class="context-tag">Team Motivation</span><p>Your team is demotivated after a failed project. Inspire them and rebuild confidence.</p></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1600&q=80')"><div class="content"><h2>Key Phrases</h2>
+<div class="phrase-block"><p class="phrase">Key phrase 1 for Team Motivation.</p><p class="usage">Use: When you need to open the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 2 for Team Motivation.</p><p class="usage">Use: When you need to discuss the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 3 for Team Motivation.</p><p class="usage">Use: When you need to close the conversation.</p></div>
+<div class="phrase-block"><p class="phrase">Key phrase 4 for Team Motivation.</p><p class="usage">Use: When you need to follow up the conversation.</p></div>
+</div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1600&q=80')"><div class="content"><h2>Example Dialogue</h2><div class="dialogue">
+<p class="speaker">Person A</p><p class="line">Opening line for Team Motivation.</p>
+<p class="speaker">Person B</p><p class="line">Response line for Team Motivation.</p>
+<p class="speaker">Person A</p><p class="line">Follow-up for Team Motivation.</p>
+<p class="speaker">Person B</p><p class="line">Closing for Team Motivation.</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=1600&q=80')"><div class="content"><h2>Language Focus</h2><div class="lang-focus"><p class="focus-title">Business Communication Focus</p>
+<p>Formal register for professional situations</p>
+<p>Key collocations and phrases</p>
+<p>Common mistakes to avoid</p>
+<p>Practice tip for this topic</p>
+</div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600&q=80')"><div class="content"><h2>Your Turn</h2><div class="roleplay"><span class="role-badge">Practice Task</span><p>Practice a scenario for Team Motivation. Use the key phrases from this lesson.</p><button class="btn-business" onclick="markPracticed(this)">✓ I Practiced This</button></div></div></section>
+<section class="slide" style="background-image:url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1600&q=80')"><div class="content"><h2>Vocabulary Review</h2><div class="glow-box">
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">business</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">professional</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">communication</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">meeting</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">presentation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">email</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">negotiation</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">service</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">interview</span></p>
+<p style="display:inline-block;margin:.3em;"><span class="vocab-word">career</span></p>
+</div></div></section>
+<div class="nav"><button id="prevBtn">◀ Prev</button><span class="slide-counter" id="slideCounter">1 / 105</span><button id="nextBtn">Next ▶</button></div>
+<script>
+// Shared systems
+let audioCtx = null, reverbNode = null;
+
+function ensureAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const rate = audioCtx.sampleRate;
+    const length = rate * 1.2;
+    const impulse = audioCtx.createBuffer(2, length, rate);
+    for (let ch = 0; ch < 2; ch++) {
+      const data = impulse.getChannelData(ch);
+      for (let i = 0; i < length; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2.5);
+      }
+    }
+    reverbNode = audioCtx.createConvolver();
+    reverbNode.buffer = impulse;
+    const reverbGain = audioCtx.createGain();
+    reverbGain.gain.value = 0.4;
+    reverbNode.connect(reverbGain);
+    reverbGain.connect(audioCtx.destination);
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playSwish(direction) {
+  ensureAudio();
+  const now = audioCtx.currentTime;
+  const bufferSize = Math.floor(audioCtx.sampleRate * 0.18);
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    const env = Math.sin((i / bufferSize) * Math.PI);
+    data[i] = (Math.random() * 2 - 1) * env;
+  }
+  const src = audioCtx.createBufferSource();
+  src.buffer = buffer;
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.Q.value = 8;
+  if (direction === 'forward') {
+    filter.frequency.setValueAtTime(800, now);
+    filter.frequency.exponentialRampToValueAtTime(4000, now + 0.15);
+  } else {
+    filter.frequency.setValueAtTime(4000, now);
+    filter.frequency.exponentialRampToValueAtTime(800, now + 0.15);
+  }
+  const gain = audioCtx.createGain();
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(0.12, now + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+  const dryGain = audioCtx.createGain();
+  dryGain.gain.value = 0.6;
+  const wetGain = audioCtx.createGain();
+  wetGain.gain.value = 0.4;
+  src.connect(filter);
+  filter.connect(gain);
+  gain.connect(dryGain);
+  gain.connect(wetGain);
+  dryGain.connect(audioCtx.destination);
+  wetGain.connect(reverbNode);
+  src.start(now);
+  src.stop(now + 0.2);
+  const osc = audioCtx.createOscillator();
+  osc.type = 'sine';
+  const oscGain = audioCtx.createGain();
+  if (direction === 'forward') {
+    osc.frequency.setValueAtTime(600, now);
+    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+  } else {
+    osc.frequency.setValueAtTime(1200, now);
+    osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+  }
+  oscGain.gain.setValueAtTime(0, now);
+  oscGain.gain.linearRampToValueAtTime(0.04, now + 0.02);
+  oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+  osc.connect(oscGain);
+  oscGain.connect(audioCtx.destination);
+  osc.start(now);
+  osc.stop(now + 0.15);
+}
+
+// Hue slider
+const hueSlider = document.getElementById('hueSlider');
+const root = document.documentElement;
+hueSlider.addEventListener('input', (e) => {
+  const hue = e.target.value;
+  root.style.setProperty('--hue-rotate', hue + 'deg');
+  document.querySelectorAll('.slide').forEach(slide => {
+    slide.style.filter = `hue-rotate(${hue}deg) saturate(${1 + hue/720})`;
+  });
+  const accent = `hsl(${hue}, 60%, 50%)`;
+  const accentLight = `hsl(${hue}, 60%, 65%)`;
+  root.style.setProperty('--accent', accent);
+  root.style.setProperty('--gold', accentLight);
+});
+
+// Glow slider
+const glowSlider = document.getElementById('glowSlider');
+glowSlider.addEventListener('input', (e) => {
+  const intensity = e.target.value / 100;
+  const glowSize = 10 + intensity * 40;
+  const glowOpacity = 0.15 + intensity * 0.45;
+  document.querySelectorAll('.content').forEach(c => {
+    c.style.boxShadow = `0 0 ${glowSize}px rgba(139,195,74,${glowOpacity}), 0 0 ${glowSize * 2}px rgba(139,195,74,${glowOpacity * 0.4})`;
+  });
+});
+
+// Mark Practiced (business)
+function markPracticed(btn) {
+  const deckId = window.location.pathname;
+  const progress = JSON.parse(localStorage.getItem('esl-progress') || '{}');
+  
+  if (btn.classList.contains('practiced')) {
+    btn.classList.remove('practiced');
+    btn.textContent = '✓ I Practiced This';
+    if (progress[deckId]) progress[deckId].practiced = false;
+  } else {
+    btn.classList.add('practiced');
+    btn.textContent = '✓ Practiced!';
+    if (!progress[deckId]) progress[deckId] = {};
+    progress[deckId].practiced = true;
+    progress[deckId].date = new Date().toISOString().split('T')[0];
+  }
+  localStorage.setItem('esl-progress', JSON.stringify(progress));
+}
+
+(function restorePracticed() {
+  const deckId = window.location.pathname;
+  const progress = JSON.parse(localStorage.getItem('esl-progress') || '{}');
+  const btn = document.querySelector('.btn-business');
+  if (btn && progress[deckId] && progress[deckId].practiced) {
+    btn.classList.add('practiced');
+    btn.textContent = '✓ Practiced!';
+  }
+})();
+
+// Navigation
+const slides = document.querySelectorAll('.slide');
+let current = 0;
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const slideCounter = document.getElementById('slideCounter');
+const progressBar = document.getElementById('progressBar');
+
+function update() {
+  slides.forEach((s, i) => s.classList.toggle('active', i === current));
+  slideCounter.textContent = `${current + 1} / ${slides.length}`;
+  progressBar.style.width = `${((current + 1) / slides.length) * 100}%`;
+  document.getElementById('hueControl').style.display = current === 0 ? 'flex' : 'none';
+}
+
+prevBtn.addEventListener('click', () => {
+  if (current > 0) { current--; playSwish('back'); } update();
+});
+nextBtn.addEventListener('click', () => {
+  if (current < slides.length - 1) { current++; playSwish('forward'); } update();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    if (current < slides.length - 1) { current++; playSwish('forward'); } update();
+  }
+  if (e.key === 'ArrowLeft') {
+    if (current > 0) { current--; playSwish('back'); } update();
+  }
+});
+
+update();
+</script>
+</body></html>
+</body></html>
