@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>B2 First for Schools — Speaking Practice Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e1a;--bg2:#111827;--bg3:#1f2937;--border:#374151;--text:#f3f4f6;--text-muted:#9ca3af;--accent:#a3e635;--cyan:#22d3ee;--amber:#fbbf24;--rose:#fb7185;--violet:#a78bfa}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat:repeat;background-size:128px 128px;
+}
+.container{max-width:1100px;margin:0 auto;padding:40px 20px;position:relative;z-index:1}
+header{text-align:center;padding:60px 0 40px}
+header h1{font-family:'Montserrat',sans-serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:900;background:linear-gradient(135deg,var(--accent),var(--cyan),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+header p{font-size:1.1rem;color:var(--text-muted);max-width:600px;margin:0 auto}
+.stats{display:flex;justify-content:center;gap:40px;margin:40px 0;flex-wrap:wrap}
+.stat{text-align:center}
+.stat .num{font-family:'Montserrat',sans-serif;font-size:2.5rem;font-weight:900;color:var(--accent)}
+.stat .label{font-size:.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;margin-top:40px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px;transition:all .2s;position:relative;overflow:hidden}
+.card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 30px rgba(163,230,53,.1)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--cyan));opacity:0;transition:opacity .2s}
+.card:hover::before{opacity:1}
+.card h3{font-size:1.1rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+.card p{font-size:.85rem;color:var(--text-muted);line-height:1.5;margin-bottom:16px}
+.card .btn{display:inline-block;padding:8px 20px;border-radius:8px;background:var(--accent);color:var(--bg);font-size:.85rem;font-weight:700;text-decoration:none;transition:all .15s}
+.card .btn:hover{filter:brightness(1.1);transform:scale(1.02)}
+.card .num-badge{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--accent);border:1px solid var(--border)}
+.part-label{display:inline-block;padding:3px 10px;border-radius:4px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;background:rgba(163,230,53,.1);color:var(--accent);border:1px solid rgba(163,230,53,.2)}
+footer{text-align:center;padding:60px 0 40px;color:var(--text-muted);font-size:.85rem}
+footer a{color:var(--accent);text-decoration:none}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.stats{gap:20px}.stat .num{font-size:2rem}}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>B2 First for Schools</h1>
+    <p>Speaking Paper Practice — Complete all 4 parts with model answers, built-in timers, and 7 colour themes.</p>
+    <div class="stats">
+      <div class="stat"><div class="num">24</div><div class="label">Decks</div></div>
+      <div class="stat"><div class="num">4</div><div class="label">Parts Each</div></div>
+      <div class="stat"><div class="num">~14</div><div class="label">Minutes</div></div>
+      <div class="stat"><div class="num">7</div><div class="label">Themes</div></div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <div class="card">
+      <span class="num-badge">1</span>
+      <span class="part-label">Speaking</span>
+      <h3>First Schools (General)</h3>
+      <p>Complete B2 First for Schools Speaking practice covering all 4 parts with exam-style questions.</p>
+      <a href="./Speaking/b2-first-schools-speaking.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">2</span>
+      <span class="part-label">Speaking</span>
+      <h3>Hobbies &amp; Free Time</h3>
+      <p>Discuss sports, music, gaming, reading, and how you spend your leisure time.</p>
+      <a href="./Speaking/b2-hobbies-free-time.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">3</span>
+      <span class="part-label">Speaking</span>
+      <h3>Travel &amp; Holidays</h3>
+      <p>Destinations, transport, accommodation, sightseeing, and travel experiences.</p>
+      <a href="./Speaking/b2-travel-holidays.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">4</span>
+      <span class="part-label">Speaking</span>
+      <h3>Technology &amp; Social Media</h3>
+      <p>Apps, online habits, gaming, digital communication, and screen time.</p>
+      <a href="./Speaking/b2-technology-social-media.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">5</span>
+      <span class="part-label">Speaking</span>
+      <h3>Health &amp; Fitness</h3>
+      <p>Exercise, diet, sleep, mental health, and sports activities.</p>
+      <a href="./Speaking/b2-health-fitness.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">6</span>
+      <span class="part-label">Speaking</span>
+      <h3>Environment &amp; Nature</h3>
+      <p>Climate change, recycling, wildlife, and sustainable living.</p>
+      <a href="./Speaking/b2-environment-nature.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">7</span>
+      <span class="part-label">Speaking</span>
+      <h3>Education &amp; School Life</h3>
+      <p>Subjects, homework, exams, teachers, and school trips.</p>
+      <a href="./Speaking/b2-education-school.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">8</span>
+      <span class="part-label">Speaking</span>
+      <h3>Friends &amp; Family</h3>
+      <p>Relationships, traditions, celebrations, and peer pressure.</p>
+      <a href="./Speaking/b2-friends-family.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">9</span>
+      <span class="part-label">Speaking</span>
+      <h3>Food &amp; Cooking</h3>
+      <p>Cooking at home, eating out, healthy eating, and international cuisines.</p>
+      <a href="./Speaking/b2-food-cooking.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">10</span>
+      <span class="part-label">Speaking</span>
+      <h3>Shopping &amp; Money</h3>
+      <p>Online shopping, saving, advertising, and budgeting.</p>
+      <a href="./Speaking/b2-shopping-money.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">11</span>
+      <span class="part-label">Speaking</span>
+      <h3>Work &amp; Future Plans</h3>
+      <p>Part-time jobs, careers, university, and ambitions.</p>
+      <a href="./Speaking/b2-work-future.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">12</span>
+      <span class="part-label">Speaking</span>
+      <h3>Music &amp; Concerts</h3>
+      <p>Genres, instruments, streaming, and live music experiences.</p>
+      <a href="./Speaking/b2-music-concerts.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">13</span>
+      <span class="part-label">Speaking</span>
+      <h3>Sports &amp; Games</h3>
+      <p>Playing and watching sports, e-sports, and fitness.</p>
+      <a href="./Speaking/b2-sports-games.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">14</span>
+      <span class="part-label">Speaking</span>
+      <h3>Books &amp; Reading</h3>
+      <p>Fiction vs non-fiction, e-books, libraries, and reading habits.</p>
+      <a href="./Speaking/b2-books-reading.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">15</span>
+      <span class="part-label">Speaking</span>
+      <h3>Films &amp; TV Shows</h3>
+      <p>Genres, streaming, cinemas, and binge-watching.</p>
+      <a href="./Speaking/b2-films-tv.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">16</span>
+      <span class="part-label">Speaking</span>
+      <h3>Weather &amp; Seasons</h3>
+      <p>Seasonal activities, weather mood, and climate.</p>
+      <a href="./Speaking/b2-weather-seasons.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">17</span>
+      <span class="part-label">Speaking</span>
+      <h3>Pets &amp; Animals</h3>
+      <p>Pets at home, favourite animals, zoos, and animal welfare.</p>
+      <a href="./Speaking/b2-pets-animals.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">18</span>
+      <span class="part-label">Speaking</span>
+      <h3>Festivals &amp; Celebrations</h3>
+      <p>Birthdays, cultural festivals, and family traditions.</p>
+      <a href="./Speaking/b2-festivals-celebrations.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">19</span>
+      <span class="part-label">Speaking</span>
+      <h3>Transport &amp; Getting Around</h3>
+      <p>Commute, public transport, cycling, and future transport.</p>
+      <a href="./Speaking/b2-transport-getting-around.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">20</span>
+      <span class="part-label">Speaking</span>
+      <h3>The Internet &amp; AI</h3>
+      <p>Online safety, AI tools, algorithms, and digital citizenship.</p>
+      <a href="./Speaking/b2-internet-ai.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">21</span>
+      <span class="part-label">Speaking</span>
+      <h3>Daily Routines &amp; Time</h3>
+      <p>Morning routines, time management, and work-life balance.</p>
+      <a href="./Speaking/b2-daily-routines-time.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">22</span>
+      <span class="part-label">Speaking</span>
+      <h3>Fashion &amp; Clothes</h3>
+      <p>Personal style, fast fashion, uniforms, and identity.</p>
+      <a href="./Speaking/b2-fashion-clothes.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">23</span>
+      <span class="part-label">Speaking</span>
+      <h3>Homes &amp; Accommodation</h3>
+      <p>Types of homes, ideal house, city vs countryside, smart homes.</p>
+      <a href="./Speaking/b2-homes-accommodation.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">24</span>
+      <span class="part-label">Speaking</span>
+      <h3>Adventures &amp; Challenges</h3>
+      <p>Adventure sports, overcoming fears, and personal achievements.</p>
+      <a href="./Speaking/b2-adventures-challenges.html" class="btn">Open Deck →</a>
+    </div>
+    <div class="card">
+      <span class="num-badge">25</span>
+      <span class="part-label">Speaking</span>
+      <h3>Feelings &amp; Emotions</h3>
+      <p>Expressing emotions, stress, happiness, and empathy.</p>
+      <a href="./Speaking/b2-feelings-emotions.html" class="btn">Open Deck →</a>
+    </div>
+  </div>
+
+  <footer>
+    <p>B2 First for Schools Speaking Practice Portal</p>
+    <p style="margin-top:8px">Each deck has 4 Parts: Interview → Long Turn → Collaborative Task → Discussion</p>
+    <p style="margin-top:8px">Built-in timer · Model answers · 7 colour themes · Keyboard navigation</p>
+  </footer>
+</div>
+</body>
+</html>
