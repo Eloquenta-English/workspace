@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self'; connect-src 'self'; media-src 'self' blob:; object-src 'none'; frame-ancestors 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0518">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nebula Notepad">
+<link rel="manifest" href="./manifest.json">
+<title>✦ Nebula Notepad</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg-deep: #0b0518;
+    --bg-card: rgba(18, 10, 38, 0.88);
+    --nebula-purple: #9b59ff;
+    --nebula-blue: #5b7fff;
+    --nebula-pink: #d8a8ff;
+    --nebula-cyan: #8dd4ff;
+    --nebula-teal: #7fffd4;
+    --star-white: #f4edff;
+    --text-primary: #f0eaff;
+    --text-secondary: #b8b0d8;
+    --text-dim: #7868a0;
+    --glass-border: rgba(170, 140, 255, 0.18);
+    --glass-bg: rgba(16, 9, 34, 0.72);
+    --glow-purple: 0 0 24px rgba(166, 107, 255, 0.25);
+    --glow-cyan: 0 0 15px rgba(141, 212, 255, 0.15);
+  }
+
+  /* ===== THEMES ===== */
+  [data-theme="glossy-white"] { --bg-deep:#f0f0f5; --text-primary:#1a1a2e; --text-secondary:#4a4a60; --text-dim:#6a6a80; --glass-bg:rgba(255,255,255,0.78); --glass-border:rgba(120,120,150,0.22); --bg-card:rgba(255,255,255,0.88); }
+  [data-theme="matte-black"] { --bg-deep:#070707; --text-primary:#e8e8e8; --text-secondary:#888; --text-dim:#555; --glass-bg:rgba(22,22,22,0.82); --glass-border:rgba(90,90,90,0.32); --bg-card:rgba(18,18,18,0.9); }
+  [data-theme="gold"] { --nebula-purple:#ffd700; --nebula-blue:#ffb347; --nebula-pink:#ffec8b; --nebula-cyan:#ffe4b5; --nebula-teal:#fffacd; --glass-border:rgba(255,215,0,0.28); }
+  [data-theme="chrome"] { --nebula-purple:#a0a0a0; --nebula-blue:#c0c0c0; --nebula-pink:#e0e0e0; --nebula-cyan:#b0b0ff; --nebula-teal:#d0d0ff; --glass-border:rgba(180,180,200,0.28); }
+  [data-theme="purplesque"] { --nebula-purple:#b56aff; --nebula-blue:#9d4edd; --nebula-pink:#e0aaff; --nebula-cyan:#c77dff; --nebula-teal:#ff9cee; }
+  [data-theme="midnight-blue"] { --nebula-purple:#5b7fff; --nebula-blue:#3b82f6; --nebula-pink:#8dd4ff; --nebula-cyan:#60a5fa; --nebula-teal:#93c5fd; }
+  [data-theme="crimson"] { --nebula-purple:#ff3864; --nebula-blue:#ff6b6b; --nebula-pink:#ff8e8e; --nebula-cyan:#ffb4b4; --nebula-teal:#ffd4d4; }
+  [data-theme="emerald"] { --nebula-purple:#00d26a; --nebula-blue:#10b981; --nebula-pink:#34d399; --nebula-cyan:#6ee7b7; --nebula-teal:#a7f3d0; }
+  [data-theme="sunset"] { --nebula-purple:#ff7e5f; --nebula-blue:#feb47b; --nebula-pink:#ff9a9e; --nebula-cyan:#fecfef; --nebula-teal:#ffdde1; }
+  [data-theme="arctic"] { --bg-deep:#0a1628; --nebula-purple:#a5f3fc; --nebula-blue:#67e8f9; --nebula-pink:#cffafe; --nebula-cyan:#e0f2fe; --nebula-teal:#f0f9ff; }
+  [data-theme="rose-gold"] { --nebula-purple:#f4acb7; --nebula-blue:#e8a598; --nebula-pink:#ffdac1; --nebula-cyan:#ffcad4; --nebula-teal:#ffe5d9; }
+  [data-theme="lavender"] { --bg-deep:#1a1025; --nebula-purple:#c8b6ff; --nebula-blue:#e0c3fc; --nebula-pink:#fde2f3; --nebula-cyan:#ffc8dd; --nebula-teal:#cdb4db; }
+
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    position: relative;
+  }
+
+  #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+  .nebula-layer { position: fixed; z-index: 1; pointer-events: none; filter: blur(80px); opacity: 0.35; }
+  .nebula-1 { top: -20%; left: -10%; width: 60vmax; height: 60vmax; background: radial-gradient(ellipse, rgba(155, 89, 255, 0.5), rgba(65, 105, 225, 0.2), transparent 70%); animation: nebula-drift-1 25s ease-in-out infinite alternate; }
+  .nebula-2 { bottom: -15%; right: -10%; width: 55vmax; height: 55vmax; background: radial-gradient(ellipse, rgba(224, 102, 255, 0.4), rgba(0, 229, 255, 0.15), transparent 70%); animation: nebula-drift-2 30s ease-in-out infinite alternate; }
+  .nebula-3 { top: 40%; left: 50%; width: 40vmax; height: 40vmax; transform: translate(-50%, -50%); background: radial-gradient(ellipse, rgba(0, 255, 179, 0.2), rgba(155, 89, 255, 0.15), transparent 70%); animation: nebula-drift-3 20s ease-in-out infinite alternate; }
+  .nebula-4 { top: 10%; right: 20%; width: 30vmax; height: 30vmax; background: radial-gradient(ellipse, rgba(65, 105, 225, 0.4), rgba(224, 102, 255, 0.1), transparent 70%); animation: nebula-drift-1 35s ease-in-out infinite alternate-reverse; }
+  @keyframes nebula-drift-1 { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(5vw,3vh) scale(1.1); } }
+  @keyframes nebula-drift-2 { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(-4vw,-5vh) scale(1.15); } }
+  @keyframes nebula-drift-3 { 0% { transform: translate(-50%,-50%) scale(1); opacity: 0.25; } 100% { transform: translate(-45%,-48%) scale(1.2); opacity: 0.4; } }
+
+  .nebula-photo { position: fixed; inset: 0; z-index: 0; pointer-events: none; background-image: url("./galaxy.jpg"); background-size: cover; background-position: center; background-repeat: no-repeat; }
+  .nebula-photo::after { content: ''; position: absolute; inset: 0; background: rgba(8, 4, 20, 0.55); }
+  .nebula-photo.hidden { background-image: none !important; }
+  .nebula-photo.hidden::after { display: none; }
+
+  .app-container { position: relative; z-index: 10; display: flex; flex-direction: column; height: 100vh; padding: 16px; gap: 12px; }
+
+  .header { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: var(--glow-purple); flex-shrink: 0; }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .logo { font-size: 24px; filter: drop-shadow(0 0 8px rgba(155, 89, 255, 0.6)); animation: logo-pulse 3s ease-in-out infinite; }
+  @keyframes logo-pulse { 0%,100% { filter: drop-shadow(0 0 8px rgba(155, 89, 255, 0.6)); } 50% { filter: drop-shadow(0 0 16px rgba(155, 89, 255, 0.9)); } }
+  .title { font-size: 18px; font-weight: 700; background: linear-gradient(135deg, var(--nebula-purple), var(--nebula-cyan), var(--nebula-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 1px; }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  .header-btn { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; background: rgba(155, 89, 255, 0.1); border: 1px solid rgba(155, 89, 255, 0.2); border-radius: 10px; color: var(--text-primary); font-size: 16px; cursor: pointer; transition: all 0.25s ease; }
+  .header-btn:hover { background: rgba(155, 89, 255, 0.2); border-color: rgba(155, 89, 255, 0.4); box-shadow: 0 0 12px rgba(155, 89, 255, 0.2); }
+  .header-btn.hidden { display: none; }
+  .offline-badge { font-size: 11px; padding: 3px 8px; border-radius: 12px; background: rgba(255, 80, 80, 0.15); border: 1px solid rgba(255, 80, 80, 0.3); color: #ff8080; opacity: 0; transition: opacity 0.3s; }
+  .offline-badge.show { opacity: 1; }
+  .note-count { font-size: 12px; color: var(--text-secondary); padding: 4px 10px; background: rgba(155, 89, 255, 0.1); border-radius: 20px; border: 1px solid rgba(155, 89, 255, 0.15); }
+
+  .toolbar { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); flex-shrink: 0; flex-wrap: wrap; }
+  .toolbar-btn { display: flex; align-items: center; gap: 6px; padding: 7px 14px; background: rgba(155, 89, 255, 0.1); border: 1px solid rgba(155, 89, 255, 0.2); border-radius: 10px; color: var(--text-primary); font-size: 13px; cursor: pointer; transition: all 0.25s ease; white-space: nowrap; }
+  .toolbar-btn:hover { background: rgba(155, 89, 255, 0.2); border-color: rgba(155, 89, 255, 0.4); box-shadow: 0 0 12px rgba(155, 89, 255, 0.2); transform: translateY(-1px); }
+  .toolbar-btn:active { transform: translateY(0); }
+  .toolbar-btn.danger { border-color: rgba(255, 80, 80, 0.2); background: rgba(255, 80, 80, 0.08); }
+  .toolbar-btn.danger:hover { background: rgba(255, 80, 80, 0.15); border-color: rgba(255, 80, 80, 0.4); box-shadow: 0 0 12px rgba(255, 80, 80, 0.2); }
+  .toolbar-btn.success { border-color: rgba(0, 255, 179, 0.2); background: rgba(0, 255, 179, 0.08); }
+  .toolbar-btn.success:hover { background: rgba(0, 255, 179, 0.15); border-color: rgba(0, 255, 179, 0.4); box-shadow: 0 0 12px rgba(0, 255, 179, 0.2); }
+  .toolbar-divider { width: 1px; height: 24px; background: rgba(155, 89, 255, 0.15); margin: 0 4px; }
+  .search-box { flex: 1; min-width: 160px; max-width: 280px; padding: 7px 14px; background: rgba(155, 89, 255, 0.06); border: 1px solid rgba(155, 89, 255, 0.15); border-radius: 10px; color: var(--text-primary); font-size: 13px; outline: none; transition: all 0.25s ease; }
+  .search-box::placeholder { color: var(--text-dim); }
+  .search-box:focus { border-color: rgba(155, 89, 255, 0.4); box-shadow: 0 0 10px rgba(155, 89, 255, 0.15); }
+
+  .notes-area { position: relative; flex: 1; overflow: hidden; border-radius: 16px; }
+  .empty-state { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--text-secondary); }
+  .empty-icon { font-size: 64px; opacity: 0.5; }
+  .empty-title { font-size: 20px; font-weight: 600; color: var(--text-primary); }
+  .empty-subtitle { font-size: 14px; }
+
+  .note-card {
+    position: absolute;
+    width: 280px;
+    min-height: 180px;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    box-shadow: var(--glow-purple), 0 8px 32px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    resize: both;
+    min-width: 220px;
+    min-height: 140px;
+    transition: box-shadow 0.25s ease;
+  }
+  .note-card:hover { box-shadow: 0 0 30px var(--note-glow, rgba(155,89,255,0.25)), 0 12px 40px rgba(0,0,0,0.5); }
+  .note-card.dragging { opacity: 0.9; cursor: grabbing; z-index: 1000 !important; }
+
+  body.textured .note-card {
+    background-image:
+      linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 40%, rgba(0,0,0,0.1) 100%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+  body.textured [data-theme="gold"] .note-card,
+  body.textured [data-theme="chrome"] .note-card,
+  body.textured [data-theme="glossy-white"] .note-card {
+    background-image:
+      linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 50%, rgba(0,0,0,0.08) 100%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+
+  .note-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: rgba(0,0,0,0.15); border-bottom: 1px solid var(--glass-border); cursor: grab; user-select: none; }
+  .note-title { flex: 1; background: transparent; border: none; color: var(--text-primary); font-size: 14px; font-weight: 600; outline: none; padding: 2px 4px; border-radius: 4px; }
+  .note-title:focus { background: rgba(255,255,255,0.06); }
+  .note-actions { display: flex; align-items: center; gap: 6px; }
+  .note-btn { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: transparent; border: none; color: var(--text-secondary); font-size: 13px; cursor: pointer; border-radius: 6px; transition: all 0.2s; }
+  .note-btn:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); }
+  .note-btn.lock { font-size: 11px; }
+  .note-btn.lock.locked { color: var(--nebula-purple); }
+
+  .note-tabs { display: flex; align-items: center; gap: 4px; padding: 6px 10px; background: rgba(0,0,0,0.1); border-bottom: 1px solid var(--glass-border); overflow-x: auto; scrollbar-width: none; }
+  .note-tabs::-webkit-scrollbar { display: none; }
+  .note-tab { display: flex; align-items: center; gap: 4px; padding: 4px 10px; background: rgba(155, 89, 255, 0.08); border: 1px solid rgba(155, 89, 255, 0.15); border-radius: 8px; color: var(--text-secondary); font-size: 12px; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+  .note-tab:hover { background: rgba(155, 89, 255, 0.15); color: var(--text-primary); }
+  .note-tab.active { background: rgba(155, 89, 255, 0.25); color: var(--text-primary); border-color: rgba(155, 89, 255, 0.4); }
+  .note-tab-close { display: flex; align-items: center; justify-content: center; width: 14px; height: 14px; border-radius: 50%; background: transparent; border: none; color: var(--text-dim); font-size: 10px; cursor: pointer; }
+  .note-tab-close:hover { background: rgba(255, 85, 102, 0.2); color: #ff5566; }
+  .note-tab-add { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; background: rgba(155, 89, 255, 0.08); border: 1px dashed rgba(155, 89, 255, 0.2); border-radius: 6px; color: var(--text-dim); font-size: 14px; cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
+  .note-tab-add:hover { background: rgba(155, 89, 255, 0.18); border-color: rgba(155, 89, 255, 0.4); color: var(--text-primary); }
+
+  .note-body { flex: 1; padding: 12px; background: transparent; border: none; color: var(--text-primary); font-size: 14px; line-height: 1.55; resize: none; outline: none; font-family: inherit; }
+  .note-body::placeholder { color: var(--text-dim); }
+
+  .locked-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 30px 20px; color: var(--text-secondary); }
+  .locked-tab input { padding: 8px 12px; background: rgba(0,0,0,0.25); border: 1px solid var(--glass-border); border-radius: 8px; color: var(--text-primary); outline: none; }
+
+  .note-footer { display: flex; align-items: center; justify-content: space-between; padding: 6px 12px; background: rgba(0,0,0,0.15); border-top: 1px solid var(--glass-border); font-size: 10px; color: var(--text-dim); }
+
+  .toast-container { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+  .toast { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 10px; padding: 10px 16px; color: var(--text-primary); font-size: 13px; box-shadow: var(--glow-purple); backdrop-filter: blur(10px); animation: toast-in 0.3s ease; }
+  @keyframes toast-in { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
+  .modal-overlay.active { opacity: 1; pointer-events: auto; }
+  .modal { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; padding: 24px; max-width: 420px; width: 90%; box-shadow: var(--glow-purple); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+  .settings-modal { max-width: 520px; max-height: 80vh; overflow-y: auto; }
+  .settings-section { margin-bottom: 20px; }
+  .settings-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 10px; }
+  .theme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 10px; }
+  .theme-swatch { width: 100%; aspect-ratio: 1; border-radius: 12px; border: 2px solid rgba(255,255,255,0.1); cursor: pointer; transition: all 0.2s ease; position: relative; overflow: hidden; }
+  .theme-swatch:hover { transform: scale(1.05); }
+  .theme-swatch.active { border-color: var(--text-primary); box-shadow: 0 0 0 2px var(--bg-deep), 0 0 12px rgba(255,255,255,0.3); }
+  .theme-swatch::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 100%); }
+  .theme-name { position: absolute; bottom: 4px; left: 4px; right: 4px; font-size: 9px; text-align: center; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); z-index: 2; pointer-events: none; }
+  .toggle-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; color: var(--text-primary); cursor: pointer; font-size: 14px; }
+  .toggle-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--nebula-purple); }
+  .file-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+  .file-row input[type="file"] { color: var(--text-primary); font-size: 13px; max-width: 220px; }
+  .file-row input[type="file"]::file-selector-button { background: rgba(155,89,255,0.15); border: 1px solid rgba(155,89,255,0.3); color: var(--text-primary); border-radius: 8px; padding: 5px 12px; cursor: pointer; }
+  .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; background: linear-gradient(135deg, var(--nebula-purple), var(--nebula-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .modal-text { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .modal-btn { padding: 8px 16px; border-radius: 10px; border: 1px solid var(--glass-border); background: rgba(155, 89, 255, 0.1); color: var(--text-primary); cursor: pointer; transition: all 0.2s; }
+  .modal-btn:hover { background: rgba(155, 89, 255, 0.2); }
+  .modal-btn.cancel { background: transparent; }
+  .modal-btn.danger-confirm { background: rgba(255, 80, 80, 0.15); border-color: rgba(255, 80, 80, 0.3); }
+  .modal-btn.danger-confirm:hover { background: rgba(255, 80, 80, 0.25); }
+
+  @media (max-width: 768px) {
+    .app-container { padding: 10px; }
+    .header { padding: 10px 14px; }
+    .title { font-size: 15px; }
+    .toolbar { gap: 6px; padding: 6px 10px; }
+    .toolbar-btn { padding: 6px 10px; font-size: 12px; }
+    .note-card { width: 260px; min-width: 200px; }
+  }
+</style>
+</head>
+<body>
+<div class="nebula-photo" id="nebulaPhoto"></div>
+<div class="nebula-layer nebula-1"></div>
+<div class="nebula-layer nebula-2"></div>
+<div class="nebula-layer nebula-3"></div>
+<div class="nebula-layer nebula-4"></div>
+<canvas id="starfield"></canvas>
+
+<div class="app-container">
+  <div class="header">
+    <div class="header-left">
+      <span class="logo">✦</span>
+      <span class="title">Nebula Notepad</span>
+    </div>
+    <div class="header-right">
+      <span class="offline-badge" id="offlineBadge">Offline</span>
+      <span class="note-count" id="noteCount">0 notes</span>
+      <button class="header-btn" id="installBtn" title="Install app" onclick="installApp()">+</button>
+      <button class="header-btn" id="settingsBtn" title="Settings" onclick="openSettings()">⚙</button>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button class="toolbar-btn success" onclick="addNote()" title="Add new note (Ctrl+N)">
+      <span>＋</span> New Note
+    </button>
+    <div class="toolbar-divider"></div>
+    <button class="toolbar-btn" onclick="exportNotes()" title="Export notes as JSON">
+      <span>⬇</span> Export
+    </button>
+    <button class="toolbar-btn" onclick="document.getElementById('importFile').click()" title="Import notes from JSON">
+      <span>⬆</span> Import
+    </button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importNotes(event)">
+    <div class="toolbar-divider"></div>
+    <button class="toolbar-btn danger" onclick="showClearAllModal()" title="Clear all notes">
+      <span>✕</span> Clear All
+    </button>
+    <input class="search-box" type="text" id="searchBox" placeholder="🔍 Search notes..." oninput="filterNotes()">
+  </div>
+
+  <div class="notes-area" id="notesArea">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">🌌</div>
+      <div class="empty-title">The cosmos awaits</div>
+      <div class="empty-subtitle">Create your first note to fill the void</div>
+      <button class="toolbar-btn success" onclick="addNote()">
+        <span>＋</span> Create Note
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Confirm</div>
+    <div class="modal-text" id="modalText">Are you sure?</div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn danger-confirm" id="modalConfirm" onclick="confirmModal()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="settingsOverlay">
+  <div class="modal settings-modal">
+    <div class="modal-title">Settings</div>
+    <div class="modal-text">
+      <div class="settings-section">
+        <div class="settings-label">Theme</div>
+        <div class="theme-grid" id="themeGrid"></div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-label">Background Image</div>
+        <label class="toggle-row">
+          <input type="checkbox" id="bgImageToggle" onchange="toggleBgImage()">
+          <span>Show background image</span>
+        </label>
+        <div class="file-row" id="bgFileRow">
+          <input type="file" id="bgFileInput" accept="image/*" onchange="changeBgImage(event)">
+          <button class="toolbar-btn" onclick="resetBgImage()">Reset to default</button>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-label">Note Frames</div>
+        <label class="toggle-row">
+          <input type="checkbox" id="textureToggle" onchange="toggleTexture()">
+          <span>Textured glass frames</span>
+        </label>
+      </div>
+      <div class="settings-section">
+        <div class="settings-label">Help</div>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.5">
+          <strong>Ctrl+N</strong> new note · <strong>Ctrl+T</strong> new tab · <strong>Ctrl+D</strong> duplicate note · <strong>Ctrl+C/X/V</strong> copy/cut/paste note · <strong>Esc</strong> close modals.<br><br>
+          The last tab on any note can be locked with a password. Click the lock icon on the last tab to set it. This is a safe place for keys and private info.
+        </p>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeSettings()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== SERVICE WORKER =====
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
+// ===== INSTALL PROMPT =====
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  const btn = document.getElementById('installBtn');
+  if (btn) btn.classList.remove('hidden');
+});
+
+function installApp() {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  deferredInstallPrompt.userChoice.then(({ outcome }) => {
+    if (outcome === 'accepted') {
+      document.getElementById('installBtn').classList.add('hidden');
+      showToast('✦ Nebula Notepad installed');
+    }
+    deferredInstallPrompt = null;
+  });
+}
+
+// ===== OFFLINE STATUS =====
+function updateOfflineStatus() {
+  const badge = document.getElementById('offlineBadge');
+  if (!navigator.onLine) badge.classList.add('show');
+  else badge.classList.remove('show');
+}
+window.addEventListener('online', updateOfflineStatus);
+window.addEventListener('offline', updateOfflineStatus);
+updateOfflineStatus();
+
+// ===== STARFIELD =====
+const canvas = document.getElementById('starfield');
+const ctx = canvas.getContext('2d');
+let stars = [];
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  initStars();
+}
+function initStars() {
+  stars = [];
+  const count = Math.floor((canvas.width * canvas.height) / 3000);
+  for (let i = 0; i < count; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.8 + 0.2,
+      brightness: Math.random(),
+      twinkleSpeed: Math.random() * 0.02 + 0.005,
+      twinkleOffset: Math.random() * Math.PI * 2,
+      color: starColor()
+    });
+  }
+}
+function starColor() {
+  const r = Math.random();
+  if (r < 0.5) return '255,255,255';
+  if (r < 0.7) return '200,180,255';
+  if (r < 0.85) return '180,200,255';
+  return '220,180,255';
+}
+function drawStars(time) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (const s of stars) {
+    const twinkle = Math.sin(time * s.twinkleSpeed + s.twinkleOffset) * 0.4 + 0.6;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${s.color}, ${s.brightness * twinkle})`;
+    ctx.fill();
+  }
+  requestAnimationFrame(drawStars);
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+requestAnimationFrame(drawStars);
+
+// ===== THEMES & SETTINGS =====
+const THEMES = [
+  { id: 'nebula',        name: 'Nebula',        color: '#9b59ff', default: true },
+  { id: 'glossy-white',  name: 'Glossy White',  color: '#e8e8ed' },
+  { id: 'matte-black',   name: 'Matte Black',   color: '#1a1a1a' },
+  { id: 'gold',          name: 'Gold',          color: '#ffd700' },
+  { id: 'chrome',        name: 'Chrome',        color: '#c0c0c0' },
+  { id: 'purplesque',    name: 'Purplesque',    color: '#b56aff' },
+  { id: 'midnight-blue', name: 'Midnight Blue', color: '#3b82f6' },
+  { id: 'crimson',       name: 'Crimson',       color: '#ff3864' },
+  { id: 'emerald',       name: 'Emerald',       color: '#00d26a' },
+  { id: 'sunset',        name: 'Sunset',        color: '#ff7e5f' },
+  { id: 'arctic',        name: 'Arctic',        color: '#67e8f9' },
+  { id: 'rose-gold',     name: 'Rose Gold',     color: '#f4acb7' },
+  { id: 'lavender',      name: 'Lavender',      color: '#c8b6ff' },
+];
+
+let appSettings = JSON.parse(localStorage.getItem('nebula-settings') || '{}');
+let currentTheme = appSettings.theme || 'nebula';
+let bgImageEnabled = appSettings.bgImageEnabled !== false;
+let texturedFrames = appSettings.texturedFrames || false;
+let customBgImage = appSettings.customBgImage || null;
+
+function saveSettings() {
+  localStorage.setItem('nebula-settings', JSON.stringify({
+    theme: currentTheme,
+    bgImageEnabled,
+    texturedFrames,
+    customBgImage
+  }));
+}
+
+function applyTheme(themeId, persist = true) {
+  currentTheme = themeId;
+  document.body.setAttribute('data-theme', themeId);
+  renderThemeGrid();
+  renderNotes();
+  if (persist) saveSettings();
+}
+
+function applyBgSettings(persist = true) {
+  const photo = document.getElementById('nebulaPhoto');
+  if (!bgImageEnabled) {
+    photo.classList.add('hidden');
+  } else {
+    photo.classList.remove('hidden');
+    photo.style.backgroundImage = customBgImage ? `url(${customBgImage})` : 'url("./galaxy.jpg")';
+  }
+  const toggle = document.getElementById('bgImageToggle');
+  if (toggle) toggle.checked = bgImageEnabled;
+  if (persist) saveSettings();
+}
+
+function toggleBgImage() {
+  bgImageEnabled = document.getElementById('bgImageToggle').checked;
+  applyBgSettings();
+}
+
+function changeBgImage(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    customBgImage = e.target.result;
+    bgImageEnabled = true;
+    applyBgSettings();
+    showToast('✦ Background image updated');
+  };
+  reader.readAsDataURL(file);
+}
+
+function resetBgImage() {
+  customBgImage = null;
+  bgImageEnabled = true;
+  applyBgSettings();
+  showToast('✦ Background reset to default');
+}
+
+function toggleTexture() {
+  texturedFrames = document.getElementById('textureToggle').checked;
+  document.body.classList.toggle('textured', texturedFrames);
+  saveSettings();
+}
+
+function renderThemeGrid() {
+  const grid = document.getElementById('themeGrid');
+  if (!grid) return;
+  grid.innerHTML = THEMES.map(t => `
+    <div class="theme-swatch ${t.id === currentTheme ? 'active' : ''}" 
+         style="background: ${t.color};" 
+         onclick="applyTheme('${t.id}')"
+         title="${t.name}">
+      <span class="theme-name">${t.name}</span>
+    </div>
+  `).join('');
+}
+
+function openSettings() {
+  renderThemeGrid();
+  document.getElementById('bgImageToggle').checked = bgImageEnabled;
+  document.getElementById('textureToggle').checked = texturedFrames;
+  document.getElementById('settingsOverlay').classList.add('active');
+}
+
+function closeSettings() {
+  document.getElementById('settingsOverlay').classList.remove('active');
+}
+
+document.getElementById('settingsOverlay').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeSettings();
+});
+
+// ===== NOTES =====
+let notes = [];
+try {
+  notes = JSON.parse(localStorage.getItem('nebula-notepad') || '[]');
+  notes.forEach(n => {
+    if (!n.tabs && n.body != null) {
+      n.tabs = [{ title: 'Main', body: n.body || '' }];
+      n.activeTab = 0;
+      delete n.body;
+    }
+    if (n.color && !THEMES.find(t => t.id === n.color)) {
+      const map = {purple:'nebula', cyan:'nebula', pink:'purplesque', blue:'midnight-blue', teal:'emerald', gold:'gold', rose:'crimson', orange:'sunset'};
+      n.color = map[n.color] || 'nebula';
+    }
+  });
+} catch(e) { notes = []; }
+
+let noteIdCounter = notes.length > 0 ? Math.max(...notes.map(n => n.id)) + 1 : 1;
+let clipboardNote = null;
+let clipboardCut = false;
+
+if (notes.length === 0) {
+  notes.unshift({
+    id: noteIdCounter++,
+    title: '🌌 Welcome to Nebula Notepad',
+    tabs: [
+      { title: 'Tips', body: 'Ctrl+N: new note\nCtrl+T: new tab\nCtrl+D: duplicate note\nCtrl+C/V/X: copy/cut/paste note\nEsc: close modals\n\nThe last tab on any note can be locked with a password — a safe place for keys and private info.' },
+      { title: 'Private', body: '', locked: true }
+    ],
+    activeTab: 0,
+    color: 'nebula',
+    created: Date.now(),
+    updated: Date.now()
+  });
+}
+
+applyTheme(currentTheme, false);
+applyBgSettings(false);
+if (texturedFrames) document.body.classList.add('textured');
+
+function saveNotes() {
+  localStorage.setItem('nebula-notepad', JSON.stringify(notes));
+  updateNoteCount();
+}
+
+function updateNoteCount() {
+  const count = notes.length;
+  document.getElementById('noteCount').textContent = `${count} note${count !== 1 ? 's' : ''}`;
+}
+
+function getColorStyle(themeId) {
+  const t = THEMES.find(t => t.id === themeId) || THEMES[0];
+  return `--note-accent: ${t.color}; --note-glow: ${hexToRgba(t.color, 0.3)};`;
+}
+
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1,3), 16);
+  const g = parseInt(hex.slice(3,5), 16);
+  const b = parseInt(hex.slice(5,7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function addNote() {
+  const note = {
+    id: noteIdCounter++,
+    title: '',
+    tabs: [{ title: 'Main', body: '' }],
+    activeTab: 0,
+    color: currentTheme,
+    created: Date.now(),
+    updated: Date.now(),
+    _x: 20 + (notes.length % 5) * 30,
+    _y: 20 + (notes.length % 5) * 30
+  };
+  notes.unshift(note);
+  saveNotes();
+  renderNotes();
+  showToast('✦ New note created');
+}
+
+function deleteNote(id) {
+  notes = notes.filter(n => n.id !== id);
+  saveNotes();
+  renderNotes();
+}
+
+function duplicateNote(id) {
+  const original = notes.find(n => n.id === id);
+  if (!original) return;
+  const copy = {
+    id: noteIdCounter++,
+    title: original.title + ' (copy)',
+    tabs: JSON.parse(JSON.stringify(original.tabs)),
+    activeTab: original.activeTab,
+    color: original.color,
+    created: Date.now(),
+    updated: Date.now(),
+    _x: (original._x || 0) + 30,
+    _y: (original._y || 0) + 30
+  };
+  notes.unshift(copy);
+  saveNotes();
+  renderNotes();
+  showToast('✦ Note duplicated');
+}
+
+function updateNoteTitle(id, title) {
+  const note = notes.find(n => n.id === id);
+  if (note) { note.title = title; note.updated = Date.now(); saveNotes(); }
+}
+
+function updateNoteBody(id, body) {
+  const note = notes.find(n => n.id === id);
+  if (note && note.tabs[note.activeTab]) {
+    note.tabs[note.activeTab].body = body;
+    note.updated = Date.now();
+    saveNotes();
+  }
+}
+
+function switchTab(id, idx) {
+  const note = notes.find(n => n.id === id);
+  if (!note || !note.tabs[idx]) return;
+  note.activeTab = idx;
+  saveNotes();
+  renderNotes();
+}
+
+function addTab(id) {
+  const note = notes.find(n => n.id === id);
+  if (!note) return;
+  note.tabs.push({ title: `Tab ${note.tabs.length + 1}`, body: '' });
+  note.activeTab = note.tabs.length - 1;
+  saveNotes();
+  renderNotes();
+}
+
+function deleteTab(id, idx) {
+  const note = notes.find(n => n.id === id);
+  if (!note || note.tabs.length <= 1) return;
+  note.tabs.splice(idx, 1);
+  if (note.activeTab >= note.tabs.length) note.activeTab = note.tabs.length - 1;
+  saveNotes();
+  renderNotes();
+}
+
+function renameTab(id, idx, title) {
+  const note = notes.find(n => n.id === id);
+  if (note && note.tabs[idx]) { note.tabs[idx].title = title; saveNotes(); }
+}
+
+function toggleTabLock(id, idx) {
+  const note = notes.find(n => n.id === id);
+  if (!note || idx !== note.tabs.length - 1) return;
+  const tab = note.tabs[idx];
+  if (tab.locked) {
+    const pw = prompt('Enter password to unlock or clear lock:');
+    if (pw === null) return;
+    if (pw === tab.password) {
+      tab.locked = false;
+      delete tab.password;
+      showToast('✦ Tab unlocked');
+    } else if (pw === '') {
+      if (confirm('Clear password and unlock?')) {
+        tab.locked = false;
+        delete tab.password;
+        showToast('✦ Lock cleared');
+      }
+    } else {
+      showToast('✗ Wrong password');
+      return;
+    }
+  } else {
+    const pw = prompt('Set a password to lock this tab:');
+    if (!pw) return;
+    tab.locked = true;
+    tab.password = pw;
+    showToast('✦ Tab locked');
+  }
+  saveNotes();
+  renderNotes();
+}
+
+function autoTileNotes(force = false) {
+  const area = document.getElementById('notesArea');
+  if (!area) return;
+  const cols = Math.max(1, Math.floor(area.clientWidth / 300));
+  notes.forEach((n, i) => {
+    if (force || n._x == null || n._y == null) {
+      n._x = 20 + (i % cols) * 300;
+      n._y = 20 + Math.floor(i / cols) * 220;
+    }
+  });
+}
+
+let activeDrag = null;
+function startDrag(e, id) {
+  if (e.target.closest('.note-actions') || e.target.closest('.note-tabs') || e.target.closest('.note-body') || e.target.closest('.note-title')) return;
+  const card = document.querySelector(`.note-card[data-id="${id}"]`);
+  const note = notes.find(n => n.id === id);
+  if (!card || !note) return;
+  activeDrag = { id, card, note, startX: e.clientX, startY: e.clientY, origX: note._x || 0, origY: note._y || 0 };
+  card.classList.add('dragging');
+  e.preventDefault();
+}
+
+function onMove(e) {
+  if (!activeDrag) return;
+  const dx = e.clientX - activeDrag.startX;
+  const dy = e.clientY - activeDrag.startY;
+  activeDrag.note._x = activeDrag.origX + dx;
+  activeDrag.note._y = activeDrag.origY + dy;
+  activeDrag.card.style.left = activeDrag.note._x + 'px';
+  activeDrag.card.style.top = activeDrag.note._y + 'px';
+}
+
+function onUp() {
+  if (!activeDrag) return;
+  activeDrag.card.classList.remove('dragging');
+  saveNotes();
+  activeDrag = null;
+}
+
+document.addEventListener('mousemove', onMove);
+document.addEventListener('mouseup', onUp);
+
+function renderNotes() {
+  const area = document.getElementById('notesArea');
+  const search = document.getElementById('searchBox').value.toLowerCase();
+  const filtered = notes.filter(n => {
+    const text = (n.title + ' ' + n.tabs.map(t => t.body).join(' ')).toLowerCase();
+    return text.includes(search);
+  });
+
+  area.querySelectorAll('.note-card').forEach(c => c.remove());
+  document.getElementById('emptyState').style.display = filtered.length ? 'none' : 'flex';
+
+  filtered.forEach(note => {
+    const card = document.createElement('div');
+    card.className = 'note-card';
+    card.dataset.id = note.id;
+    card.style.cssText = `left:${note._x || 20}px; top:${note._y || 20}px; ${getColorStyle(note.color)}`;
+    card.addEventListener('mousedown', e => startDrag(e, note.id));
+
+    const tab = note.tabs[note.activeTab] || note.tabs[0];
+    const isLocked = tab && tab.locked;
+
+    const tabsHtml = note.tabs.map((t, i) => `
+      <div class="note-tab ${i === note.activeTab ? 'active' : ''}" onclick="switchTab(${note.id}, ${i})">
+        <span contenteditable="true" onblur="renameTab(${note.id}, ${i}, this.textContent)" onclick="event.stopPropagation()">${escapeHtml(t.title || `Tab ${i+1}`)}</span>
+        ${note.tabs.length > 1 ? `<button class="note-tab-close" onclick="event.stopPropagation(); deleteTab(${note.id}, ${i})">×</button>` : ''}
+      </div>
+    `).join('');
+
+    const lastIdx = note.tabs.length - 1;
+    const lockHtml = `<button class="note-btn lock ${note.tabs[lastIdx].locked ? 'locked' : ''}" title="Lock last tab" onclick="event.stopPropagation(); toggleTabLock(${note.id}, ${lastIdx})">🔒</button>`;
+
+    card.innerHTML = `
+      <div class="note-header">
+        <input type="text" class="note-title" value="${escapeHtml(note.title)}" placeholder="Note title..." onchange="updateNoteTitle(${note.id}, this.value)">
+        <div class="note-actions">
+          <button class="note-btn" title="Duplicate" onclick="event.stopPropagation(); duplicateNote(${note.id})">⧉</button>
+          <button class="note-btn" title="Delete" onclick="event.stopPropagation(); confirmDelete(${note.id})">🗑</button>
+        </div>
+      </div>
+      <div class="note-tabs">
+        ${tabsHtml}
+        <button class="note-tab-add" onclick="addTab(${note.id})" title="Add tab">+</button>
+        ${lockHtml}
+      </div>
+      ${isLocked ? `
+        <div class="locked-tab">
+          <div>🔒 This tab is locked</div>
+          <input type="password" placeholder="Password" id="pw-${note.id}" onkeydown="if(event.key==='Enter')unlockTab(${note.id})">
+          <button class="toolbar-btn" onclick="unlockTab(${note.id})">Unlock</button>
+        </div>
+      ` : `
+        <textarea class="note-body" placeholder="Write something cosmic..." oninput="updateNoteBody(${note.id}, this.value)">${escapeHtml(tab.body)}</textarea>
+      `}
+      <div class="note-footer">
+        <span>${new Date(note.updated).toLocaleString(undefined, {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'})}</span>
+      </div>
+    `;
+    area.appendChild(card);
+  });
+
+  updateNoteCount();
+}
+
+function unlockTab(id) {
+  const note = notes.find(n => n.id === id);
+  if (!note) return;
+  const tab = note.tabs[note.activeTab];
+  const input = document.getElementById(`pw-${id}`);
+  if (!tab || !tab.locked || !input) return;
+  if (input.value === tab.password) {
+    tab.locked = false;
+    delete tab.password;
+    saveNotes();
+    renderNotes();
+    showToast('✦ Tab unlocked');
+  } else {
+    showToast('✗ Wrong password');
+  }
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text || '';
+  return div.innerHTML;
+}
+
+function confirmDelete(id) {
+  showModal('Delete note?', 'This cannot be undone.', () => { deleteNote(id); closeModal(); });
+}
+
+function showClearAllModal() {
+  showModal('Clear all notes?', 'This will permanently delete every note.', () => {
+    notes = [];
+    saveNotes();
+    renderNotes();
+    closeModal();
+  });
+}
+
+// ===== MODAL =====
+let modalCallback = null;
+function showModal(title, text, callback) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalText').textContent = text;
+  modalCallback = callback;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  document.getElementById('settingsOverlay').classList.remove('active');
+  modalCallback = null;
+}
+function confirmModal() {
+  if (modalCallback) modalCallback();
+}
+document.getElementById('modalOverlay').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+// ===== EXPORT/IMPORT =====
+function exportNotes() {
+  const data = JSON.stringify(notes, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `nebula-notepad-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✦ Notes exported');
+}
+
+function importNotes(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!Array.isArray(imported)) throw new Error('Invalid format');
+      notes = imported;
+      noteIdCounter = notes.length > 0 ? Math.max(...notes.map(n => n.id)) + 1 : 1;
+      saveNotes();
+      renderNotes();
+      showToast(`✦ Imported ${notes.length} notes`);
+    } catch (err) {
+      showToast('✗ Import failed');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ===== SEARCH =====
+function filterNotes() {
+  renderNotes();
+}
+
+// ===== TOAST =====
+function showToast(message) {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => {
+    if (toast.parentNode) toast.parentNode.removeChild(toast);
+  }, 3000);
+}
+
+// ===== KEYBOARD =====
+document.addEventListener('keydown', (e) => {
+  const isCtrl = e.ctrlKey || e.metaKey;
+  const activeEl = document.activeElement;
+  const noteCard = activeEl ? activeEl.closest('.note-card') : null;
+  const noteId = noteCard ? parseInt(noteCard.dataset.id) : null;
+  const inInput = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable);
+
+  if (isCtrl && e.key === 'n' && !inInput) { e.preventDefault(); addNote(); }
+  if (isCtrl && e.key === 'd' && noteId != null && !inInput) { e.preventDefault(); duplicateNote(noteId); }
+  if (isCtrl && e.key === 't' && noteId != null) { e.preventDefault(); addTab(noteId); }
+  if (isCtrl && e.key === 'c' && noteId != null && !window.getSelection().toString()) {
+    e.preventDefault();
+    const note = notes.find(n => n.id === noteId);
+    if (note) { clipboardNote = { title: note.title, tabs: JSON.parse(JSON.stringify(note.tabs)), color: note.color }; clipboardCut = false; showToast('✦ Note copied'); }
+  }
+  if (isCtrl && e.key === 'x' && noteId != null && !window.getSelection().toString()) {
+    e.preventDefault();
+    const note = notes.find(n => n.id === noteId);
+    if (note) { clipboardNote = { title: note.title, tabs: JSON.parse(JSON.stringify(note.tabs)), color: note.color }; clipboardCut = true; showToast('✦ Note cut — paste to move'); }
+  }
+  if (isCtrl && e.key === 'v' && clipboardNote != null && !inInput) {
+    e.preventDefault();
+    const newNote = { id: noteIdCounter++, title: clipboardNote.title, tabs: JSON.parse(JSON.stringify(clipboardNote.tabs)), activeTab: 0, color: clipboardNote.color, created: Date.now(), updated: Date.now() };
+    notes.unshift(newNote);
+    if (clipboardCut && noteId != null) { notes = notes.filter(n => n.id !== noteId); clipboardCut = false; }
+    saveNotes();
+    renderNotes();
+    showToast('✦ Note pasted');
+  }
+  if (e.key === 'Escape') {
+    closeModal();
+  }
+});
+
+// ===== INIT =====
+autoTileNotes(true);
+renderNotes();
+</script>
+</body>
+</html>
