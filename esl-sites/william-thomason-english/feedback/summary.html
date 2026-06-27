@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#1c1c1c">
+<title>Lesson Summary — William Thomason English</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Blogger+Sans:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #1c1c1c; --bg2: #161616; --bg3: #222222; --bg-card: #232323; --bg-card2: #1a1a1a;
+  --border: #333333; --border-light: #444444; --text: #e8e8e8; --text-muted: #999999; --text-dim: #555555;
+  --accent: #a3e635; --accent-dim: rgba(163,230,53,.08); --accent-glow: rgba(163,230,53,.3);
+}
+[data-theme="light"] {
+  --bg: #f5f5f5; --bg2: #eeeeee; --bg3: #e0e0e0; --bg-card: #ffffff; --bg-card2: #f0f0f0;
+  --border: #d0d0d0; --border-light: #b0b0b0; --text: #2f2f2f; --text-muted: #666666; --text-dim: #888888;
+  --accent: #3097cf; --accent-dim: rgba(48,151,207,.08); --accent-glow: rgba(48,151,207,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{font-family:'Blogger Sans','Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;overflow-x:hidden;transition:background .3s ease,color .3s ease}
+h1,h2,h3,h4{font-family:'Blogger Sans',sans-serif;font-weight:700}
+.container{max-width:680px;margin:0 auto;padding:40px 24px 60px}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:18px;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.header{text-align:center;padding-bottom:8px}
+.header h1{font-size:1.8rem;color:var(--accent);margin-bottom:6px}
+.header p{color:var(--text-muted);font-size:.9rem}
+.badge{display:inline-block;padding:6px 12px;border-radius:50px;background:var(--accent-dim);color:var(--accent);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.section-title{font-size:1.1rem;color:#fff;margin-bottom:12px}
+.ratings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:12px}
+.rating-card{text-align:center;padding:14px;background:var(--bg-card2);border:1px solid var(--border);border-radius:12px}
+.rating-card .label{font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:6px}
+.rating-card .stars{color:var(--accent);font-size:1.1rem;letter-spacing:2px}
+.homework-list{display:flex;flex-direction:column;gap:10px}
+.hw-card{padding:16px;background:var(--bg-card2);border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;gap:6px}
+.hw-label{display:inline-block;padding:4px 10px;border-radius:6px;background:var(--accent-dim);color:var(--accent);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;width:fit-content}
+.hw-title{font-size:1rem;font-weight:600;color:#fff}
+.hw-url{font-size:.8rem;color:var(--text-muted);word-break:break-all}
+.hw-url a{color:var(--accent);text-decoration:none}
+.text-block{white-space:pre-wrap;color:var(--text-muted);font-size:.95rem;line-height:1.7}
+.praise-box{padding:20px;text-align:center;border:1px solid var(--accent);border-radius:16px;background:var(--accent-dim);margin:16px 0}
+.praise-box h2{font-size:1.3rem;color:var(--accent);margin-bottom:6px}
+.praise-box p{color:var(--text);font-size:1rem}
+.empty{color:var(--text-muted);font-style:italic}
+.footer{text-align:center;margin-top:24px;font-size:.75rem;color:var(--text-muted)}
+.footer a{color:var(--accent);text-decoration:none}
+@media print{
+  body{background:#fff;color:#000}
+  .card{border:1px solid #ccc}
+  .hw-url a{color:#000}
+}
+@media(max-width:480px){.header h1{font-size:1.4rem}.ratings-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="summary">
+    <div class="card header">
+      <span class="badge" id="levelBadge">B2</span>
+      <h1 id="studentName">Lesson Summary</h1>
+      <p id="lessonMeta"></p>
+    </div>
+
+    <div class="card" id="ratingsCard">
+      <h2 class="section-title">Quick evaluation</h2>
+      <div class="ratings-grid" id="ratingsGrid"></div>
+    </div>
+
+    <div class="card" id="focusCard">
+      <h2 class="section-title">Focus of the lesson</h2>
+      <p id="focusText" class="text-block"></p>
+    </div>
+
+    <div class="card" id="vocabCard">
+      <h2 class="section-title">Language seen</h2>
+      <p id="vocabText" class="text-block"></p>
+    </div>
+
+    <div class="card" id="homeworkCard">
+      <h2 class="section-title">Homework</h2>
+      <div class="homework-list" id="homeworkList"></div>
+    </div>
+
+    <div class="card" id="nextCard">
+      <h2 class="section-title">Next session focus</h2>
+      <p id="nextText" class="text-block"></p>
+    </div>
+
+    <div id="praiseBox" class="praise-box card" style="display:none">
+      <h2>🎉 Well done!</h2>
+      <p id="praiseText"></p>
+    </div>
+
+    <div class="card" id="commentsCard" style="display:none">
+      <h2 class="section-title">Additional comments</h2>
+      <p id="commentsText" class="text-block"></p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Powered by <a href="https://eloquenta-english.github.io/workspace/esl-sites/william-thomason-english/index.html">William Thomason English</a></p>
+  </div>
+</div>
+
+<script src="_feedback-engine.js"></script>
+<script>
+(function(){
+  var E = window.FeedbackEngine;
+  var hash = location.search.replace(/^\?s=/, '');
+  var data = hash ? E.decodeSummary(hash) : null;
+
+  if (!data) {
+    document.getElementById('summary').innerHTML = '<div class="card"><p class="empty">No feedback data found. Ask your teacher to send you the summary link.</p></div>';
+    return;
+  }
+
+  document.getElementById('levelBadge').textContent = data.level || 'B2';
+  document.getElementById('studentName').textContent = (data.studentName || 'Student') + ' — Lesson Summary';
+  document.getElementById('lessonMeta').textContent = (data.lessonDate || '') + (data.topic ? ' | ' + data.topic : '');
+
+  var ratingsGrid = document.getElementById('ratingsGrid');
+  var ratings = data.ratings || {};
+  var labels = {fluency:'Fluency', accuracy:'Accuracy', pronunciation:'Pronunciation', comprehension:'Comprehension', participation:'Participation'};
+  Object.keys(labels).forEach(function(key){
+    var val = ratings[key] || 0;
+    var card = document.createElement('div');
+    card.className = 'rating-card';
+    card.innerHTML = '<div class="label">'+labels[key]+'</div><div class="stars">'+'★'.repeat(val)+'</div>';
+    ratingsGrid.appendChild(card);
+  });
+
+  document.getElementById('focusText').textContent = data.focus || '—';
+  document.getElementById('vocabText').textContent = data.vocabulary || '—';
+  document.getElementById('nextText').textContent = data.nextFocus || '—';
+
+  var homeworkList = document.getElementById('homeworkList');
+  if (data.homework && data.homework.length) {
+    data.homework.forEach(function(hw){
+      var card = document.createElement('div');
+      card.className = 'hw-card';
+      card.innerHTML = ''+
+        '<span class="hw-label">'+hw.label+'</span>'+
+        '<div class="hw-title">'+(hw.title || 'Homework')+'</div>'+
+        '<div class="hw-url"><a href="'+hw.url+'" target="_blank" rel="noopener">'+hw.url+'</a></div>';
+      homeworkList.appendChild(card);
+    });
+  } else {
+    homeworkList.innerHTML = '<p class="empty">No homework assigned.</p>';
+  }
+
+  if (data.praise) {
+    document.getElementById('praiseBox').style.display = 'block';
+    document.getElementById('praiseText').textContent = data.praise;
+  }
+
+  if (data.comments) {
+    document.getElementById('commentsCard').style.display = 'block';
+    document.getElementById('commentsText').textContent = data.comments;
+  }
+})();
+</script>
+</body>
+</html>

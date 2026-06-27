@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0a0e1a">
+<title>Lesson Summary — Eloquenta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cs-accent:#22d3ee;--cs-bg:#0a0e1a;--cs-text:#e0f2fe;--cs-bg-card:#111827;
+  --cs-border:#1e3a5f;--cs-text-muted:#94a3b8;--cs-accent-glow:rgba(34,211,238,.2);
+  --cs-accent-dim:rgba(34,211,238,.08);--cs-border-light:rgba(30,58,95,.7);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--cs-bg);color:var(--cs-text);line-height:1.6;min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif}
+.bg{position:fixed;inset:0;background:radial-gradient(circle at 20% 20%,rgba(34,211,238,.08),transparent 40%),radial-gradient(circle at 80% 80%,rgba(167,139,250,.08),transparent 40%),var(--cs-bg);z-index:-2}
+.container{max-width:680px;margin:0 auto;padding:40px 24px 60px}
+.glass{background:rgba(255,255,255,.04);border:1px solid var(--cs-border);border-radius:18px;backdrop-filter:blur(14px);box-shadow:0 0 30px rgba(0,0,0,.3)}
+.card{padding:24px;margin-bottom:18px}
+.header{text-align:center;padding-bottom:8px}
+.header h1{font-size:1.8rem;color:var(--cs-accent);margin-bottom:6px}
+.header p{color:var(--cs-text-muted);font-size:.9rem}
+.badge{display:inline-block;padding:6px 12px;border-radius:50px;background:var(--cs-accent-dim);color:var(--cs-accent);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.section-title{font-size:1rem;color:#fff;margin-bottom:12px}
+.ratings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:12px}
+.rating-card{text-align:center;padding:14px;background:var(--cs-bg-card);border:1px solid var(--cs-border);border-radius:12px}
+.rating-card .label{font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;color:var(--cs-text-muted);margin-bottom:6px}
+.rating-card .stars{color:var(--cs-accent);font-size:1.1rem;letter-spacing:2px}
+.homework-list{display:flex;flex-direction:column;gap:10px}
+.hw-card{padding:16px;background:var(--cs-bg-card);border:1px solid var(--cs-border);border-radius:12px;display:flex;flex-direction:column;gap:6px}
+.hw-label{display:inline-block;padding:4px 10px;border-radius:6px;background:var(--cs-accent-dim);color:var(--cs-accent);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;width:fit-content}
+.hw-title{font-size:1rem;font-weight:600;color:#fff}
+.hw-url{font-size:.8rem;color:var(--cs-text-muted);word-break:break-all}
+.hw-url a{color:var(--cs-accent);text-decoration:none}
+.text-block{white-space:pre-wrap;color:var(--cs-text-muted);font-size:.95rem;line-height:1.7}
+.praise-box{padding:20px;text-align:center;border:1px solid var(--cs-accent);border-radius:16px;background:var(--cs-accent-dim);margin:16px 0}
+.praise-box h2{font-size:1.3rem;color:var(--cs-accent);margin-bottom:6px}
+.praise-box p{color:var(--cs-text);font-size:1rem}
+.empty{color:var(--cs-text-muted);font-style:italic}
+.footer{text-align:center;margin-top:24px;font-size:.75rem;color:var(--cs-text-muted)}
+.footer a{color:var(--cs-accent);text-decoration:none}
+@media print{
+  .bg{display:none}
+  body{background:#fff;color:#000}
+  .glass{border:1px solid #ccc}
+  .hw-url a{color:#000}
+}
+@media(max-width:480px){.header h1{font-size:1.4rem}.ratings-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="container">
+  <div id="summary">
+    <div class="card glass header">
+      <span class="badge" id="levelBadge">B2</span>
+      <h1 id="studentName">Lesson Summary</h1>
+      <p id="lessonMeta"></p>
+    </div>
+
+    <div class="card glass" id="ratingsCard">
+      <h2 class="section-title">Quick evaluation</h2>
+      <div class="ratings-grid" id="ratingsGrid"></div>
+    </div>
+
+    <div class="card glass" id="focusCard">
+      <h2 class="section-title">Focus of the lesson</h2>
+      <p id="focusText" class="text-block"></p>
+    </div>
+
+    <div class="card glass" id="vocabCard">
+      <h2 class="section-title">Language seen</h2>
+      <p id="vocabText" class="text-block"></p>
+    </div>
+
+    <div class="card glass" id="homeworkCard">
+      <h2 class="section-title">Homework</h2>
+      <div class="homework-list" id="homeworkList"></div>
+    </div>
+
+    <div class="card glass" id="nextCard">
+      <h2 class="section-title">Next session focus</h2>
+      <p id="nextText" class="text-block"></p>
+    </div>
+
+    <div id="praiseBox" class="praise-box glass" style="display:none">
+      <h2>🎉 Well done!</h2>
+      <p id="praiseText"></p>
+    </div>
+
+    <div class="card glass" id="commentsCard" style="display:none">
+      <h2 class="section-title">Additional comments</h2>
+      <p id="commentsText" class="text-block"></p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Powered by <a href="https://eloquenta-english.github.io/workspace/esl-sites/eloquenta/index.html">Eloquenta</a></p>
+  </div>
+</div>
+
+<script src="_feedback-engine.js"></script>
+<script>
+(function(){
+  var E = window.FeedbackEngine;
+  var hash = location.search.replace(/^\?s=/, '');
+  var data = hash ? E.decodeSummary(hash) : null;
+
+  if (!data) {
+    document.getElementById('summary').innerHTML = '<div class="card glass"><p class="empty">No feedback data found. Ask your teacher to send you the summary link.</p></div>';
+    return;
+  }
+
+  document.getElementById('levelBadge').textContent = data.level || 'B2';
+  document.getElementById('studentName').textContent = (data.studentName || 'Student') + ' — Lesson Summary';
+  document.getElementById('lessonMeta').textContent = (data.lessonDate || '') + (data.topic ? ' | ' + data.topic : '');
+
+  var ratingsGrid = document.getElementById('ratingsGrid');
+  var ratings = data.ratings || {};
+  var labels = {fluency:'Fluency', accuracy:'Accuracy', pronunciation:'Pronunciation', comprehension:'Comprehension', participation:'Participation'};
+  Object.keys(labels).forEach(function(key){
+    var val = ratings[key] || 0;
+    var card = document.createElement('div');
+    card.className = 'rating-card';
+    card.innerHTML = '<div class="label">'+labels[key]+'</div><div class="stars">'+'★'.repeat(val)+'</div>';
+    ratingsGrid.appendChild(card);
+  });
+
+  document.getElementById('focusText').textContent = data.focus || '—';
+  document.getElementById('vocabText').textContent = data.vocabulary || '—';
+  document.getElementById('nextText').textContent = data.nextFocus || '—';
+
+  var homeworkList = document.getElementById('homeworkList');
+  if (data.homework && data.homework.length) {
+    data.homework.forEach(function(hw){
+      var card = document.createElement('div');
+      card.className = 'hw-card';
+      card.innerHTML = ''+
+        '<span class="hw-label">'+hw.label+'</span>'+
+        '<div class="hw-title">'+(hw.title || 'Homework')+'</div>'+
+        '<div class="hw-url"><a href="'+hw.url+'" target="_blank" rel="noopener">'+hw.url+'</a></div>';
+      homeworkList.appendChild(card);
+    });
+  } else {
+    homeworkList.innerHTML = '<p class="empty">No homework assigned.</p>';
+  }
+
+  if (data.praise) {
+    document.getElementById('praiseBox').style.display = 'block';
+    document.getElementById('praiseText').textContent = data.praise;
+  }
+
+  if (data.comments) {
+    document.getElementById('commentsCard').style.display = 'block';
+    document.getElementById('commentsText').textContent = data.comments;
+  }
+})();
+</script>
+</body>
+</html>

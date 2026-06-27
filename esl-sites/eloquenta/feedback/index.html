@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0a0e1a">
+<title>Lesson Feedback — Eloquenta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cs-accent:#22d3ee;--cs-bg:#0a0e1a;--cs-text:#e0f2fe;--cs-bg-card:#111827;
+  --cs-border:#1e3a5f;--cs-text-muted:#94a3b8;--cs-accent-glow:rgba(34,211,238,.2);
+  --cs-accent-dim:rgba(34,211,238,.08);--cs-border-light:rgba(30,58,95,.7);
+  --cs-amber:#fbbf24;--cs-rose:#fb7185;--cs-green:#4ade80;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--cs-bg);color:var(--cs-text);line-height:1.6;min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif}
+.bg{position:fixed;inset:0;background:radial-gradient(circle at 20% 20%,rgba(34,211,238,.08),transparent 40%),radial-gradient(circle at 80% 80%,rgba(167,139,250,.08),transparent 40%),var(--cs-bg);z-index:-2}
+.nav{position:sticky;top:0;z-index:50;background:rgba(10,14,26,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--cs-border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Space Grotesk';font-size:1.1rem;font-weight:700;color:#fff;text-decoration:none;letter-spacing:1px}
+.nav-logo span{color:var(--cs-accent)}
+.theme-cycle-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--cs-border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.theme-dot{width:10px;height:10px;border-radius:50%;background:var(--cs-accent)}
+.timer{position:fixed;top:68px;right:18px;z-index:40;background:var(--cs-bg-card);border:1px solid var(--cs-border);border-radius:50px;padding:8px 16px;font-family:'Space Grotesk';font-weight:700;font-size:1rem;letter-spacing:1px}
+.timer-urgent{color:var(--cs-amber);border-color:var(--cs-amber);animation:pulse 1s infinite}
+.timer-ended{color:var(--cs-rose);border-color:var(--cs-rose)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.container{max-width:760px;margin:0 auto;padding:40px 24px 80px}
+.glass{background:rgba(255,255,255,.04);border:1px solid var(--cs-border);border-radius:18px;backdrop-filter:blur(14px);box-shadow:0 0 30px rgba(0,0,0,.3)}
+.card{padding:24px;margin-bottom:18px}
+.card h2{font-size:1.1rem;margin-bottom:16px;color:#fff}
+.card h3{font-size:.9rem;text-transform:uppercase;letter-spacing:1px;color:var(--cs-text-muted);margin-bottom:12px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.form-group{margin-bottom:16px}
+label{display:block;font-size:.82rem;font-weight:600;color:var(--cs-text-muted);margin-bottom:6px}
+input[type="text"],input[type="date"],input[type="time"],select,textarea{
+  width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--cs-border);background:var(--cs-bg-card);color:var(--cs-text);font-family:'Inter',sans-serif;font-size:1rem;outline:none;transition:border .2s,box-shadow .2s
+}
+input:focus,select:focus,textarea:focus{border-color:var(--cs-accent);box-shadow:0 0 0 3px var(--cs-accent-glow)}
+textarea{min-height:90px;resize:vertical}
+.toggle-group{display:flex;gap:10px;flex-wrap:wrap}
+.toggle-btn{padding:10px 18px;border-radius:50px;border:1px solid var(--cs-border);background:var(--cs-bg-card);color:var(--cs-text);cursor:pointer;font-size:.9rem;transition:all .15s}
+.toggle-btn.active{background:var(--cs-accent);color:var(--cs-bg);border-color:var(--cs-accent);font-weight:700}
+.rating-row{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between}
+.rating-col{flex:1;min-width:120px;text-align:center}
+.rating-col label{font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.stars{display:flex;justify-content:center;gap:4px;font-size:1.4rem;cursor:pointer}
+.star{color:var(--cs-border);transition:color .1s}
+.star.filled{color:var(--cs-accent)}
+.homework-list{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.homework-item{display:grid;grid-template-columns:auto 1fr 1fr auto;gap:8px;align-items:center;padding:12px}
+.hw-label{padding:6px 10px;border-radius:6px;background:var(--cs-accent-dim);color:var(--cs-accent);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.hw-title,.hw-url{margin-bottom:0}
+.hw-remove{width:30px;height:30px;border-radius:50%;border:1px solid var(--cs-border);background:transparent;color:var(--cs-text-muted);cursor:pointer}
+.hw-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.homework-label-select{max-width:180px}
+.btn{padding:10px 18px;border-radius:50px;border:1px solid var(--cs-border);background:var(--cs-bg-card);color:var(--cs-text);cursor:pointer;font-size:.9rem;font-weight:600;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--cs-accent)}
+.btn-primary{background:var(--cs-accent);color:var(--cs-bg);border-color:var(--cs-accent)}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-success{background:var(--cs-green);color:#052e16;border-color:var(--cs-green)}
+.no-time-box{padding:16px;border:1px dashed var(--cs-border);border-radius:12px;background:rgba(255,255,255,.02);margin-bottom:16px}
+.praise-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.confirm-row{display:flex;align-items:center;gap:10px;margin:20px 0;padding:16px;border:1px solid var(--cs-border);border-radius:12px;background:var(--cs-bg-card)}
+.confirm-row input{width:20px;height:20px;accent-color:var(--cs-accent)}
+.footer-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:24px;flex-wrap:wrap}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px)}
+.modal.active{display:flex}
+.modal-box{max-width:420px;width:90%;padding:24px;text-align:center}
+.modal-box h2{font-size:1.4rem;margin-bottom:12px;color:var(--cs-accent)}
+.modal-box p{color:var(--cs-text-muted);margin-bottom:20px}
+.link-box{display:flex;gap:8px;margin-bottom:16px}
+.link-box input{flex:1}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--cs-bg-card);border:1px solid var(--cs-accent);color:#fff;padding:12px 20px;border-radius:50px;z-index:120;opacity:0;transition:opacity .3s}
+.toast.show{opacity:1}
+@media(max-width:640px){.form-row{grid-template-columns:1fr}.homework-item{grid-template-columns:1fr auto}.hw-label{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<nav class="nav">
+  <a href="../index.html" class="nav-logo">◆ <span>Eloquenta</span> Feedback</a>
+  <button class="theme-cycle-btn" id="themeCycleBtn" title="Cycle theme"><span class="theme-dot" id="themeDot"></span></button>
+</nav>
+
+<div class="timer" id="timer">03:00</div>
+
+<div class="container">
+  <form id="feedbackForm">
+    <!-- Header -->
+    <div class="card glass">
+      <h1>Lesson Feedback</h1>
+      <p style="color:var(--cs-text-muted);font-size:.9rem;margin-top:4px">Complete with the student in the last 3 minutes of the lesson.</p>
+    </div>
+
+    <!-- Lesson info -->
+    <div class="card glass">
+      <h2>Lesson details</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="studentName">Student name</label>
+          <input type="text" id="studentName" name="studentName" required>
+        </div>
+        <div class="form-group">
+          <label for="lessonDate">Date & time</label>
+          <input type="text" id="lessonDate" name="lessonDate" placeholder="e.g. 27 June, 11:30–12:00" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="topic">Topic / goal</label>
+          <input type="text" id="topic" name="topic" required>
+        </div>
+        <div class="form-group">
+          <label for="level">Level</label>
+          <select id="level" name="level">
+            <option value="B1">B1</option>
+            <option value="B2" selected>B2</option>
+            <option value="C1">C1</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Session status -->
+    <div class="card glass">
+      <h2>Session status</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Completed successfully?</label>
+          <div class="toggle-group">
+            <button type="button" class="toggle-btn active" data-name="completed" data-value="1">Yes</button>
+            <button type="button" class="toggle-btn" data-name="completed" data-value="0">No</button>
+          </div>
+          <input type="hidden" name="completed" value="1">
+        </div>
+        <div class="form-group">
+          <label>Tech issues?</label>
+          <div class="toggle-group">
+            <button type="button" class="toggle-btn" data-name="techIssues" data-value="1">Yes</button>
+            <button type="button" class="toggle-btn active" data-name="techIssues" data-value="0">No</button>
+          </div>
+          <input type="hidden" name="techIssues" value="0">
+        </div>
+      </div>
+      <div class="form-group" id="techDescGroup" style="display:none">
+        <label for="techDescription">Describe the tech issues</label>
+        <textarea id="techDescription" name="techDescription" rows="4"></textarea>
+      </div>
+    </div>
+
+    <!-- Quick evaluation -->
+    <div class="card glass">
+      <h2>Quick evaluation</h2>
+      <div class="rating-row">
+        <div class="rating-col">
+          <label>Fluency</label>
+          <div class="stars" data-rating="fluency"></div>
+          <input type="hidden" class="rating-input" name="fluency" value="0">
+        </div>
+        <div class="rating-col">
+          <label>Accuracy</label>
+          <div class="stars" data-rating="accuracy"></div>
+          <input type="hidden" class="rating-input" name="accuracy" value="0">
+        </div>
+        <div class="rating-col">
+          <label>Pronunciation</label>
+          <div class="stars" data-rating="pronunciation"></div>
+          <input type="hidden" class="rating-input" name="pronunciation" value="0">
+        </div>
+        <div class="rating-col">
+          <label>Comprehension</label>
+          <div class="stars" data-rating="comprehension"></div>
+          <input type="hidden" class="rating-input" name="comprehension" value="0">
+        </div>
+        <div class="rating-col">
+          <label>Participation</label>
+          <div class="stars" data-rating="participation"></div>
+          <input type="hidden" class="rating-input" name="participation" value="0">
+        </div>
+      </div>
+    </div>
+
+    <!-- Focus + vocabulary -->
+    <div class="card glass">
+      <h2>Lesson focus</h2>
+      <div class="form-group">
+        <label for="focus">Focus (20 chars max)</label>
+        <input type="text" id="focus" name="focus" maxlength="20" required>
+      </div>
+      <div class="form-group">
+        <label for="vocabulary">Language / vocabulary seen</label>
+        <textarea id="vocabulary" name="vocabulary" rows="4" required></textarea>
+      </div>
+    </div>
+
+    <!-- Homework -->
+    <div class="card glass" id="homeworkCard">
+      <h2>Homework</h2>
+
+      <div class="no-time-box">
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:700;color:#fff">
+          <input type="checkbox" id="noTimeThisWeek" name="noTimeThisWeek">
+          I don't have time this week — assign a short TED Talk listening task
+        </label>
+        <div id="tedPick" style="display:none;margin-top:12px">
+          <label>Choose a TED Talk for the student's level:</label>
+          <select id="tedSelect" name="tedSelect">
+            <!-- filled by JS -->
+          </select>
+        </div>
+      </div>
+
+      <div id="homeworkBuilder">
+        <div class="hw-controls">
+          <select class="homework-label-select" id="homeworkLabel"><!-- filled by JS --></select>
+          <button type="button" class="btn add-homework-manual" id="addManual">+ Add homework link</button>
+          <button type="button" class="btn btn-primary" id="addFromTab">🔗 Add link from open tab</button>
+        </div>
+
+        <div class="homework-list"><!-- homework items --></div>
+      </div>
+    </div>
+
+    <!-- Next focus + praise -->
+    <div class="card glass">
+      <h2>Next lesson & encouragement</h2>
+      <div class="form-group">
+        <label for="nextFocus">Focus of next session</label>
+        <textarea id="nextFocus" name="nextFocus" rows="3" required></textarea>
+      </div>
+      <div class="form-group">
+        <label>Reward message</label>
+        <div class="praise-grid" id="praiseGrid"><!-- filled by JS --></div>
+        <input type="hidden" name="praise" value="">
+      </div>
+      <div class="form-group">
+        <label for="comments">Additional comments (optional)</label>
+        <textarea id="comments" name="comments" rows="3"></textarea>
+      </div>
+    </div>
+
+    <!-- Confirmation -->
+    <div class="confirm-row">
+      <input type="checkbox" id="studentConfirmed" name="studentConfirmed" required>
+      <label for="studentConfirmed" style="margin:0;color:#fff;font-weight:600">Student confirms they understand the homework and next lesson focus.</label>
+    </div>
+
+    <div class="footer-actions">
+      <button type="button" class="btn" id="saveDraft">💾 Save draft</button>
+      <button type="reset" class="btn" id="cancelForm">Cancel</button>
+      <button type="submit" class="btn btn-success" id="sendBtn">🚀 Send to student</button>
+    </div>
+  </form>
+</div>
+
+<!-- Summary modal -->
+<div class="modal" id="summaryModal">
+  <div class="modal-box glass">
+    <h2>Feedback sent! 🎉</h2>
+    <p>Copy the link below and share it with your student.</p>
+    <div class="link-box">
+      <input type="text" id="summaryLink" readonly>
+      <button class="btn btn-primary" id="copyLink">Copy</button>
+    </div>
+    <button class="btn" id="newFeedback">Start new feedback</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="_feedback-engine.js"></script>
+<script>
+(function(){
+  var E = window.FeedbackEngine;
+  var form = document.getElementById('feedbackForm');
+
+  // Theme
+  var THEME_ORDER=['eloquent','wte','midnight','sunset','forest','light'];
+  var THEMES={
+    eloquent:{accent:'#22d3ee',bg:'#0a0e1a',text:'#e0f2fe',card:'#111827',border:'#1e3a5f'},
+    wte:{accent:'#a3e635',bg:'#1c1c1c',text:'#e8e8f0',card:'#232323',border:'#3a3a3a'},
+    midnight:{accent:'#818cf8',bg:'#0f0f23',text:'#c7d2fe',card:'#1a1a3e',border:'#2e2e5e'},
+    sunset:{accent:'#fb923c',bg:'#1a0f0a',text:'#fed7aa',card:'#2d1a10',border:'#4a2a1a'},
+    forest:{accent:'#4ade80',bg:'#0a1a0f',text:'#bbf7d0',card:'#162418',border:'#2a4a2a'},
+    light:{accent:'#2563eb',bg:'#f8fafc',text:'#1e293b',card:'#ffffff',border:'#e2e8f0'}
+  };
+  function applyTheme(name){
+    var t=THEMES[name]; if(!t) return;
+    var r=document.documentElement;
+    r.style.setProperty('--cs-accent',t.accent);r.style.setProperty('--cs-bg',t.bg);r.style.setProperty('--cs-text',t.text);
+    r.style.setProperty('--cs-bg-card',t.card);r.style.setProperty('--cs-border',t.border);
+    r.style.setProperty('--cs-text-muted',t.text+'99');r.style.setProperty('--cs-accent-glow',t.accent+'33');r.style.setProperty('--cs-accent-dim',t.accent+'18');
+    document.getElementById('themeDot').style.background=t.accent;
+    try{localStorage.setItem('eloquent-theme',name);}catch(e){}
+  }
+  document.getElementById('themeCycleBtn').addEventListener('click',function(){
+    var saved=localStorage.getItem('eloquent-theme')||'eloquent';
+    applyTheme(THEME_ORDER[(THEME_ORDER.indexOf(saved)+1)%THEME_ORDER.length]);
+  });
+  applyTheme(localStorage.getItem('eloquent-theme')||'eloquent');
+
+  // Timer
+  var timerInterval = E.startTimer(document.getElementById('timer'), 180);
+
+  // Toggles
+  form.querySelectorAll('.toggle-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var name = btn.dataset.name;
+      form.querySelectorAll('.toggle-btn[data-name="'+name+'"]').forEach(function(b){b.classList.remove('active');});
+      btn.classList.add('active');
+      form.querySelector('input[name="'+name+'"]').value = btn.dataset.value;
+      if (name === 'techIssues') {
+        document.getElementById('techDescGroup').style.display = btn.dataset.value === '1' ? 'block' : 'none';
+      }
+    });
+  });
+
+  // Star ratings
+  form.querySelectorAll('.stars').forEach(function(container){
+    var input = container.parentElement.querySelector('.rating-input');
+    for (var i=1; i<=5; i++){
+      var s = document.createElement('span');
+      s.className = 'star';
+      s.textContent = '★';
+      s.dataset.val = i;
+      s.addEventListener('click', function(){
+        input.value = this.dataset.val;
+        updateStars(container, parseInt(input.value));
+      });
+      container.appendChild(s);
+    }
+    function updateStars(c, val){
+      c.querySelectorAll('.star').forEach(function(st, idx){ st.classList.toggle('filled', idx < val); });
+    }
+  });
+
+  // Homework label select
+  var labelSel = document.getElementById('homeworkLabel');
+  E.HOMEWORK_LABELS.forEach(function(l){
+    var opt = document.createElement('option'); opt.value = l; opt.textContent = l; labelSel.appendChild(opt);
+  });
+
+  // TED Talk fallback
+  var tedSel = document.getElementById('tedSelect');
+  function fillTed(level){
+    tedSel.innerHTML = '';
+    (E.TED_TALKS[level.toLowerCase()] || E.TED_TALKS.b2).forEach(function(t){
+      var opt = document.createElement('option'); opt.value = t.url; opt.textContent = t.title; tedSel.appendChild(opt);
+    });
+  }
+  fillTed(document.getElementById('level').value);
+  document.getElementById('level').addEventListener('change', function(){ fillTed(this.value); });
+
+  var noTimeBox = document.getElementById('noTimeThisWeek');
+  noTimeBox.addEventListener('change', function(){
+    document.getElementById('tedPick').style.display = this.checked ? 'block' : 'none';
+  });
+
+  // Homework builder
+  var hwBuilder = E.initHomeworkBuilder(document.getElementById('homeworkBuilder'), document.getElementById('addFromTab'));
+
+  // Praise grid
+  var praiseGrid = document.getElementById('praiseGrid');
+  var praiseInput = form.querySelector('input[name="praise"]');
+  E.PRAISE_MESSAGES.forEach(function(msg){
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'toggle-btn'; b.textContent = msg;
+    b.addEventListener('click', function(){
+      praiseGrid.querySelectorAll('.toggle-btn').forEach(function(x){x.classList.remove('active');});
+      b.classList.add('active');
+      praiseInput.value = msg;
+    });
+    praiseGrid.appendChild(b);
+  });
+
+  // Draft save/load
+  var DRAFT_KEY = 'eloquenta-feedback-draft';
+  function populateFromDraft(data){
+    if (!data) return;
+    form.querySelector('[name="studentName"]').value = data.studentName || '';
+    form.querySelector('[name="lessonDate"]').value = data.lessonDate || '';
+    form.querySelector('[name="topic"]').value = data.topic || '';
+    form.querySelector('[name="level"]').value = data.level || 'B2';
+    fillTed(data.level || 'B2');
+    form.querySelector('[name="focus"]').value = data.focus || '';
+    form.querySelector('[name="vocabulary"]').value = data.vocabulary || '';
+    form.querySelector('[name="nextFocus"]').value = data.nextFocus || '';
+    form.querySelector('[name="comments"]').value = data.comments || '';
+    if (data.homework) hwBuilder.setItems(data.homework);
+    // Restore ratings
+    if (data.ratings) {
+      Object.keys(data.ratings).forEach(function(k){
+        var input = form.querySelector('input[name="'+k+'"]');
+        var stars = form.querySelector('.stars[data-rating="'+k+'"]');
+        if (input && stars) {
+          input.value = data.ratings[k];
+          stars.querySelectorAll('.star').forEach(function(st, idx){ st.classList.toggle('filled', idx < data.ratings[k]); });
+        }
+      });
+    }
+  }
+  populateFromDraft(E.loadDraft(DRAFT_KEY));
+
+  document.getElementById('saveDraft').addEventListener('click', function(){
+    var data = E.buildData(form);
+    if (E.saveDraft(DRAFT_KEY, data)) showToast('Draft saved');
+    else showToast('Could not save draft');
+  });
+
+  document.getElementById('cancelForm').addEventListener('click', function(){
+    if (confirm('Discard current form?')) { form.reset(); E.clearDraft(DRAFT_KEY); location.reload(); }
+  });
+
+  function showToast(msg){
+    var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+    setTimeout(function(){t.classList.remove('show');}, 2500);
+  }
+
+  // Submit
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var data = E.buildData(form);
+    if (data.noTimeThisWeek) {
+      data.homework = [{
+        label:'Listening exercise',
+        title: document.getElementById('tedSelect').selectedOptions[0].textContent,
+        url: document.getElementById('tedSelect').value
+      }];
+    }
+    if (data.homework.length === 0 && !data.noTimeThisWeek) {
+      showToast('Please add at least one homework link, or check "I don\'t have time this week".');
+      return;
+    }
+    if (!data.studentConfirmed) { showToast('Student must confirm.'); return; }
+
+    E.saveDraft(DRAFT_KEY, data);
+    var summaryUrl = E.generateSummaryLink(data, 'summary.html');
+    document.getElementById('summaryLink').value = summaryUrl;
+    document.getElementById('summaryModal').classList.add('active');
+    E.createConfetti(document.body, getComputedStyle(document.documentElement).getPropertyValue('--cs-accent').trim());
+  });
+
+  document.getElementById('copyLink').addEventListener('click', function(){
+    var inp = document.getElementById('summaryLink');
+    inp.select();
+    navigator.clipboard.writeText(inp.value).then(function(){ showToast('Link copied'); });
+  });
+
+  document.getElementById('newFeedback').addEventListener('click', function(){
+    E.clearDraft(DRAFT_KEY);
+    location.reload();
+  });
+})();
+</script>
+</body>
+</html>

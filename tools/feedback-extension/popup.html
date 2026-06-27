@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Teacher Link Drop</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e1a;--card:#111827;--border:#1e3a5f;--accent:#22d3ee;--text:#e0f2fe;--muted:#94a3b8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:360px;max-height:500px;overflow-y:auto;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text)}
+.header{padding:16px;border-bottom:1px solid var(--border);background:var(--card)}
+.header h1{font-size:1rem;font-weight:700}
+.header p{font-size:.75rem;color:var(--muted);margin-top:2px}
+.search{padding:12px 16px;border-bottom:1px solid var(--border)}
+.search input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);outline:none}
+.search input:focus{border-color:var(--accent)}
+.tabs{padding:8px}
+.tab{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;cursor:pointer;transition:background .15s;border:1px solid transparent}
+.tab:hover{background:var(--card);border-color:var(--border)}
+.favicon{width:18px;height:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.favicon img{max-width:100%;max-height:100%}
+.title{flex:1;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.url{font-size:.65rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.add-btn{padding:6px 12px;border-radius:50px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:.7rem;font-weight:700;cursor:pointer;flex-shrink:0}
+.add-btn:hover{background:var(--accent);color:var(--bg)}
+.empty{padding:30px;text-align:center;color:var(--muted);font-size:.8rem}
+.status{padding:10px 16px;font-size:.75rem;color:var(--muted);border-top:1px solid var(--border)}
+.status.ok{color:var(--accent)}
+.status.warn{color:#fbbf24}
+</style>
+</head>
+<body>
+  <div class="header">
+    <h1>Teacher Link Drop</h1>
+    <p>Click a tab to add it as homework.</p>
+  </div>
+  <div class="search">
+    <input type="text" id="searchInput" placeholder="Filter tabs...">
+  </div>
+  <div class="tabs" id="tabList"></div>
+  <div class="status" id="status">Looking for feedback form...</div>
+  <script src="popup.js"></script>
+</body>
+</html>
