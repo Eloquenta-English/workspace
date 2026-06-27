@@ -3,120 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#0a0e1a">
+<meta name="theme-color" content="#000000">
 <title>Lesson Feedback — Eloquenta</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --cs-accent:#22d3ee;--cs-bg:#0a0e1a;--cs-text:#e0f2fe;--cs-bg-card:#111827;
-  --cs-border:#1e3a5f;--cs-text-muted:#94a3b8;--cs-accent-glow:rgba(34,211,238,.2);
-  --cs-accent-dim:rgba(34,211,238,.08);--cs-border-light:rgba(30,58,95,.7);
-  --cs-amber:#fbbf24;--cs-rose:#fb7185;--cs-green:#4ade80;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{font-size:16px}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--cs-bg);color:var(--cs-text);line-height:1.6;min-height:100vh;overflow-x:hidden}
-h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif}
-.bg{position:fixed;inset:0;background:radial-gradient(circle at 20% 20%,rgba(34,211,238,.08),transparent 40%),radial-gradient(circle at 80% 80%,rgba(167,139,250,.08),transparent 40%),var(--cs-bg);z-index:-2}
-.nav{position:sticky;top:0;z-index:50;background:rgba(10,14,26,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--cs-border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
-.nav-logo{font-family:'Space Grotesk';font-size:1.1rem;font-weight:700;color:#fff;text-decoration:none;letter-spacing:1px}
-.nav-logo span{color:var(--cs-accent)}
-.theme-cycle-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--cs-border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.theme-dot{width:10px;height:10px;border-radius:50%;background:var(--cs-accent)}
-.timer{position:fixed;top:68px;right:18px;z-index:40;background:var(--cs-bg-card);border:1px solid var(--cs-border);border-radius:50px;padding:8px 16px;font-family:'Space Grotesk';font-weight:700;font-size:1rem;letter-spacing:1px}
-.timer-urgent{color:var(--cs-amber);border-color:var(--cs-amber);animation:pulse 1s infinite}
-.timer-ended{color:var(--cs-rose);border-color:var(--cs-rose)}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-.container{max-width:760px;margin:0 auto;padding:40px 24px 80px}
-.glass{background:rgba(255,255,255,.04);border:1px solid var(--cs-border);border-radius:18px;backdrop-filter:blur(14px);box-shadow:0 0 30px rgba(0,0,0,.3)}
-.card{padding:24px;margin-bottom:18px}
-.card h2{font-size:1.1rem;margin-bottom:16px;color:#fff}
-.card h3{font-size:.9rem;text-transform:uppercase;letter-spacing:1px;color:var(--cs-text-muted);margin-bottom:12px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.form-group{margin-bottom:16px}
-label{display:block;font-size:.82rem;font-weight:600;color:var(--cs-text-muted);margin-bottom:6px}
-input[type="text"],input[type="date"],input[type="time"],select,textarea{
-  width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--cs-border);background:var(--cs-bg-card);color:var(--cs-text);font-family:'Inter',sans-serif;font-size:1rem;outline:none;transition:border .2s,box-shadow .2s
-}
-input:focus,select:focus,textarea:focus{border-color:var(--cs-accent);box-shadow:0 0 0 3px var(--cs-accent-glow)}
-textarea{min-height:90px;resize:vertical}
-.toggle-group{display:flex;gap:10px;flex-wrap:wrap}
-.toggle-btn{padding:10px 18px;border-radius:50px;border:1px solid var(--cs-border);background:var(--cs-bg-card);color:var(--cs-text);cursor:pointer;font-size:.9rem;transition:all .15s}
-.toggle-btn.active{background:var(--cs-accent);color:var(--cs-bg);border-color:var(--cs-accent);font-weight:700}
-.rating-row{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between}
-.rating-col{flex:1;min-width:120px;text-align:center}
-.rating-col label{font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.stars{display:flex;justify-content:center;gap:4px;font-size:1.4rem;cursor:pointer}
-.star{color:var(--cs-border);transition:color .1s}
-.star.filled{color:var(--cs-accent)}
-.homework-list{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
-.homework-item{display:grid;grid-template-columns:auto 1fr 1fr auto;gap:8px;align-items:center;padding:12px}
-.hw-label{padding:6px 10px;border-radius:6px;background:var(--cs-accent-dim);color:var(--cs-accent);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.hw-title,.hw-url{margin-bottom:0}
-.hw-remove{width:30px;height:30px;border-radius:50%;border:1px solid var(--cs-border);background:transparent;color:var(--cs-text-muted);cursor:pointer}
-.hw-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
-.homework-label-select{max-width:180px}
-.btn{padding:10px 18px;border-radius:50px;border:1px solid var(--cs-border);background:var(--cs-bg-card);color:var(--cs-text);cursor:pointer;font-size:.9rem;font-weight:600;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
-.btn:hover{border-color:var(--cs-accent)}
-.btn-primary{background:var(--cs-accent);color:var(--cs-bg);border-color:var(--cs-accent)}
-.btn-primary:hover{filter:brightness(1.1)}
-.btn-success{background:var(--cs-green);color:#052e16;border-color:var(--cs-green)}
-.no-time-box{padding:16px;border:1px dashed var(--cs-border);border-radius:12px;background:rgba(255,255,255,.02);margin-bottom:16px}
-.praise-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:16px}
-.confirm-row{display:flex;align-items:center;gap:10px;margin:20px 0;padding:16px;border:1px solid var(--cs-border);border-radius:12px;background:var(--cs-bg-card)}
-.confirm-row input{width:20px;height:20px;accent-color:var(--cs-accent)}
-.footer-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:24px;flex-wrap:wrap}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px)}
-.modal.active{display:flex}
-.modal-box{max-width:420px;width:90%;padding:24px;text-align:center}
-.modal-box h2{font-size:1.4rem;margin-bottom:12px;color:var(--cs-accent)}
-.modal-box p{color:var(--cs-text-muted);margin-bottom:20px}
-.link-box{display:flex;gap:8px;margin-bottom:16px}
-.link-box input{flex:1}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--cs-bg-card);border:1px solid var(--cs-accent);color:#fff;padding:12px 20px;border-radius:50px;z-index:120;opacity:0;transition:opacity .3s}
-.toast.show{opacity:1}
-@media(max-width:640px){.form-row{grid-template-columns:1fr}.homework-item{grid-template-columns:1fr auto}.hw-label{grid-column:1/-1}}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;330;400;450;500;540;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_feedback-figma.css">
 </head>
 <body>
-<div class="bg"></div>
+<div class="bg-hero"></div>
+<div class="overlay"></div>
+
 <nav class="nav">
-  <a href="../index.html" class="nav-logo">◆ <span>Eloquenta</span> Feedback</a>
+  <a href="../index.html" class="nav-logo">ELOQUENTA <span>FEEDBACK</span></a>
   <button class="theme-cycle-btn" id="themeCycleBtn" title="Cycle theme"><span class="theme-dot" id="themeDot"></span></button>
 </nav>
 
-<div class="timer" id="timer">03:00</div>
+<div class="timer-wrap">
+  <svg class="timer-ring" id="timerRing" viewBox="0 0 72 72">
+    <circle cx="36" cy="36" r="30"></circle>
+    <circle class="timer-progress" cx="36" cy="36" r="30" stroke-dasharray="188.5" stroke-dashoffset="0"></circle>
+  </svg>
+  <div class="timer-text" id="timerText">03:00</div>
+</div>
 
 <div class="container">
   <form id="feedbackForm">
-    <!-- Header -->
-    <div class="card glass">
+    <div class="card">
       <h1>Lesson Feedback</h1>
-      <p style="color:var(--cs-text-muted);font-size:.9rem;margin-top:4px">Complete with the student in the last 3 minutes of the lesson.</p>
+      <p style="color:var(--figma-muted);font-size:.9rem;margin-top:6px">Complete with the student in the last 3 minutes.</p>
     </div>
 
-    <!-- Lesson info -->
-    <div class="card glass">
+    <div class="card">
       <h2>Lesson details</h2>
       <div class="form-row">
         <div class="form-group">
-          <label for="studentName">Student name</label>
+          <label class="label" for="studentName">Student name</label>
           <input type="text" id="studentName" name="studentName" required>
         </div>
         <div class="form-group">
-          <label for="lessonDate">Date & time</label>
+          <label class="label" for="lessonDate">Date & time</label>
           <input type="text" id="lessonDate" name="lessonDate" placeholder="e.g. 27 June, 11:30–12:00" required>
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label for="topic">Topic / goal</label>
+          <label class="label" for="topic">Topic / goal</label>
           <input type="text" id="topic" name="topic" required>
         </div>
         <div class="form-group">
-          <label for="level">Level</label>
+          <label class="label" for="level">Level</label>
           <select id="level" name="level">
             <option value="B1">B1</option>
             <option value="B2" selected>B2</option>
@@ -126,12 +62,11 @@ textarea{min-height:90px;resize:vertical}
       </div>
     </div>
 
-    <!-- Session status -->
-    <div class="card glass">
+    <div class="card">
       <h2>Session status</h2>
       <div class="form-row">
         <div class="form-group">
-          <label>Completed successfully?</label>
+          <label class="label">Completed successfully?</label>
           <div class="toggle-group">
             <button type="button" class="toggle-btn active" data-name="completed" data-value="1">Yes</button>
             <button type="button" class="toggle-btn" data-name="completed" data-value="0">No</button>
@@ -139,7 +74,7 @@ textarea{min-height:90px;resize:vertical}
           <input type="hidden" name="completed" value="1">
         </div>
         <div class="form-group">
-          <label>Tech issues?</label>
+          <label class="label">Tech issues?</label>
           <div class="toggle-group">
             <button type="button" class="toggle-btn" data-name="techIssues" data-value="1">Yes</button>
             <button type="button" class="toggle-btn active" data-name="techIssues" data-value="0">No</button>
@@ -148,13 +83,12 @@ textarea{min-height:90px;resize:vertical}
         </div>
       </div>
       <div class="form-group" id="techDescGroup" style="display:none">
-        <label for="techDescription">Describe the tech issues</label>
+        <label class="label" for="techDescription">Describe the tech issues</label>
         <textarea id="techDescription" name="techDescription" rows="4"></textarea>
       </div>
     </div>
 
-    <!-- Quick evaluation -->
-    <div class="card glass">
+    <div class="card">
       <h2>Quick evaluation</h2>
       <div class="rating-row">
         <div class="rating-col">
@@ -185,66 +119,58 @@ textarea{min-height:90px;resize:vertical}
       </div>
     </div>
 
-    <!-- Focus + vocabulary -->
-    <div class="card glass">
+    <div class="card">
       <h2>Lesson focus</h2>
       <div class="form-group">
-        <label for="focus">Focus (20 chars max)</label>
+        <label class="label" for="focus">Focus (20 chars max)</label>
         <input type="text" id="focus" name="focus" maxlength="20" required>
       </div>
       <div class="form-group">
-        <label for="vocabulary">Language / vocabulary seen</label>
+        <label class="label" for="vocabulary">Language / vocabulary seen</label>
         <textarea id="vocabulary" name="vocabulary" rows="4" required></textarea>
       </div>
     </div>
 
-    <!-- Homework -->
-    <div class="card glass" id="homeworkCard">
+    <div class="card" id="homeworkCard">
       <h2>Homework</h2>
-
       <div class="no-time-box">
-        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:700;color:#fff">
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;color:#fff">
           <input type="checkbox" id="noTimeThisWeek" name="noTimeThisWeek">
           I don't have time this week — assign a short TED Talk listening task
         </label>
         <div id="tedPick" style="display:none;margin-top:12px">
-          <label>Choose a TED Talk for the student's level:</label>
-          <select id="tedSelect" name="tedSelect">
-            <!-- filled by JS -->
-          </select>
+          <label class="label">Choose a TED Talk:</label>
+          <select id="tedSelect" name="tedSelect"></select>
         </div>
       </div>
 
       <div id="homeworkBuilder">
         <div class="hw-controls">
-          <select class="homework-label-select" id="homeworkLabel"><!-- filled by JS --></select>
-          <button type="button" class="btn add-homework-manual" id="addManual">+ Add homework link</button>
-          <button type="button" class="btn btn-primary" id="addFromTab">🔗 Add link from open tab</button>
+          <select class="homework-label-select" id="homeworkLabel"></select>
+          <button type="button" class="btn add-homework-manual" id="addManual">+ Add link</button>
+          <button type="button" class="btn btn-primary" id="addFromTab">🔗 From open tab</button>
         </div>
-
-        <div class="homework-list"><!-- homework items --></div>
+        <div class="homework-list"></div>
       </div>
     </div>
 
-    <!-- Next focus + praise -->
-    <div class="card glass">
+    <div class="card">
       <h2>Next lesson & encouragement</h2>
       <div class="form-group">
-        <label for="nextFocus">Focus of next session</label>
+        <label class="label" for="nextFocus">Focus of next session</label>
         <textarea id="nextFocus" name="nextFocus" rows="3" required></textarea>
       </div>
       <div class="form-group">
-        <label>Reward message</label>
-        <div class="praise-grid" id="praiseGrid"><!-- filled by JS --></div>
+        <label class="label">Reward message</label>
+        <div class="praise-grid" id="praiseGrid"></div>
         <input type="hidden" name="praise" value="">
       </div>
       <div class="form-group">
-        <label for="comments">Additional comments (optional)</label>
+        <label class="label" for="comments">Additional comments (optional)</label>
         <textarea id="comments" name="comments" rows="3"></textarea>
       </div>
     </div>
 
-    <!-- Confirmation -->
     <div class="confirm-row">
       <input type="checkbox" id="studentConfirmed" name="studentConfirmed" required>
       <label for="studentConfirmed" style="margin:0;color:#fff;font-weight:600">Student confirms they understand the homework and next lesson focus.</label>
@@ -258,9 +184,8 @@ textarea{min-height:90px;resize:vertical}
   </form>
 </div>
 
-<!-- Summary modal -->
 <div class="modal" id="summaryModal">
-  <div class="modal-box glass">
+  <div class="modal-box">
     <h2>Feedback sent! 🎉</h2>
     <p>Copy the link below and share it with your student.</p>
     <div class="link-box">
@@ -278,34 +203,44 @@ textarea{min-height:90px;resize:vertical}
 (function(){
   var E = window.FeedbackEngine;
   var form = document.getElementById('feedbackForm');
+  var TOTAL_SECONDS = 180;
 
-  // Theme
-  var THEME_ORDER=['eloquent','wte','midnight','sunset','forest','light'];
-  var THEMES={
-    eloquent:{accent:'#22d3ee',bg:'#0a0e1a',text:'#e0f2fe',card:'#111827',border:'#1e3a5f'},
-    wte:{accent:'#a3e635',bg:'#1c1c1c',text:'#e8e8f0',card:'#232323',border:'#3a3a3a'},
-    midnight:{accent:'#818cf8',bg:'#0f0f23',text:'#c7d2fe',card:'#1a1a3e',border:'#2e2e5e'},
-    sunset:{accent:'#fb923c',bg:'#1a0f0a',text:'#fed7aa',card:'#2d1a10',border:'#4a2a1a'},
-    forest:{accent:'#4ade80',bg:'#0a1a0f',text:'#bbf7d0',card:'#162418',border:'#2a4a2a'},
-    light:{accent:'#2563eb',bg:'#f8fafc',text:'#1e293b',card:'#ffffff',border:'#e2e8f0'}
-  };
-  function applyTheme(name){
-    var t=THEMES[name]; if(!t) return;
-    var r=document.documentElement;
-    r.style.setProperty('--cs-accent',t.accent);r.style.setProperty('--cs-bg',t.bg);r.style.setProperty('--cs-text',t.text);
-    r.style.setProperty('--cs-bg-card',t.card);r.style.setProperty('--cs-border',t.border);
-    r.style.setProperty('--cs-text-muted',t.text+'99');r.style.setProperty('--cs-accent-glow',t.accent+'33');r.style.setProperty('--cs-accent-dim',t.accent+'18');
-    document.getElementById('themeDot').style.background=t.accent;
-    try{localStorage.setItem('eloquent-theme',name);}catch(e){}
+  // Theme cycle
+  var THEME_ORDER=['dark','light'];
+  function applyTheme(theme){
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('themeDot').style.background = getComputedStyle(document.documentElement).getPropertyValue('--cs-accent').trim();
+    try{localStorage.setItem('eloquent-theme', theme);}catch(e){}
   }
   document.getElementById('themeCycleBtn').addEventListener('click',function(){
-    var saved=localStorage.getItem('eloquent-theme')||'eloquent';
+    var saved=localStorage.getItem('eloquent-theme')||'dark';
     applyTheme(THEME_ORDER[(THEME_ORDER.indexOf(saved)+1)%THEME_ORDER.length]);
   });
-  applyTheme(localStorage.getItem('eloquent-theme')||'eloquent');
+  applyTheme(localStorage.getItem('eloquent-theme')||'dark');
 
-  // Timer
-  var timerInterval = E.startTimer(document.getElementById('timer'), 180);
+  // Sci-fi circular timer
+  var ring = document.getElementById('timerRing');
+  var progress = ring.querySelector('.timer-progress');
+  var timerText = document.getElementById('timerText');
+  var circumference = 2 * Math.PI * 30;
+  progress.style.strokeDasharray = circumference;
+
+  var remaining = TOTAL_SECONDS;
+  function updateTimer(){
+    remaining--;
+    var m = Math.floor(remaining / 60);
+    var s = remaining % 60;
+    timerText.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    var offset = circumference * (1 - remaining / TOTAL_SECONDS);
+    progress.style.strokeDashoffset = offset;
+
+    if (remaining <= 60) ring.classList.add('urgent');
+    if (remaining <= 0) {
+      ring.classList.add('ended');
+      clearInterval(timerInterval);
+    }
+  }
+  var timerInterval = setInterval(updateTimer, 1000);
 
   // Toggles
   form.querySelectorAll('.toggle-btn').forEach(function(btn){
@@ -392,7 +327,6 @@ textarea{min-height:90px;resize:vertical}
     form.querySelector('[name="nextFocus"]').value = data.nextFocus || '';
     form.querySelector('[name="comments"]').value = data.comments || '';
     if (data.homework) hwBuilder.setItems(data.homework);
-    // Restore ratings
     if (data.ratings) {
       Object.keys(data.ratings).forEach(function(k){
         var input = form.querySelector('input[name="'+k+'"]');
