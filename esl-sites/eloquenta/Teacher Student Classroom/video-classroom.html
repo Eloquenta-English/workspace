@@ -84,31 +84,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .resize-handle.se::after{content:'';position:absolute;bottom:2px;right:2px;width:8px;height:8px;border-right:2px solid rgba(255,255,255,.4);border-bottom:2px solid rgba(255,255,255,.4);border-radius:0 0 4px 0}
 .video-window:hover .resize-handle.se::after{border-color:rgba(34,211,238,.8)}
 
-/* Minimize button on video windows */
-.win-minimize{position:absolute;top:4px;right:4px;z-index:4;width:24px;height:24px;border-radius:6px;border:none;background:rgba(0,0,0,.5);color:#f1f5f9;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s,background .2s}
-.video-window:hover .win-minimize{opacity:1}
-.win-minimize:hover{background:rgba(239,68,68,.8)}
-
-/* Hidden video window — minimized to a small floating button */
-.video-window.hidden{position:absolute!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important;max-width:44px!important;max-height:44px!important;border-radius:50%!important;overflow:hidden!important;z-index:8;box-shadow:0 2px 12px rgba(0,0,0,.5)!important;transition:all .25s ease;cursor:pointer}
-.video-window.hidden video,
-.video-window.hidden .video-placeholder,
-.video-window.hidden .resize-handle,
-.video-window.hidden .drag-handle,
-.video-window.hidden .speaking-ring,
-.video-window.hidden .win-minimize{display:none!important}
-.video-window.hidden .video-label{display:flex!important;position:static!important;background:transparent!important;padding:0!important;font-size:18px!important;line-height:44px!important;color:#f1f5f9!important;pointer-events:auto!important;cursor:pointer;align-items:center;justify-content:center;text-align:center}
-
-/* Side panel resize handle */
-.panel-resize-handle{position:absolute;left:0;top:0;bottom:0;width:5px;cursor:ew-resize;background:transparent;z-index:11;transition:background .2s}
-.panel-resize-handle:hover,.panel-resize-handle.active{background:rgba(34,211,238,.4)}
-
-/* Restore bar — shows when panels are hidden */
-.restore-bar{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:12;background:rgba(17,24,39,.9);border:1px solid #374151;border-radius:10px;padding:6px 10px;box-shadow:0 4px 16px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
-.restore-bar.visible{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
-.restore-tab{padding:6px 14px;border-radius:6px;border:1px solid #374151;background:#1f2937;color:#94a3b8;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
-.restore-tab:hover{background:#374151;color:#f1f5f9;border-color:#22d3ee}
-
 /* Placeholder when no remote video */
 .video-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#111827,#1f2937);color:#64748b}
 .video-placeholder .avatar-big{width:80px;height:80px;border-radius:50%;background:rgba(34,211,238,.15);color:#22d3ee;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;margin-bottom:12px}
@@ -219,25 +194,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 /* Responsive */
 @media(max-width:900px){
-  .sidebar{position:absolute;left:-260px;height:100%;transition:left .3s;z-index:20}
-  .sidebar.open{left:0}
-  .side-panel{position:absolute;right:0;height:100%;box-shadow:-4px 0 20px rgba(0,0,0,.3);z-index:20}
-  .pip-video{width:140px;height:90px}
-  .main-video{width:90%!important;height:60%!important}
   .lang-panel{width:100%;top:auto;bottom:0;height:50vh;border-left:none;border-top:1px solid #1e293b}
   .lang-widget-toggle{right:50%;top:auto;bottom:50vh;transform:translate(50%,50%);border-radius:8px 8px 0 0;padding:6px 12px;writing-mode:horizontal-tb}
   .lang-widget-toggle.active{right:50%;bottom:calc(50vh + 40px)}
-  .restore-bar{bottom:80px;flex-wrap:wrap;justify-content:center;max-width:90%}
-  .win-minimize{opacity:1!important;width:28px;height:28px;font-size:14px}
-}
-@media(max-width:600px){
-  .bottom-controls{gap:8px;padding:12px}
-  .ctrl-btn{width:44px;height:44px;font-size:18px}
-  .pip-video{width:110px;height:70px;bottom:8px;right:8px}
-  .main-video{width:95%!important;height:55%!important}
-  .video-label{font-size:10px!important;padding:2px 6px!important}
-  .drag-handle{height:28px}
-  .restore-tab{padding:5px 10px;font-size:10px}
 }
 .layout-reset{position:absolute;top:12px;right:12px;z-index:10;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);color:#f1f5f9;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;opacity:0;transition:opacity .2s;display:flex;align-items:center;gap:4px}
 .video-stage:hover .layout-reset{opacity:1}
@@ -340,6 +299,33 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   .elo-logo-wrap:hover{text-decoration:none;opacity:.85}
   .elo-logo-wrap .elo-wordmark{font-size:22px;font-weight:700;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;letter-spacing:-.5px;line-height:1;color:#f1f5f9}
   .elo-logo-wrap .elo-wordmark .o{color:#22d3ee}
+  
+  /* Theme picker button */
+  .theme-picker-btn{position:relative;width:36px;height:36px;border-radius:50%;border:1px solid #374151;background:#111827;color:#94a3b8;font-size:18px;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+  .theme-picker-btn:hover{transform:scale(1.1);border-color:#22d3ee;color:#22d3ee;box-shadow:0 0 16px rgba(34,211,238,.3)}
+  .theme-picker-btn:active{transform:scale(0.95)}
+  
+  /* Theme picker panel */
+  .theme-picker-panel{position:fixed;bottom:60px;right:16px;z-index:90;background:#111827;border:1px solid #374151;border-radius:12px;padding:12px;width:200px;box-shadow:0 8px 24px rgba(0,0,0,.4);display:none;flex-direction:column;gap:8px}
+  .theme-picker-panel.open{display:flex}
+  .theme-picker-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+  .theme-picker-title{font-size:12px;font-weight:700;color:#f1f5f9;text-transform:uppercase;letter-spacing:1px}
+  .theme-picker-close{width:24px;height:24px;border:none;background:transparent;color:#94a3b8;cursor:pointer;font-size:14px;border-radius:4px}
+  .theme-picker-close:hover{background:#1f2937;color:#f1f5f9}
+  .theme-preset-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .theme-preset{width:38px;height:38px;border-radius:8px;border:2px solid transparent;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+  .theme-preset:hover{transform:scale(1.12);border-color:#22d3ee}
+  .theme-preset.active{border-color:#fff;box-shadow:0 0 12px rgba(34,211,238,.3)}
+  
+  /* Sparkle effect on hover */
+  @keyframes sparkle-fall{0%{transform:translateY(-100px) rotate(0deg);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(400px) rotate(360deg);opacity:0}}
+  .sparkle{position:absolute;width:6px;height:6px;background:#22d3ee;border-radius:50%;box-shadow:0 0 8px rgba(34,211,238,.3);z-index:100;pointer-events:none;animation:sparkle-fall 1.2s ease-out forwards}
+  
+  /* Swish animation for button clicks */
+  @keyframes swish{0%{transform:translate(-50%,-50%) scale(0);opacity:0.8}100%{transform:translate(-50%,-50%) scale(1.5);opacity:0}}
+  
+  /* Video window enhanced hover */
+  .video-window:hover{box-shadow:0 8px 36px rgba(0,0,0,.7)}
 </style>
 </head>
 <body>
@@ -348,7 +334,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-       <span class="elo-wordmark">Eloqu<span class="o">e</span>nta</span>
+      <span class="elo-wordmark">Eloqu<span class="o">e</span>nta</span>
+      <button class="theme-picker-btn" id="themePickerBtn" title="Themes">🎨</button>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section">
@@ -463,7 +450,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
       <!-- Main video (remote — fullscreen for student, small for teacher) -->
       <div class="video-window main-video" id="main-video-wrap">
-        <button class="win-minimize" onclick="minimizeWindow('main-video-wrap')" title="Minimize">—</button>
         <div class="drag-handle" id="main-drag"></div>
         <div class="resize-handle nw"></div>
         <div class="resize-handle ne"></div>
@@ -485,7 +471,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
       <!-- PIP video (self — small for student, fullscreen for teacher) -->
       <div class="video-window pip-video" id="pip-video-wrap">
-        <button class="win-minimize" onclick="minimizeWindow('pip-video-wrap')" title="Minimize">—</button>
         <div class="drag-handle" id="pip-drag"></div>
         <div class="resize-handle nw"></div>
         <div class="resize-handle ne"></div>
@@ -502,12 +487,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
       <!-- Layout reset button -->
       <button class="layout-reset" id="layout-reset" onclick="resetLayout()">🔄 Reset Layout</button>
-      <!-- Restore bar for minimized panels -->
-      <div class="restore-bar" id="restore-bar">
-        <button class="restore-tab" id="restore-main" onclick="restoreWindow('main-video-wrap')" style="display:none">📹 Remote</button>
-        <button class="restore-tab" id="restore-pip" onclick="restoreWindow('pip-video-wrap')" style="display:none">👤 You</button>
-        <button class="restore-tab" id="restore-chat" onclick="togglePanel('chat')" style="display:none">💬 Chat</button>
-      </div>
     </div>
 
     <!-- BOTTOM CONTROLS -->
@@ -535,13 +514,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
   <!-- SIDE PANEL -->
   <aside class="side-panel" id="side-panel">
-    <div class="panel-resize-handle" id="panel-resize"></div>
     <div class="panel-header">
       <h3 id="panel-title">Chat</h3>
-      <div style="display:flex;gap:4px;align-items:center">
-        <button class="panel-close" onclick="togglePanel('none')" title="Hide panel">—</button>
-        <button class="panel-close" onclick="togglePanel('none')" style="font-size:12px">✕</button>
-      </div>
+      <button class="panel-close" onclick="togglePanel('none')">✕</button>
     </div>
     <div class="panel-content" id="panel-content"></div>
     <div class="chat-input-area" id="chat-input-area" style="display:none">
@@ -551,7 +526,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </aside>
 </div><!-- end app -->
 
-<!-- ═══ LANGUAGE WIDGET TOGGLE ═══ -->
+<!-- ═══ THEME PICKER PANEL ═══ -->
+<div class="theme-picker-panel" id="themePickerPanel">
+  <div class="theme-picker-header"><span class="theme-picker-title">Themes</span><button class="theme-picker-close" onclick="toggleThemePicker()">✕</button></div>
+  <div class="theme-preset-grid" id="themePresets">
+    <button class="theme-preset" data-theme="default" style="background:linear-gradient(135deg,#22d3ee,#0891b2)"></button>
+    <button class="theme-preset" data-theme="ocean" style="background:linear-gradient(135deg,#3b82f6,#0ea5e9)"></button>
+    <button class="theme-preset" data-theme="forest" style="background:linear-gradient(135deg,#22c55e,#16a34a)"></button>
+    <button class="theme-preset" data-theme="sunset" style="background:linear-gradient(135deg,#f97316,#f59e0b)"></button>
+    <button class="theme-preset" data-theme="rose" style="background:linear-gradient(135deg,#f43f5e,#fb7185)"></button>
+    <button class="theme-preset" data-theme="amber" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)"></button>
+    <button class="theme-preset" data-theme="violet" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)"></button>
+    <button class="theme-preset" data-theme="neon" style="background:linear-gradient(135deg,#d946ef,#c084fc)"></button>
+  </div>
+</div>
+
+<!-- Language widget -->
 <button class="lang-widget-toggle" id="lang-widget-toggle" onclick="toggleLangWidget()" title="Language Tools">🌐 Tools</button>
 
 <!-- ═══ LANGUAGE WIDGET PANEL ═══ -->
@@ -1041,34 +1031,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       var newL=resizeState.startL;
       var newT=resizeState.startT;
       var minW=100,minH=70;
-      var aspect=16/9;
-      // Determine primary axis from handle and compute proportional size
-      if(h==='se'||h==='nw'||h==='ne'||h==='sw'){
-        // Corner handles — use larger delta to drive size, lock aspect
-        if(h.includes('e')||h.includes('w')){
-          newW=Math.max(minW,resizeState.startW+(h.includes('w')?-dx:dx));
-          newH=Math.round(newW/aspect);
-        } else {
-          newH=Math.max(minH,resizeState.startH+(h.includes('n')?-dy:dy));
-          newW=Math.round(newH*aspect);
-        }
-        if(h.includes('w')){newL=resizeState.startL+(resizeState.startW-newW);}
-        if(h.includes('n')){newT=resizeState.startT+(resizeState.startH-newH);}
-      } else if(h==='e'||h==='w'){
-        newW=Math.max(minW,resizeState.startW+(h==='w'?-dx:dx));
-        newH=Math.round(newW/aspect);
-        if(h==='w'){newL=resizeState.startL+(resizeState.startW-newW);}
-        // Re-center vertically
-        var curCenterY=resizeState.startT+resizeState.startH/2;
-        newT=Math.max(0,Math.min(curCenterY-newH/2,resizeState.stageRect.height-newH));
-      } else if(h==='n'||h==='s'){
-        newH=Math.max(minH,resizeState.startH+(h==='n'?-dy:dy));
-        newW=Math.round(newH*aspect);
-        if(h==='n'){newT=resizeState.startT+(resizeState.startH-newH);}
-        // Re-center horizontally
-        var curCenterX=resizeState.startL+resizeState.startW/2;
-        newL=Math.max(0,Math.min(curCenterX-newW/2,resizeState.stageRect.width-newW));
-      }
+      if(h.includes('e')){newW=Math.max(minW,resizeState.startW+dx);}
+      if(h.includes('w')){newW=Math.max(minW,resizeState.startW-dx);newL=resizeState.startL+dx;}
+      if(h.includes('s')){newH=Math.max(minH,resizeState.startH+dy);}
+      if(h.includes('n')){newH=Math.max(minH,resizeState.startH-dy);newT=resizeState.startT+dy;}
       newL=Math.max(0,newL);newT=Math.max(0,newT);
       newW=Math.min(newW,resizeState.stageRect.width-newL);
       newH=Math.min(newH,resizeState.stageRect.height-newT);
@@ -1079,104 +1045,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   function endDrag(){
     if(dragState){dragState.element.style.transition='';dragState=null;}
     if(resizeState){resizeState.element.style.transition='';resizeState=null;}
-  }
-
-  // ── MINIMIZE / RESTORE VIDEO WINDOWS ──
-  var minimizedWindows={};
-  function minimizeWindow(id){
-    var win=document.getElementById(id);
-    if(!win)return;
-    // Save current geometry for restore
-    minimizedWindows[id]={
-      width:win.style.width||win.offsetWidth+'px',
-      height:win.style.height||win.offsetHeight+'px',
-      left:win.style.left,
-      top:win.style.top,
-      right:win.style.right,
-      bottom:win.style.bottom,
-      transform:win.style.transform,
-      className:win.className
-    };
-    win.classList.add('hidden');
-    // Position the minimized button
-    var bar=document.getElementById('restore-bar');
-    var tabs=bar.querySelectorAll('.restore-tab');
-    var slot=0;
-    tabs.forEach(function(t,i){if(t.style.display!=='none')slot=i+1;});
-    win.style.left=(10+slot*56)+'px';
-    win.style.top='auto';
-    win.style.bottom='8px';
-    win.style.right='auto';
-    // Show restore button
-    var restoreBtn=document.getElementById(id==='main-video-wrap'?'restore-main':'restore-pip');
-    if(restoreBtn)restoreBtn.style.display='block';
-    updateRestoreBar();
-  }
-  function restoreWindow(id){
-    var win=document.getElementById(id);
-    if(!win||!minimizedWindows[id])return;
-    var s=minimizedWindows[id];
-    win.className=s.className;
-    win.classList.remove('hidden');
-    win.style.width=s.width;
-    win.style.height=s.height;
-    win.style.left=s.left;
-    win.style.top=s.top;
-    win.style.right=s.right||'auto';
-    win.style.bottom=s.bottom||'auto';
-    win.style.transform=s.transform||'none';
-    delete minimizedWindows[id];
-    var restoreBtn=document.getElementById(id==='main-video-wrap'?'restore-main':'restore-pip');
-    if(restoreBtn)restoreBtn.style.display='none';
-    updateRestoreBar();
-  }
-  function updateRestoreBar(){
-    var bar=document.getElementById('restore-bar');
-    var anyHidden=false;
-    ['main-video-wrap','pip-video-wrap'].forEach(function(id){
-      if(minimizedWindows[id])anyHidden=true;
-    });
-    // Check if chat panel is hidden
-    var sidePanel=document.getElementById('side-panel');
-    var chatHidden=!sidePanel.classList.contains('open');
-    if(chatHidden)anyHidden=true;
-    document.getElementById('restore-chat').style.display=chatHidden?'block':'none';
-    bar.classList.toggle('visible',anyHidden);
-  }
-
-  // ── SIDE PANEL RESIZE ──
-  var panelResizeState=null;
-  function initPanelResize(){
-    var handle=document.getElementById('panel-resize');
-    if(!handle)return;
-    handle.addEventListener('mousedown',function(e){startPanelResize(e);});
-    handle.addEventListener('touchstart',function(e){startPanelResize(e);},{passive:false});
-  }
-  function startPanelResize(e){
-    e.preventDefault();e.stopPropagation();
-    var panel=document.getElementById('side-panel');
-    panelResizeState={startX:e.touches?e.touches[0].clientX:e.clientX,startWidth:panel.offsetWidth};
-    document.getElementById('panel-resize').classList.add('active');
-    document.addEventListener('mousemove',onPanelResize);
-    document.addEventListener('touchmove',onPanelResize,{passive:false});
-    document.addEventListener('mouseup',endPanelResize);
-    document.addEventListener('touchend',endPanelResize);
-  }
-  function onPanelResize(e){
-    if(!panelResizeState)return;
-    e.preventDefault();
-    var dx=(e.touches?e.touches[0].clientX:e.clientX)-panelResizeState.startX;
-    var newW=Math.max(240,Math.min(600,panelResizeState.startWidth-dx));
-    document.getElementById('side-panel').style.width=newW+'px';
-    document.getElementById('side-panel').style.minWidth=newW+'px';
-  }
-  function endPanelResize(){
-    panelResizeState=null;
-    document.getElementById('panel-resize').classList.remove('active');
-    document.removeEventListener('mousemove',onPanelResize);
-    document.removeEventListener('touchmove',onPanelResize);
-    document.removeEventListener('mouseup',endPanelResize);
-    document.removeEventListener('touchend',endPanelResize);
   }
 
   // ── SWAP VIDEOS ──
@@ -1326,16 +1194,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     currentPanel=name;
     var panel=document.getElementById('side-panel');
     var chatInput=document.getElementById('chat-input-area');
-    if(name==='none'){panel.classList.remove('open');}
-    else{panel.classList.add('open');}
+    if(name==='none'){panel.classList.remove('open');return;}
+    panel.classList.add('open');
     chatInput.style.display=(name==='chat')?'flex':'none';
-    var titles={chat:'Chat',participants:'Participants',settings:'Settings'};
+    var titles={chat:'💬 Chat',participants:'👥 Participants',settings:'⚙️ Settings'};
     document.getElementById('panel-title').textContent=titles[name]||'Panel';
     var content=document.getElementById('panel-content');
     if(name==='chat')renderChat(content);
     if(name==='participants')renderParticipants(content);
     if(name==='settings')renderSettings(content);
-    updateRestoreBar();
   }
 
   // ── CHAT ──
@@ -1571,19 +1438,48 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     }
   }
 
+  // ── SOUND EFFECTS ──
+  var audioCtx=null;
+  function playSwish(){
+    if(!audioCtx){audioCtx=new(window.AudioContext||window.webkitAudioContext)();}
+    var osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
+    osc.type="sine";osc.frequency.value=800;gain.gain.value=0.08;
+    osc.connect(gain);gain.connect(audioCtx.destination);
+    osc.start();osc.stop(audioCtx.currentTime+0.1);
+  }
+  function createSparkle(x,y){
+    var s=document.createElement("div");s.className="sparkle";
+    s.style.left=(x-3)+"px";s.style.top=(y-3)+"px";document.body.appendChild(s);
+    setTimeout(function(){s.remove();},1200);
+  }
+
+  // ── THEME PICKER ──
+  var THEMES={default:"#22d3ee",ocean:"#3b82f6",forest:"#22c55e",sunset:"#f97316",rose:"#f43f5e",amber:"#f59e0b",violet:"#8b5cf6",neon:"#d946ef"};
+  function applyTheme(t){
+    var c=THEMES[t]||THEMES.default;
+    document.documentElement.style.setProperty("--accent",c);
+    var r=parseInt(c.slice(1,3),16),g=parseInt(c.slice(3,5),16),b=parseInt(c.slice(5,7),16);
+    document.documentElement.style.setProperty("--accent-glow","rgba("+r+","+g+","+b+",.3)");
+    localStorage.setItem("elo_theme",t);
+  }
+  function toggleThemePicker(){document.getElementById("themePickerPanel").classList.toggle("open");}
+
   // ── INIT ──
   showDeviceCheck();
   renderVocabList();
-  initPanelResize();
-  updateRestoreBar();
+  // Add sound effects to buttons
+  document.querySelectorAll(".ctrl-btn").forEach(function(el){
+    el.addEventListener("click",playSwish);
+  });
+  // Theme preset click handler
+  document.getElementById("themePresets").addEventListener("click",function(e){
+    if(e.target.classList.contains("theme-preset")){applyTheme(e.target.dataset.theme);playSwish();}
+  });
+  // Load saved theme
+  var savedTheme=localStorage.getItem("elo_theme");
+  if(savedTheme){applyTheme(savedTheme);}
 
 })();
 </script>
-<!-- Donate Section — inconspicuous, bottom of page -->
-<div id="donate-bar" style="text-align:center;padding:12px 0 8px;font-size:11px;color:rgba(0,0,0,0.35);letter-spacing:0.5px;border-top:1px solid rgba(0,0,0,0.08);margin-top:auto">
-  <span style="margin-right:10px">Support this project</span>
-  <a href="https://paypal.me/williamgraythomason" target="_blank" rel="noopener" style="display:inline-block;background:#0070ba;color:#fff;padding:4px 12px;border-radius:4px;text-decoration:none;font-weight:600;font-size:11px;margin:0 4px">PayPal</a>
-  <a href="https://wise.com/payme/williamgraythomason" target="_blank" rel="noopener" style="display:inline-block;background:#9fe870;color:#163300;padding:4px 12px;border-radius:4px;text-decoration:none;font-weight:600;font-size:11px;margin:0 4px">Wise</a>
-</div>
 </body>
 </html>
